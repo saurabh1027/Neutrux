@@ -1,0 +1,36 @@
+--------------------------------------- Requirements ---------------------------------
+
+--Softwares
+	--IDE	
+		Spring_Tool_Suite
+		Visual_Studio_Code
+		Mysql_Workbench / Oracle_SQL_Developer
+	--Technologies
+		Angular_CLI - 13.2.1
+		Spring - 2.6.4
+		Java - 1.8
+		Node - 17.0.1
+		NPM - 8.1.0
+
+--Projects
+	--Angular [Client_Application] JS
+		this is a standalone application for user-interaction.
+	--Spring
+		API_Gateway [Spring_Cloud]
+		Discovery_Service [Eureka_Server]
+		Config_service [Spring_Cloud]
+		--Micro_Services
+			user_service
+			tools_service
+
+			blogs_service
+			blogs_filter_service
+			blogs_search_service
+			blog_impressions_service
+			blog_saves_service
+			blog_categories_service
+			comments_service
+			comment_impressions_service
+
+			blog_editor_service
+				related to projects, blog_elements

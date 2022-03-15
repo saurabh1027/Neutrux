@@ -1,0 +1,74 @@
+-------------------------------------------- Entities --------------------------------------------
+
+
+	Users
+		id:long [PK],
+		fullname:string,
+		email:string,
+		encrypted_password:string,  	
+		job_role:string,
+		profile_pic_path:string,
+	
+	Tools
+		tool_id:long [PK],
+		tool_name:string,
+		category:string,            	//category means for which industry it is useful, 
+				     		//like web designer is for IT industry.
+		profile_pic_path:string,
+		description:string,		//short intro about tool	
+		type:string,			//if it is prime then it is available for prime users,
+						//and if local, then it is available for local users.
+
+	Blogs
+		blog_id:long [PK],
+		title:string,
+		user_id:long [FK],
+		publish_date:timestamp,
+
+	Elements
+		element_id:long [PK],
+		name:string,
+
+	Blog_Elements
+		element_id:long [FK],
+		blog_id:long [FK],
+		value:string,
+		index:integer,
+
+	Blog_Views
+		blog_id:long [FK],
+		user_id:long [FK]
+		
+	Impressions
+		impression_id:long [PK],
+		impression_type:string,		//it is like,love,celebrate,sad,angry
+
+	Blog_Impressions
+		blog_id:long [FK],
+		impression_id:long [FK],
+		user_id:long [FK]
+
+	Blog_Saves
+		user_id:long [FK],
+		blog_id:long [FK]
+
+	Categories
+		category_id:long [PK],
+		name:string,
+		description:string,
+
+	Blog_Categories
+		category_id:long [FK],
+		blog_id:long [FK]
+		
+	Comments,
+		comment_id:long [PK],
+		content:string,
+		creation_date:timestamp,
+		blog_id:long [FK],
+		user_id:long [FK]		
+
+	Comment_Impressions
+		comment_id:long [FK],
+		impression_id:long [FK],
+		user_id:long [FK]

@@ -1,0 +1,37 @@
+------------------------------------ Meta-Information -------------------------------
+	-- 			=> Can_Be_Extended
+	[N_D] 			=> Not_Decided
+	[Number_with_suffix] 	=> Build_Queue_Order_Index
+
+
+
+--------------------------------------- Architecture ---------------------------------
+	
+
+TechzSpots.com 
+	[1st]	--home
+			intro
+	[2nd]	--tools
+		[3rd]	--blog_editor
+				--posted_blog_list
+					--posted_blog_card_with_menu
+					[N_D]	--blog_analytics
+				--blog_projects
+					--blog_project_dashboard_with_menu
+						--editor_page
+							control_panel
+							content_panel
+							blog_elements_modal
+						--output_page
+							content_panel
+		[N_D]	--web_designer
+	[4th]	--blog_display_page
+			top_blog_list
+			--filtered_blog_list
+				--Sorted by date, views, impressions, alphabets, etc.
+				--Featured by categories such as film_industry, government, technology, etc.
+			--search_blog_page
+				resulting_blog_list
+			--blog_page
+				content
+				comments_section

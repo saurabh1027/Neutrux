@@ -1,0 +1,12 @@
+-------------------------------------------- Goals --------------------------------------------
+
+	
+	Do's
+		put functional_working on the first place
+		think multiple times before performing an action
+		always inspect, it will help in reduction of consumption of time and other resources		
+
+
+	Dont's
+		put designing on the first place
+		declare working is finished until it is not properly inspected.
