@@ -1,4 +1,4 @@
-package com.neutrux.api.NeutruxUsersApi.ui.model;
+package com.neutrux.api.NeutruxUsersApi.ui.model.request;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;

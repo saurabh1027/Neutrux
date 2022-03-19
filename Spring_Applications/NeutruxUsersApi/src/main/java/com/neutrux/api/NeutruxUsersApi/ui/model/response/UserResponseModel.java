@@ -1,4 +1,4 @@
-package com.neutrux.api.NeutruxUsersApi.ui.model;
+package com.neutrux.api.NeutruxUsersApi.ui.model.response;
 
 import java.io.Serializable;
 

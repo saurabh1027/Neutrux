@@ -3,6 +3,7 @@ package com.neutrux.api.NeutruxAuthenticationApi.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,14 +19,17 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
 	
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	private UsersService usersService;
+	private Environment environment;
 	
 	@Autowired
 	public WebSecurity(
 		BCryptPasswordEncoder bCryptPasswordEncoder,
-		UsersService usersService	
+		UsersService usersService,
+		Environment environment
 	) {
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 		this.usersService = usersService;
+		this.environment = environment;
 	}
 
 	@Override
@@ -43,8 +47,11 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
 	}
 
 	public AuthenticationFilter getAuthenticationFilter() throws Exception {
-		AuthenticationFilter authenticationFilter = new AuthenticationFilter(usersService,authenticationManager());
-//		authenticationFilter.setFilterProcessesUrl("/authenticate");
+		AuthenticationFilter authenticationFilter = new AuthenticationFilter(
+				usersService,
+				environment,
+				authenticationManager());
+		authenticationFilter.setFilterProcessesUrl("/authenticate");
 		return authenticationFilter;
 	}
 

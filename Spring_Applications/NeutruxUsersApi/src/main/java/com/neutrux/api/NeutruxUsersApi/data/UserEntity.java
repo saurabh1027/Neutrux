@@ -9,7 +9,7 @@ public class UserEntity implements Serializable {
 
 	private static final long serialVersionUID = 4305198951211612065L;
 
-	//Database ID
+	// Database ID
 	@Id
 	@GeneratedValue
 	private long id;
@@ -23,8 +23,11 @@ public class UserEntity implements Serializable {
 	@Column(nullable = false, length = 120, unique = true)
 	private String email;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	private String encryptedPassword;
+
+	@Column(nullable = false)
+	private String role;
 
 	public long getId() {
 		return id;
@@ -65,4 +68,13 @@ public class UserEntity implements Serializable {
 	public void setEncryptedPassword(String encryptedPassword) {
 		this.encryptedPassword = encryptedPassword;
 	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
 }

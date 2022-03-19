@@ -1,0 +1,39 @@
+
+POST User /users
+	400 Invalid Method Argument Exception
+	//401 Unauthorized
+	400 Invalid Request, email must be unique, username already taken
+	//400 Authorization information[header] is incorrect
+
+GET Users /users
+	400 Authorization information[header] is incorrect
+	401 Unauthorized[Authentication Failure]
+
+GET User by ID	/users/:id
+	400 Authorization information[header] is incorrect
+	401 Unauthorized[Authentication Failure]
+	403 Forbidden[User is not authorized to access this User]
+	404 Not Found[User for id 144687001 was Not Found]
+
+GET Resources of User by ID	/users/:id/resource-name
+	400 Authorization information[header] is incorrect
+	401 Unauthorized[Authentication Failure]
+	403 Forbidden[User is not authorized to access this Resource]
+	404 Not Found[User for id 144687001 was Not Found]		
+		//User should be checked even for accesing any resource
+
+POST Authenticate User		/authenticate	
+	400 Invalid Method Argument Exception
+	401 Unauthorized[Authentication Failure]
+
+PUT User	/users/:id
+	400 Invalid Method Argument Exception
+	400 Invalid Request, email must be unique, username already taken
+	400 Authorization information[header] is incorrect
+	401 Unauthorized
+	401 Insufficient Permission
+	403 Forbidden[User is not authorized to access this User]
+	404 Not Found[User for id 144687001 was Not Found]	
+
+
+

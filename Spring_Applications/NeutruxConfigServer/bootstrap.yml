@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: neutrux-config-server
+  profiles:
+    active: dev,mysql
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/saurabh1027/NeutruxConfigServer
+          username: saurabh1027
+          password: S@urAbh8887
