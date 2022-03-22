@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.neutrux.api.NeutruxUsersApi.ui.model.InvalidField;
-import com.neutrux.api.NeutruxUsersApi.ui.model.response.ErrorMessage;
-import com.neutrux.api.NeutruxUsersApi.ui.model.response.MethodArgumentNotValidExceptionResponseModel;
+import com.neutrux.api.NeutruxUsersApi.ui.models.InvalidField;
+import com.neutrux.api.NeutruxUsersApi.ui.models.response.ErrorMessageResponseModel;
+import com.neutrux.api.NeutruxUsersApi.ui.models.response.MethodArgumentNotValidExceptionResponseModel;
 
 @ControllerAdvice
 public class AppExceptionsHandler extends ResponseEntityExceptionHandler {
@@ -49,7 +49,7 @@ public class AppExceptionsHandler extends ResponseEntityExceptionHandler {
 
 		String errorMessageDescription = ex.getMessage();
 
-		ErrorMessage errorMessage = buildErrorMessage(ex, errorMessageDescription, HttpStatus.BAD_REQUEST);
+		ErrorMessageResponseModel errorMessage = buildErrorMessage(ex, errorMessageDescription, HttpStatus.BAD_REQUEST);
 
 		return new ResponseEntity<Object>(errorMessage, new HttpHeaders(), errorMessage.getType());
 
@@ -60,19 +60,19 @@ public class AppExceptionsHandler extends ResponseEntityExceptionHandler {
 		
 		String errorMessageDescription = "User Not Found";
 
-		ErrorMessage errorMessage = buildErrorMessage(ex, errorMessageDescription, HttpStatus.NOT_FOUND);
+		ErrorMessageResponseModel errorMessage = buildErrorMessage(ex, errorMessageDescription, HttpStatus.NOT_FOUND);
 
 		return new ResponseEntity<Object>(errorMessage, new HttpHeaders(), errorMessage.getType());
 		
 	}
 
-	public ErrorMessage buildErrorMessage(Exception ex, String errorMessageDescription, HttpStatus httpStatus) {
+	public ErrorMessageResponseModel buildErrorMessage(Exception ex, String errorMessageDescription, HttpStatus httpStatus) {
 
 		if (errorMessageDescription == null || errorMessageDescription.isEmpty()) {
 			errorMessageDescription = ex.toString();
 		}
 
-		ErrorMessage errorMessage = new ErrorMessage(new Date(), httpStatus.value(), httpStatus,
+		ErrorMessageResponseModel errorMessage = new ErrorMessageResponseModel(new Date(), httpStatus.value(), httpStatus,
 				errorMessageDescription);
 
 		return errorMessage;

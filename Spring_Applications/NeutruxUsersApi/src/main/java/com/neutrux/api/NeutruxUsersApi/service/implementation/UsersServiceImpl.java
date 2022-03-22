@@ -1,23 +1,28 @@
 package com.neutrux.api.NeutruxUsersApi.service.implementation;
 
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.mysql.cj.exceptions.MysqlErrorNumbers;
-import com.neutrux.api.NeutruxUsersApi.data.UserEntity;
-import com.neutrux.api.NeutruxUsersApi.data.UsersRepository;
+import com.neutrux.api.NeutruxUsersApi.repositories.UsersRepository;
+import com.neutrux.api.NeutruxUsersApi.security.UsersSecurityDetails;
 import com.neutrux.api.NeutruxUsersApi.service.UsersService;
 import com.neutrux.api.NeutruxUsersApi.shared.UserDto;
+import com.neutrux.api.NeutruxUsersApi.ui.models.UserEntity;
 
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -26,33 +31,67 @@ public class UsersServiceImpl implements UsersService {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@Autowired
-	public UsersServiceImpl(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+	public UsersServiceImpl(UsersRepository usersRepository,
+			BCryptPasswordEncoder bCryptPasswordEncoder) {
 		this.usersRepository = usersRepository;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 	}
 
 	@Override
-	public UserDto createUser(UserDto userDto) throws Exception {
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		UserEntity userEntity = usersRepository.findByEmail(username);
+
+		if (userEntity == null) {
+			throw new UsernameNotFoundException(username + " not found!");
+		}
+
+		return new UsersSecurityDetails(userEntity);
+	}
+
+	@Override
+	public Set<UserDto> getUsers(int pageNumber, int pageLimit) {
+		UserDto userDto = null;
+		Set<UserDto> users = new HashSet<UserDto>();
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+		Pageable userPageables = PageRequest.of(pageNumber, pageLimit);
+		Page<UserEntity> userPages = usersRepository.findAll(userPageables);
+		
+		Iterator<UserEntity> iterator = userPages.iterator();
+
+		while (iterator.hasNext()) {
+			UserEntity userEntity = iterator.next();
+			userDto = modelMapper.map(userEntity, UserDto.class);
+			userDto.setUserId(encryptUserId(userEntity.getId()));
+			users.add(userDto);
+		}
+
+		return users;
+	}
+
+	@Override
+	public UserDto createUser(UserDto userDetails) throws Exception {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
 		// Add algorithm to store encrypted password!
-		String encryptedPassword = encryptPassword(userDto.getPassword());
-		userDto.setEncryptedPassword(encryptedPassword);
+		String encryptedPassword = encryptPassword(userDetails.getPassword());
+		userDetails.setEncryptedPassword(encryptedPassword);
 
-		UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
-		
-		userEntity.setRole("SUBSCRIBER");
+		UserEntity userEntity = modelMapper.map(userDetails, UserEntity.class);
+
+		userEntity.setRoles("ROLE_SUBSCRIBER");
 
 		try {
 			usersRepository.save(userEntity);
 		} catch (DataIntegrityViolationException e) {
-			//Exception Handling for Duplicate Entry of Email
+			// Exception Handling for Duplicate Entry of Email
 			if (e.getRootCause() != null
 					&& e.getRootCause().getClass().equals(SQLIntegrityConstraintViolationException.class)) {
 				SQLIntegrityConstraintViolationException ex = (SQLIntegrityConstraintViolationException) e
 						.getRootCause();
-				if( ex.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY ) {
+				if (ex.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
 					throw new Exception("Email already exists!");
 				}
 			}
@@ -65,20 +104,51 @@ public class UsersServiceImpl implements UsersService {
 
 		return createdUser;
 	}
-	
+
 	@Override
 	public UserDto getUserByUserId(String userId) {
 		ModelMapper modelMapper = new ModelMapper();
 		UserEntity userEntity = null;
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
+
 		long id = decryptUserId(userId);
 		userEntity = usersRepository.findById(id).get();
-		
+
 		UserDto userDto = modelMapper.map(userEntity, UserDto.class);
-		userDto.setUserId(userId);
-		
+		String newUserId = encryptUserId(userEntity.getId());
+		userDto.setUserId(newUserId);
+
 		return userDto;
+	}
+
+	@Override
+	public UserDto updateUserByUserId(UserDto newUserDetails) {
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+		long id = this.decryptUserId(newUserDetails.getUserId());
+		UserEntity oldUserEntity = usersRepository.findById(id).get();
+
+		oldUserEntity.setFirstname(newUserDetails.getFirstname());
+		oldUserEntity.setLastname(newUserDetails.getLastname());
+
+		UserEntity newUserEntity = oldUserEntity;
+		UserEntity updatedUserEntity = usersRepository.save(newUserEntity);
+
+		UserDto updatedUserDetails = modelMapper.map(updatedUserEntity, UserDto.class);
+
+		String newUserId = encryptUserId(updatedUserEntity.getId());
+		updatedUserDetails.setUserId(newUserId);
+
+		return updatedUserDetails;
+	}
+
+	@Override
+	public void deleteUserByUserId(String userId) {
+		long id = this.decryptUserId(userId);
+
+		UserEntity userEntity = usersRepository.findById(id).get();
+		usersRepository.delete(userEntity);
 	}
 
 	// Add some logic to avoid exposing original user passwords
@@ -91,27 +161,12 @@ public class UsersServiceImpl implements UsersService {
 	private String encryptUserId(long id) {
 		return (id * 673926356) + "";
 	}
-	
+
 	private long decryptUserId(String userId) {
 		long id = 0;
 		id = Long.parseLong(userId);
-		id = id/673926356;
+		id = id / 673926356;
 		return id;
 	}
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		UserEntity userEntity = usersRepository.findByEmail(username);
-		
-		if(userEntity==null) {
-			throw new UsernameNotFoundException(username+" not found!");
-		}
-		
-		return new User(
-			userEntity.getEmail(),
-			userEntity.getEncryptedPassword(),
-			true, true, true, true, 
-			new ArrayList<>()
-		);
-	}
 }

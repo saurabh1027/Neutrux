@@ -29,13 +29,13 @@
 		element_id:long [PK],
 		name:string,
 
-	Blog_Elements
+	Blogs_Elements_JUNCTION
 		element_id:long [FK],
 		blog_id:long [FK],
 		value:string,
 		index:integer,
 
-	Blog_Views
+	Blogs_Views_JUNCTION
 		blog_id:long [FK],
 		user_id:long [FK]
 		
@@ -43,12 +43,12 @@
 		impression_id:long [PK],
 		impression_type:string,		//it is like,love,celebrate,sad,angry
 
-	Blog_Impressions
+	Blogs_Impressions_JUNCTION
 		blog_id:long [FK],
 		impression_id:long [FK],
 		user_id:long [FK]
 
-	Blog_Saves
+	Blog_Saves_JUNCTION
 		user_id:long [FK],
 		blog_id:long [FK]
 
@@ -57,7 +57,7 @@
 		name:string,
 		description:string,
 
-	Blog_Categories
+	Blogs_Categories_JUNCTION
 		category_id:long [FK],
 		blog_id:long [FK]
 		
@@ -68,7 +68,7 @@
 		blog_id:long [FK],
 		user_id:long [FK]		
 
-	Comment_Impressions
+	Comments_Impressions_JUNCTION
 		comment_id:long [FK],
 		impression_id:long [FK],
 		user_id:long [FK]

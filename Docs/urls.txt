@@ -1,0 +1,22 @@
+
+
+	/authenticate	
+		POST	authenticate-user
+	/users 	
+		GET 	get-users
+		POST	add-user
+		
+		/:userId
+			GET	get-user-by-userId
+			PUT	update-user-by-userId
+			DELETE	delete-user-by-userId
+
+			/blogs
+				GET	get-blogs-of-user
+				POST	add-blog-of-user
+				
+				/:blogId
+					GET	get-blog-of-user-by-blogId
+					PUT	update-blog-of-user-by-blogId
+					DELETE	delete-blog-of-user-by-blogId
+		

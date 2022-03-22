@@ -1,28 +1,38 @@
 package com.neutrux.api.NeutruxUsersApi.security;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import com.neutrux.api.NeutruxUsersApi.service.UsersService;
+import com.neutrux.api.NeutruxUsersApi.shared.UserDto;
 
 import io.jsonwebtoken.Jwts;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 
 	private Environment environment;
+	private UsersService usersService;
 
-	public AuthorizationFilter(AuthenticationManager authenticationManager, Environment environment) {
+	@Autowired
+	public AuthorizationFilter(AuthenticationManager authenticationManager,
+		Environment environment,
+		UsersService usersService
+	) {
 		super(authenticationManager);
 		this.environment = environment;
+		this.usersService = usersService;
 	}
 
 	@Override
@@ -58,8 +68,11 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 		if (userId == null) {
 			return null;
 		}
-
-		return new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
+		
+		UserDto userDto = usersService.getUserByUserId(userId);
+		UserDetails userDetails = usersService.loadUserByUsername(userDto.getEmail());
+		
+		return new UsernamePasswordAuthenticationToken(userId, userDetails.getPassword(), userDetails.getAuthorities());
 
 	}
 }

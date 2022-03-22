@@ -15,13 +15,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neutrux.api.NeutruxAuthenticationApi.service.UsersService;
 import com.neutrux.api.NeutruxAuthenticationApi.shared.UserDto;
-import com.neutrux.api.NeutruxAuthenticationApi.ui.model.AuthenticateUserRequestModel;
+import com.neutrux.api.NeutruxAuthenticationApi.ui.models.request.AuthenticateUserRequestModel;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -64,10 +63,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
-		String username = ( (User)authResult.getPrincipal() ).getUsername();
-		UserDto userDto = usersService.getUserDetailsByEmail(username);
 		
+		String username = ( (UsersSecurityDetails)authResult.getPrincipal() ).getUsername();
 		String tokenExpirationTime = environment.getProperty("token.expiration_time");
+		
+		UserDto userDto = usersService.getUserDetailsByEmail(username);
 		
 		String token =
 				Jwts.builder()
@@ -78,8 +78,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 		
 		response.addHeader("token", token);
 		response.addHeader("userId", userDto.getUserId());
+	
 	}
-	
-	
 	
 }
