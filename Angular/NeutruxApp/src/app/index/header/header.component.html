@@ -1,0 +1,21 @@
+<div class="header">
+    <a 
+        [routerLink]="['']" 
+        class="logo">
+        <img src="../../../assets/name_logo_dark_grey.png" alt="logo">
+    </a>
+
+    <div 
+        class="menu-icon" 
+        (click)="isSidenavOpened = true">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+
+</div>
+
+<app-sidenav 
+    *ngIf="isSidenavOpened"
+    (closeSidenav)="isSidenavOpened = false">
+</app-sidenav>

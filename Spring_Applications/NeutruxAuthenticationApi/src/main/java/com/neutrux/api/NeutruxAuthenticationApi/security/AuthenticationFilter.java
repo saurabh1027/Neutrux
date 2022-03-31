@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neutrux.api.NeutruxAuthenticationApi.service.UsersService;
 import com.neutrux.api.NeutruxAuthenticationApi.shared.UserDto;
 import com.neutrux.api.NeutruxAuthenticationApi.ui.models.request.AuthenticateUserRequestModel;
+import com.neutrux.api.NeutruxAuthenticationApi.ui.models.response.UserResponseModel;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -68,6 +70,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 		String tokenExpirationTime = environment.getProperty("token.expiration_time");
 		
 		UserDto userDto = usersService.getUserDetailsByEmail(username);
+		ModelMapper modelMapper = new ModelMapper();
+		
+		UserResponseModel userResponseModel = modelMapper.map(userDto, UserResponseModel.class);
 		
 		String token =
 				Jwts.builder()
@@ -76,9 +81,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 					.signWith(SignatureAlgorithm.HS512, environment.getProperty("token.secret"))
 					.compact();
 		
-		response.addHeader("token", token);
-		response.addHeader("userId", userDto.getUserId());
-	
+		response.setStatus(HttpServletResponse.SC_OK);
+		response.getWriter().write(userResponseModel.toString());
+		response.addHeader("X-Access-Token", token);
+		response.addHeader("X-User-ID", userDto.getUserId());
+		response.setContentType("application/json");
 	}
 	
 }

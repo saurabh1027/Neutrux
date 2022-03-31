@@ -9,11 +9,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @EnableDiscoveryClient
 @ComponentScans({
-	@ComponentScan("com.neutrux.api.NeutruxAuthenticationApi.ui.controllers"),
 	@ComponentScan("com.neutrux.api.NeutruxAuthenticationApi.configurations") 
 })
 @EnableJpaRepositories("com.neutrux.api.NeutruxAuthenticationApi.repositories")
@@ -27,6 +28,19 @@ public class NeutruxAuthenticationApiApplication {
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+	
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry
+					.addMapping("/**")
+					.allowedOrigins("http://localhost:4200")
+					.exposedHeaders("X-Access-Token,X-User-ID");
+			}
+		};
 	}
 
 }

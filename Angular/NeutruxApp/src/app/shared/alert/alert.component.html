@@ -1,0 +1,12 @@
+<div class="backdrop" (click)="onClose()"></div>
+<div class="alert-box">
+  <p class="message" [class.error]="alert.isError" >{{ alert.message }}</p>
+  <div class="alert-box-actions">
+  
+    <button 
+      #closeBtn
+      class="btn btn-primary" 
+      (click)="onClose()">Close</button>
+  
+    </div>
+</div>

@@ -1,0 +1,135 @@
+@import '../../../../variables'
+
+.backdrop
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    height: 100vh
+    background: rgba(0, 0, 0, 0.75)
+    cursor: pointer
+
+.sidenav
+    position: fixed
+    top: 0
+    right: 0
+    width: 350px
+    height: 100vh
+    background: $dark-theme-color
+    display: flex
+    justify-content: center
+    align-items: center
+    flex-direction: column
+    row-gap: 10px
+    user-select: none
+    animation-duration: 0.5s
+    animation-timing-function: ease-in-out
+
+    &.open
+        animation-name: slide-in
+
+    &.close
+        animation-name: slide-out
+
+    .close-icon
+        position: absolute
+        top: 0
+        right: 0
+        margin: 35px 25px
+        cursor: pointer
+        color: #ddd
+        display: none
+        align-items: center
+        justify-content: center
+
+        .line
+            position: absolute
+            width: 30px
+            height: 7px
+            background: $dark-theme-text-color
+            border-radius: 3px
+
+            &:nth-child(1)
+                transform: rotate(45deg)
+
+            &:nth-child(2)
+                transform: rotate(-45deg)
+
+    .user-details
+        display: flex
+        flex-direction: column
+        align-items: center
+        row-gap: 20px
+        height: 35vh
+
+        .profile
+            width: 200px
+            height: 200px
+            background: #ddd
+            border-radius: 50%
+        
+        .name
+            font-weight: 600
+            letter-spacing: 2px
+            text-transform: uppercase
+            color: #ddd
+
+    hr
+        width: 90%
+        margin: 10px auto
+
+    .navigation
+        display: flex
+        flex-direction: column
+        align-items: center
+        overflow-y: auto
+        width: 100%
+        height: 50vh
+        row-gap: 10px
+
+        &::-webkit-scrollbar
+            display: none
+
+        a
+            padding: 10px
+            width: 85%
+            background: #ddd
+            text-decoration: none
+            color: #333
+            margin: 0 auto
+            user-select: none
+
+            &:nth-child(even)
+                background: #bbb
+
+            &:hover
+                background: #aaa
+                font-weight: 600
+
+
+
+
+
+
+@media screen and (max-width:400px)
+    .sidenav
+        width: 100%
+
+        .close-icon
+            display: flex
+
+
+@keyframes slide-in
+    from
+        right: -350px
+
+    to
+        right: 0px
+
+@keyframes slide-out
+    from
+        right: 0px
+
+    to
+        right: -350px
+        

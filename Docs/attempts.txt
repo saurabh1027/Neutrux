@@ -1,0 +1,7 @@
+
+
+	attempt-1   => 	Didn't work!
+		add endpoint to status url in auth-api
+		allow status-route from api-gateway
+		check it in vscode
+			

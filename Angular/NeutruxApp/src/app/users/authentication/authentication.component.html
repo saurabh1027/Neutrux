@@ -1,0 +1,58 @@
+<div class="container">
+
+    <app-alert 
+        [alert]="alert"
+        (close)="onClose()"
+        *ngIf="alert"></app-alert>
+
+    <form 
+        class="authentication-form form"
+        (ngSubmit)="onAuthenticationFormSubmit(form)" 
+        #form="ngForm">
+        
+        <div class="group flex justify-center">
+            <span class="heading">Authentication Form</span>
+        </div>
+
+        <div class="group flex column">
+            <label for="username">Username</label>
+            <input 
+                type="text"
+                name="username"
+                id="username"
+                ngModel
+                #username="ngModel"
+                required
+                email>
+            <small
+                *ngIf="username.invalid && username.touched"
+                class="error">Username cannot be null!</small>
+        </div>
+
+        <div class="group flex column">
+            <label for="password">Password</label>
+            <input 
+                type="password"
+                name="password"
+                id="password"
+                ngModel
+                #password="ngModel"
+                required
+                minlength="8" 
+                maxlength="16">
+            <small
+                *ngIf="password.invalid && password.touched"
+                class="error">Password cannot be null!</small>
+        </div>
+
+        <div class="group">
+            <button [disabled]="form.invalid" type="submit">Authenticate</button>
+        </div>
+
+        <div class="group">
+            <p class="link">New user, click <a [routerLink]="['','registration']">here</a> to register!</p>
+        </div>
+
+    </form>
+
+</div>

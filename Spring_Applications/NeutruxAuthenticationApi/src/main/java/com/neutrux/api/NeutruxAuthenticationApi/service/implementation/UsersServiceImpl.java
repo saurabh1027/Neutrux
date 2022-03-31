@@ -41,7 +41,7 @@ public class UsersServiceImpl implements UsersService{
 		UserEntity userEntity = usersRepository.findByEmail(email);
 		
 		if(userEntity==null) {
-			throw new UsernameNotFoundException(email+" not found!");
+			throw new UsernameNotFoundException("No records found for email \""+email+"\" !");
 		}
 		
 		ModelMapper modelMapper = new ModelMapper();

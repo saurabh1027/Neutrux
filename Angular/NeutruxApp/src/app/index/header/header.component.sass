@@ -1,0 +1,34 @@
+@import '../../../variables'
+
+.header
+    width: 100%
+    height: 10vh
+    display: flex
+    justify-content: space-between
+    align-items: center
+    user-select: none
+    background: $dark-theme-color
+    color: $dark-theme-text-color
+
+    .logo
+        margin: 0 3vw
+
+        img
+            width: 90px
+            -webkit-user-drag: none
+            user-select: none
+
+    .menu-icon
+        display: flex
+        flex-direction: column
+        justify-content: space-between
+        align-items: center
+        row-gap: 5px
+        margin: 0 3vw
+        cursor: pointer
+
+        .line
+            border-radius: 3px
+            width: 25px
+            height: 4px
+            background-color: $dark-theme-text-color

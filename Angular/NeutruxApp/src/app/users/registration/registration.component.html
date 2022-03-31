@@ -1,0 +1,86 @@
+<div class="container">
+
+    <app-alert 
+        [alert]="alert"
+        (close)="onClose()"
+        *ngIf="alert"></app-alert>
+
+    <form 
+        class="registration-form form"
+        (ngSubmit)="onRegistrationFormSubmit()" 
+        #form="ngForm">
+        
+        <div class="group flex justify-center">
+            <span class="heading">Registration Form</span>
+        </div>
+
+        <div class="group flex column">
+            <label for="firstname">Firstname</label>
+            <input 
+                type="text"
+                name="firstname"
+                id="firstname"
+                [(ngModel)]="registrationUserModel.firstname"
+                #firstname="ngModel"
+                required>
+            <small
+                *ngIf="firstname.invalid && firstname.touched"
+                class="error">Firstname cannot be null!</small>
+        </div>
+
+        <div class="group flex column">
+            <label for="lastname">Lastname</label>
+            <input 
+                type="text"
+                name="lastname"
+                id="lastname"
+                [(ngModel)]="registrationUserModel.lastname"
+                #lastname="ngModel"
+                required>
+            <small
+                *ngIf="lastname.invalid && lastname.touched"
+                class="error">Lastname cannot be null!</small>
+        </div>
+        
+        <div class="group flex column">
+            <label for="username">Username</label>
+            <input 
+                type="text"
+                name="email"
+                id="username"
+                [(ngModel)]="registrationUserModel.email"
+                #email="ngModel"
+                required
+                email>
+            <small
+                *ngIf="email.invalid && email.touched"
+                class="error">Username cannot be null!</small>
+        </div>
+
+        <div class="group flex column">
+            <label for="password">Password</label>
+            <input 
+                type="password"
+                name="password"
+                id="password"
+                [(ngModel)]="registrationUserModel.password"
+                #password="ngModel"
+                required
+                minlength="8" 
+                maxlength="16">
+            <small
+                *ngIf="password.invalid && password.touched"
+                class="error">Password cannot be null!</small>
+        </div>
+
+        <div class="group">
+            <button [disabled]="form.invalid" type="submit">Register</button>
+        </div>
+
+        <div class="group">
+            <p class="link">Already have an account, <a [routerLink]="['','authentication']">authenticate</a> yourself!</p>
+        </div>
+
+    </form>
+
+</div>

@@ -1,0 +1,36 @@
+.backdrop
+    position: fixed
+    top: 0
+    left: 0
+    width: 100vw
+    height: 100vh
+    background: rgba(0, 0, 0, 0.75)
+    z-index: 50
+
+.alert-box
+    position: fixed
+    top: 30vh
+    left: 20vw
+    width: 60vw
+    padding: 16px
+    z-index: 100
+    background: white
+    box-shadow: 0 2px 8px rbga(0, 0, 0, 0.26)
+
+    .message
+        color: #0f0
+
+        &.error
+            color: #f00
+
+    .alert-box-actions
+        text-align: right
+
+        button
+            padding: 10px 20px
+            cursor: pointer
+            outline: 2px solid #00609c
+            background: #0080cd
+            color: #fff
+            border: none
+            border-radius: 3px

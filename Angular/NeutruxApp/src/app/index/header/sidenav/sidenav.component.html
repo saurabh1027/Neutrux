@@ -1,0 +1,48 @@
+<div 
+    class="backdrop"
+    (click)="onClick()"></div>
+<div 
+    class="sidenav open"
+    #sidenav>
+
+    <div class="close-icon" (click)="onClick()">
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+
+    <!-- optional | user details -->
+    <div class="user-details">
+        <div class="profile"></div>
+        <span class="name">User</span>
+    </div>
+
+    <!-- optional | divider -->
+    <hr>
+
+    <!-- navigation -->
+    <div class="navigation">
+
+        <a 
+            class="link"
+            [routerLink]="['']">
+            <span>Smartphones</span>
+        </a>
+        <a 
+            class="link"
+            [routerLink]="['']">
+            <span>Headphones</span>
+        </a>
+        <a 
+            class="link"
+            [routerLink]="['']">
+            <span>Watches</span>
+        </a>
+        <a 
+            class="link"
+            [routerLink]="['']">
+            <span>Accessories</span>
+        </a>
+
+    </div>
+
+</div>

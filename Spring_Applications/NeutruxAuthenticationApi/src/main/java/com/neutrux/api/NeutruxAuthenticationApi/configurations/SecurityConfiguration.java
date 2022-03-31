@@ -2,7 +2,6 @@ package com.neutrux.api.NeutruxAuthenticationApi.configurations;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,19 +18,15 @@ import com.neutrux.api.NeutruxAuthenticationApi.service.UsersService;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
-	
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	private UsersService usersService;
 	private Environment environment;
-	
+
 	@Autowired
-	public SecurityConfiguration(
-		BCryptPasswordEncoder bCryptPasswordEncoder,
-		UsersService usersService,
-		Environment environment
-	) {
+	public SecurityConfiguration(BCryptPasswordEncoder bCryptPasswordEncoder, UsersService usersService,
+			Environment environment) {
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 		this.usersService = usersService;
 		this.environment = environment;
@@ -40,34 +35,28 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.csrf().disable();
-		http.authorizeRequests().antMatchers("/**").permitAll()
-			.and()
-			.addFilter(getAuthenticationFilter());
+		http.cors().and().csrf().disable();
+		http.authorizeRequests().antMatchers("/**").permitAll().and().addFilter(getAuthenticationFilter());
 		http.headers().frameOptions().disable();
 	}
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth
-			.userDetailsService(usersService)
-			.passwordEncoder(bCryptPasswordEncoder);
+		auth.userDetailsService(usersService).passwordEncoder(bCryptPasswordEncoder);
 	}
-	
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception{
-        return super.authenticationManagerBean();
-    }
-	
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
+
 	public AuthenticationFilter getAuthenticationFilter() throws Exception {
-		AuthenticationFilter authenticationFilter = new AuthenticationFilter(
-				usersService,
-				environment,
+		AuthenticationFilter authenticationFilter = new AuthenticationFilter(usersService, environment,
 				authenticationManager());
 		authenticationFilter.setFilterProcessesUrl("/authenticate");
 		return authenticationFilter;
