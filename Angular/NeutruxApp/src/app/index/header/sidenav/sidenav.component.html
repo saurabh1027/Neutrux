@@ -11,9 +11,13 @@
     </div>
 
     <!-- optional | user details -->
-    <div class="user-details">
-        <div class="profile"></div>
-        <span class="name">User</span>
+    <div class="user">
+        <div class="details" *ngIf="user">
+            <div class="profile"></div>
+            <span class="name">{{ user.firstname+' '+user.lastname }}</span>
+        </div>
+
+        <a [routerLink]="['','authentication']" *ngIf="!user">Login</a>
     </div>
 
     <!-- optional | divider -->

@@ -1,12 +1,12 @@
 import { DOCUMENT } from "@angular/common";
-import { Component, ElementRef, Inject, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, Inject, ViewChild } from "@angular/core";
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.sass']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
     @ViewChild('navigation') navigation!:ElementRef
     isSidenavOpened:boolean = false
 
@@ -14,10 +14,6 @@ export class HeaderComponent implements OnInit {
         @Inject(DOCUMENT) private document:Document
     ) {}
     
-    ngOnInit(): void {
-        
-    }
-
     toggleNavbar(bool:boolean){
         if(bool){
             this.navigation.nativeElement.classList.add('active')

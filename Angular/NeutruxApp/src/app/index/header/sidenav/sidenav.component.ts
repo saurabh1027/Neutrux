@@ -1,23 +1,32 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from "@angular/core";
-import { UsersService } from "src/app/users/users.service";
+import { Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from "@angular/core";
+import { Subscription } from "rxjs";
+import { AuthService } from "src/app/users/authentication/auth.service";
+import { User } from "src/app/users/user.model";
 
 @Component({
     selector: 'app-sidenav',
     templateUrl: './sidenav.component.html',
     styleUrls: ['./sidenav.component.sass']
 })
-export class SidenavComponent implements OnInit {
+export class SidenavComponent implements OnInit, OnDestroy {
     @Output('closeSidenav')
     closeSidenav: EventEmitter<void> = new EventEmitter()
+
     @ViewChild('sidenav')
     sidenav!: ElementRef
 
+    user!:User
+    private userSub!:Subscription
+
     constructor(
-        private usersService:UsersService
+        private authService:AuthService
     ) {}
 
     ngOnInit(): void {
-        // console.log( this.usersService.getAuthenticatedUser() )
+        this.authService.user.subscribe(user=>{
+            if(user)
+                this.user = user
+        })
     }
 
     onClick(){
@@ -27,4 +36,9 @@ export class SidenavComponent implements OnInit {
             this.closeSidenav.emit() 
         }, 450);
     }
+
+    ngOnDestroy(): void {
+        
+    }
+
 }

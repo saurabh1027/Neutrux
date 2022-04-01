@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { Router } from "@angular/router";
 import { UsersService } from "../users.service";
+import { AuthService } from "./auth.service";
 
 @Component({
     selector:'app-authentication',
@@ -15,27 +16,27 @@ export class AuthenticationComponent implements OnInit {
     } | null = null
 
     constructor(
-        private usersService:UsersService,
+        private authService:AuthService,
         private router:Router
     ) { }
 
     ngOnInit(): void {
-        this.usersService.logout()
+        this.authService.logout('authentication')
     }
 
     onAuthenticationFormSubmit( authenticationForm:NgForm ){
         let email:string = authenticationForm.controls['username'].value
         let password:string = authenticationForm.controls['password'].value
 
-        this.usersService.authenticateUser( email,password ).subscribe(response=>{
+        this.authService.authenticateUser( email,password ).subscribe(response=>{
             this.alert = {
                 message: 'Authenticated Successfully!',
                 isError: false
-            }    
+            }
             authenticationForm.reset()
-        },(error:any)=>{
+        },(errorMessage:any)=>{
             this.alert = {
-                message: error.message,
+                message: errorMessage,
                 isError: true
             }
         })

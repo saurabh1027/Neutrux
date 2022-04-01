@@ -73,6 +73,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 		ModelMapper modelMapper = new ModelMapper();
 		
 		UserResponseModel userResponseModel = modelMapper.map(userDto, UserResponseModel.class);
+		Date userExpirationDate = new Date( System.currentTimeMillis() + Long.parseLong(tokenExpirationTime));
+		userResponseModel.setExpiresIn( userExpirationDate.getTime() );
 		
 		String token =
 				Jwts.builder()
@@ -84,7 +86,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.getWriter().write(userResponseModel.toString());
 		response.addHeader("X-Access-Token", token);
-		response.addHeader("X-User-ID", userDto.getUserId());
 		response.setContentType("application/json");
 	}
 	

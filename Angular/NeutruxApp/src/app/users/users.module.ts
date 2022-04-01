@@ -24,9 +24,6 @@ import { RegistrationComponent } from "./registration/registration.component";
         AuthenticationComponent,
         RegistrationComponent
     ],
-    providers:[
-        // { provide:HTTP_INTERCEPTORS , useClass: AuthorizationHeaderInterceptor, multi:true }
-    ],
     bootstrap:[]
 })
 export class UsersModule{ }

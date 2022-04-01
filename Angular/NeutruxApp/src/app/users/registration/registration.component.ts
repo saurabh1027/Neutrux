@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { Router } from "@angular/router";
+import { AuthService } from "../authentication/auth.service";
 import { RegistrationUserModel } from "../registration.user.model";
 import { UsersService } from "../users.service";
 
@@ -22,11 +23,12 @@ export class RegistrationComponent implements OnInit{
 
     constructor(
         private usersService:UsersService,
+        private authService:AuthService,
         private router:Router
     ) { }
 
     ngOnInit(): void {
-        this.usersService.logout()
+        this.authService.logout('registration')
     }
 
     onRegistrationFormSubmit(){

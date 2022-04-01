@@ -1,19 +1,21 @@
-export class UserModel{
-    userId:string;
-    firstname:string;
-    lastname:string;
-    email:string;
+export class User{
 
     constructor(
-        userId:string,
-        firstname:string,
-        lastname:string,
-        email:string
-    ) {
-        this.userId = userId
-        this.email = email
-        this.firstname = firstname
-        this.lastname = lastname
+        public userId:string,
+        public firstname:string,
+        public lastname:string,
+        public email:string,
+        private _accessToken:string,
+        private _accessTokenExpirationDate:Date
+    ) { }
+
+    
+    public get accessToken() : string|null {
+        if (!this._accessTokenExpirationDate || new Date() > this._accessTokenExpirationDate) {
+            return null;
+        }
+        return this._accessToken;
     }
+    
 
 }

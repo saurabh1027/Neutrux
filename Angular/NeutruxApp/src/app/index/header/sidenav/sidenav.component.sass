@@ -55,24 +55,39 @@
             &:nth-child(2)
                 transform: rotate(-45deg)
 
-    .user-details
-        display: flex
-        flex-direction: column
-        align-items: center
-        row-gap: 20px
+    .user
         height: 35vh
+        position: relative
 
-        .profile
-            width: 200px
-            height: 200px
-            background: #ddd
-            border-radius: 50%
-        
-        .name
-            font-weight: 600
-            letter-spacing: 2px
+        a
+            padding: 10px 20px
+            font-size: 18px
             text-transform: uppercase
-            color: #ddd
+            position: absolute
+            top: 80%
+            left: 50%
+            transform: translate(-50%,-80%)
+            background: #ddd
+            color: $dark-theme-color
+            text-decoration: none
+        
+        .details
+            display: flex
+            flex-direction: column
+            align-items: center
+            row-gap: 20px
+
+            .profile
+                width: 200px
+                height: 200px
+                background: #ddd
+                border-radius: 50%
+            
+            .name
+                font-weight: 600
+                letter-spacing: 2px
+                text-transform: uppercase
+                color: #ddd
 
     hr
         width: 90%

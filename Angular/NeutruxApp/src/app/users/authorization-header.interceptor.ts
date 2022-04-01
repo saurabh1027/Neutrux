@@ -1,28 +1,29 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { UsersService } from "./users.service";
+import { exhaustMap, Observable, take } from "rxjs";
+import { AuthService } from "./authentication/auth.service";
 
 @Injectable({
     providedIn: 'root'
 })
-export class AuthorizationHeaderInterceptor /*implements HttpInterceptor*/ {
+export class AuthorizationHeaderInterceptor {/*implements HttpInterceptor {
 
-    constructor( private usersService:UsersService ) {}
+    constructor( private authService:AuthService ) {}
 
-    // intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    //     let newRequest = req.clone()
-    //     let accessToken = this.usersService.getAccessToken()
-        
-    //     if( accessToken ){
-    //         newRequest = req.clone({
-    //             setHeaders: {
-    //                 Authorization: 'Bearer '+accessToken
-    //             }
-    //         })
-    //     }
+    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        return this.authService.user.pipe(
+            take(1),
+            exhaustMap(user => {
+                if( !user )
+                    return next.handle(req)
+                
+                const newRequest = req.clone({
+                    headers: new HttpHeaders().set('Authorization', 'Bearer '+user.accessToken)
+                })
 
-    //     return next.handle( newRequest )
-    // }
+                return next.handle( newRequest )
+            })
+        )
+    }*/
     
 }
