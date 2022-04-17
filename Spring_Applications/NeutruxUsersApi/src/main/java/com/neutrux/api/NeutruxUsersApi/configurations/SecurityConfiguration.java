@@ -19,7 +19,7 @@ import com.neutrux.api.NeutruxUsersApi.security.AuthorizationFilter;
 import com.neutrux.api.NeutruxUsersApi.service.UsersService;
 
 /*
-	You can remove @Configuration annotation from here. It will cause any changes
+	You can remove @Configuration annotation from here. It will cause no changes
 	Because @EnableWebSecurity already has @Configuration annotation applied on it.
 	You can check it by doing ctrl+click on @EnableWebSecurity annotation below.
 	
@@ -53,7 +53,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.cors().and().csrf().disable();
 		http.authorizeRequests()
-			.antMatchers(HttpMethod.POST,"/users/").permitAll()
+			.antMatchers(HttpMethod.POST,"/users/**").permitAll()
 			.anyRequest().authenticated()
 			.and()
 				.addFilter(new AuthorizationFilter(authenticationManager(), environment, usersService));

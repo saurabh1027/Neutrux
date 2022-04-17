@@ -20,9 +20,12 @@
 		Discovery_Service [Eureka_Server]
 		Config_service [Spring_Cloud]
 		--Micro_Services
-			user_service
+			-----in USE-----
+			users_api
+			authentication_api
+			
+			-----planning phase-----
 			tools_service
-
 			blogs_service
 			blogs_filter_service
 			blogs_search_service
@@ -34,3 +37,6 @@
 
 			blog_editor_service
 				related to projects, blog_elements
+
+
+

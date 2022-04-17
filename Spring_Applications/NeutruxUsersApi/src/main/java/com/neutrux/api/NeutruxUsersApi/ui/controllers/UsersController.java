@@ -10,7 +10,6 @@ import javax.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,20 +34,17 @@ import com.neutrux.api.NeutruxUsersApi.ui.models.response.UserResponseModel;
 @RequestMapping("/users")
 public class UsersController {
 
-	private Environment environment;
 	private UsersService usersService;
 
 	@Autowired
-	public UsersController(Environment environment, UsersService usersService) {
-		this.environment = environment;
+	public UsersController(UsersService usersService) {
 		this.usersService = usersService;
 	}
 
-	@GetMapping("/status")
-	public String checkStatus() {
-		return "Working on port: " + environment.getProperty("local.server.port");
-	}
 
+	
+	
+	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping
 	public ResponseEntity<Set<UserResponseModel>> getUsers(
@@ -69,6 +65,20 @@ public class UsersController {
 
 		return ResponseEntity.ok(users);
 	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN') or principal == #userId")
+	@GetMapping("{userId}")
+	public ResponseEntity<UserResponseModel> getUserByUserId(@PathVariable("userId") String userId) {
+		ModelMapper modelMapper = new ModelMapper();
+		UserResponseModel userResponseModel = null;
+		UserDto userDto = null;
+		
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+		userDto = usersService.getUserByUserId(userId);
+		
+		userResponseModel = modelMapper.map(userDto, UserResponseModel.class);
+		return new ResponseEntity<UserResponseModel>(userResponseModel, HttpStatus.OK);
+	}
 
 	@PostMapping
 	public ResponseEntity<UserResponseModel> createUser(
@@ -88,22 +98,8 @@ public class UsersController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(userResponseModel);
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or principal == #userId")
-	@GetMapping("/{userId}")
-	public ResponseEntity<UserResponseModel> getUserByUserId(@PathVariable("userId") String userId) {
-		ModelMapper modelMapper = new ModelMapper();
-		UserResponseModel userResponseModel = null;
-		UserDto userDto = null;
-
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		userDto = usersService.getUserByUserId(userId);
-
-		userResponseModel = modelMapper.map(userDto, UserResponseModel.class);
-		return new ResponseEntity<UserResponseModel>(userResponseModel, HttpStatus.OK);
-	}
-
 	@PreAuthorize("principal == #userId")
-	@PutMapping("/{userId}")
+	@PutMapping("{userId}")
 	public ResponseEntity<UserResponseModel> updateUserByUserId(@PathVariable("userId") String userId,
 			@Valid @RequestBody UpdateUserRequestModel updateUserRequestModel) {
 
@@ -123,7 +119,7 @@ public class UsersController {
 	}
 
 	@PreAuthorize("principal == #userId")
-	@DeleteMapping("/{userId}")
+	@DeleteMapping("{userId}")
 	public ResponseEntity<SuccessMessageResponseModel> deleteUserByUserId(@PathVariable("userId") String userId) {
 		usersService.deleteUserByUserId(userId);
 

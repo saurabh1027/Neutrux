@@ -1,0 +1,40 @@
+@import '../../../variables'
+    
+.top-blogs
+    width: 100%
+    position: relative
+    background: rgba(0, 0, 0, 0.25)
+    display: flex
+
+    .col
+        position: relative
+
+        &.one
+            background: url("../../../assets/blog_pictures/image1.jpg") no-repeat center
+            padding-top: 38.25%
+            width: 60% 
+        &.two
+            width: 40% 
+
+        .row
+            width: 100%
+            padding-top: 48.8%
+            
+            &.one
+                background: url("../../../assets/blog_pictures/image2.jpg") no-repeat center
+            &.two
+                background: url("../../../assets/blog_pictures/image3.jpg") no-repeat center
+
+
+@media screen and (max-width:900px)
+    .top-blogs
+        flex-direction: column
+
+        .col
+            &.one
+                width: 100%
+                padding-top: 55%
+            &.two
+                display: flex
+                width: 100%
+            

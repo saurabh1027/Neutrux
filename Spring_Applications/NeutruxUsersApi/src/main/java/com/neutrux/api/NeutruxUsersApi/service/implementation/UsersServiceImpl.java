@@ -84,7 +84,7 @@ public class UsersServiceImpl implements UsersService {
 		userEntity.setRoles("ROLE_SUBSCRIBER");
 
 		try {
-			usersRepository.save(userEntity);
+			userEntity = usersRepository.save(userEntity);
 		} catch (DataIntegrityViolationException e) {
 			// Exception Handling for Duplicate Entry of Email
 			if (e.getRootCause() != null
@@ -108,8 +108,8 @@ public class UsersServiceImpl implements UsersService {
 	@Override
 	public UserDto getUserByUserId(String userId) {
 		ModelMapper modelMapper = new ModelMapper();
-		UserEntity userEntity = null;
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+		UserEntity userEntity = null;
 
 		long id = decryptUserId(userId);
 		userEntity = usersRepository.findById(id).get();

@@ -43,7 +43,7 @@ public class AppExceptionsHandler extends ResponseEntityExceptionHandler {
 
 		return new ResponseEntity<Object>(responseModel, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 	}
-
+	
 	@ExceptionHandler({ Exception.class })
 	public ResponseEntity<Object> handleAnyException(Exception ex, WebRequest request) {
 

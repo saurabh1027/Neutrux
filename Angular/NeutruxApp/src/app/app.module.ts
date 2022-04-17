@@ -4,9 +4,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core.module';
+import { BlogsComponent } from './index/blogs/blogs.component';
 import { FooterComponent } from './index/footer/footer.component';
 import { HeaderComponent } from './index/header/header.component';
 import { SidenavComponent } from './index/header/sidenav/sidenav.component';
+import { HomeComponent } from './index/home/home.component';
 import { IndexComponent } from './index/index.component';
 import { SharedModule } from './shared/shared.module';
 import { UsersModule } from './users/users.module';
@@ -17,7 +19,9 @@ import { UsersModule } from './users/users.module';
     HeaderComponent,
     FooterComponent,
     IndexComponent,
-    SidenavComponent
+    SidenavComponent,
+    HomeComponent,
+    BlogsComponent
   ],
   imports: [
     BrowserModule,
