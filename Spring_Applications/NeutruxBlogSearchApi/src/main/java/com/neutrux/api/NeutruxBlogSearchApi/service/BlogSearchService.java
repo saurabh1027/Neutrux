@@ -13,5 +13,7 @@ public interface BlogSearchService {
 	public Set<BlogDto> getBlogsByTitleSubstring(String titleSubstr, int pageNumber, int pageLimit);
 	//asc sort by date
 	public Set<BlogDto> getLatestBlogs(int pageNumber, int pageLimit);
+	
+	public Set<BlogDto> getTrendingBlogs(int pageNumber, int pageLimit);
 
 }

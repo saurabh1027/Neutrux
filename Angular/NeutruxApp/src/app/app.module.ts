@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core.module';
-import { BlogsComponent } from './index/blogs/blogs.component';
+import { BlogsModule } from './index/blogs/blogs.module';
 import { FooterComponent } from './index/footer/footer.component';
 import { HeaderComponent } from './index/header/header.component';
 import { SidenavComponent } from './index/header/sidenav/sidenav.component';
@@ -20,8 +20,7 @@ import { UsersModule } from './users/users.module';
     FooterComponent,
     IndexComponent,
     SidenavComponent,
-    HomeComponent,
-    BlogsComponent
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -31,6 +30,7 @@ import { UsersModule } from './users/users.module';
     CoreModule,
     UsersModule,
     SharedModule,
+    BlogsModule
   ],
   bootstrap: [AppComponent]
 })

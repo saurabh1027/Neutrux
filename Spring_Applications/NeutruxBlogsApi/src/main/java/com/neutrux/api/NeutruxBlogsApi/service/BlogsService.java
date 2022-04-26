@@ -6,11 +6,11 @@ import com.neutrux.api.NeutruxBlogsApi.shared.BlogDto;
 
 public interface BlogsService {
 	
-	Set<BlogDto> getBlogsByUserId( String userId, int pageNumber, int pageLimit ) throws Exception;
+	Set<BlogDto> getBlogsByUserId( String userId, boolean includeImpressions, int pageNumber, int pageLimit ) throws Exception;
 
 	BlogDto createBlog( BlogDto blogDto ) throws Exception ;
 	
-	BlogDto getBlogByBlogId( String blogId, String userId ) throws Exception;
+	BlogDto getBlogByBlogId( String blogId, String userId, boolean includeImpressions ) throws Exception;
 	
 	BlogDto updateBlog( BlogDto blogDto ) throws Exception;
 	

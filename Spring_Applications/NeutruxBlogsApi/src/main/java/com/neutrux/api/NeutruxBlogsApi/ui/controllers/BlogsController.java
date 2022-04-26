@@ -40,41 +40,42 @@ public class BlogsController {
 		this.blogsService = blogsService;
 	}
 
-	
 	@PreAuthorize("hasRole('ROLE_EDITOR') and principal == #userId")
 	@GetMapping
 	public ResponseEntity<Set<BlogResponseModel>> getUserBlogsByUserId(
 			@RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
 			@RequestParam(name = "pageLimit", defaultValue = "20") int pageLimit,
-			@RequestParam("X-User-ID") String userId ) throws Exception {
+			@RequestParam("X-User-ID") String userId,
+			@RequestParam(name = "include-impressions", defaultValue = "false") boolean includeImpressions)
+			throws Exception {
 		Set<BlogResponseModel> blogs = new HashSet<BlogResponseModel>();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-		
-		//Implement Blog Search Service here...
-		Set<BlogDto> blogsDto = blogsService.getBlogsByUserId(userId, pageNumber-1, pageLimit);
+		// Implement Blog Search Service here...
+		Set<BlogDto> blogsDto = blogsService.getBlogsByUserId(userId, includeImpressions, pageNumber - 1, pageLimit);
 
-		
 		Iterator<BlogDto> iterator = blogsDto.iterator();
 		while (iterator.hasNext()) {
 			BlogResponseModel userResponseModel = modelMapper.map(iterator.next(), BlogResponseModel.class);
 			blogs.add(userResponseModel);
 		}
-		
-		return ResponseEntity.ok( blogs );
+
+		return ResponseEntity.ok(blogs);
 	}
 
 	@PreAuthorize("hasRole('ROLE_EDITOR') and principal == #userId")
 	@GetMapping("{blogId}")
 	public ResponseEntity<BlogResponseModel> getBlogByBlogId(@PathVariable("blogId") String blogId,
-			@RequestParam("X-User-ID") String userId) throws Exception {
+			@RequestParam("X-User-ID") String userId,
+			@RequestParam(name = "include-impressions", defaultValue = "false") boolean includeImpressions)
+			throws Exception {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		BlogResponseModel blogResponseModel = null;
 		BlogDto blogDto = null;
 
-		blogDto = blogsService.getBlogByBlogId(blogId, userId);
+		blogDto = blogsService.getBlogByBlogId(blogId, userId, includeImpressions);
 		blogResponseModel = modelMapper.map(blogDto, BlogResponseModel.class);
 
 		return new ResponseEntity<BlogResponseModel>(blogResponseModel, HttpStatus.OK);
@@ -109,7 +110,7 @@ public class BlogsController {
 		BlogResponseModel blogResponseModel = modelMapper.map(updatedBlog, BlogResponseModel.class);
 		return ResponseEntity.status(HttpStatus.OK).body(blogResponseModel);
 	}
-	
+
 	@PreAuthorize("principal==#userId and hasRole('ROLE_EDITOR')")
 	@DeleteMapping("{blogId}")
 	public ResponseEntity<SuccessMessageResponseModel> deleteBlogbyBlogId(@PathVariable("blogId") String blogId,

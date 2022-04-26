@@ -24,36 +24,33 @@ import com.neutrux.api.NeutruxBlogsApi.service.BlogsService;
 import com.neutrux.api.NeutruxBlogsApi.service.UsersService;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogDto;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogElementDto;
+import com.neutrux.api.NeutruxBlogsApi.shared.BlogImpressionDto;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogElementEntity;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogEntity;
+import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogImpressionEntity;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.CategoryEntity;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.UserEntity;
 
 @Service
 public class BlogsServiceImpl implements BlogsService {
-	
-	
+
 	private BlogsRepository blogsRepository;
 	private UsersService usersService;
 	private UsersRepository usersRepository;
 	private CategoryRepository categoryRepository;
-	
+
 	@Autowired
-	public BlogsServiceImpl(
-		BlogsRepository blogsRepository,
-		UsersRepository usersRepository,
-		UsersService usersService,
-		CategoryRepository categoryRepository
-	) {
+	public BlogsServiceImpl(BlogsRepository blogsRepository, UsersRepository usersRepository, UsersService usersService,
+			CategoryRepository categoryRepository) {
 		this.blogsRepository = blogsRepository;
-		this.usersService= usersService;
-		this.usersRepository= usersRepository;
+		this.usersService = usersService;
+		this.usersRepository = usersRepository;
 		this.categoryRepository = categoryRepository;
 	}
-	
 
 	@Override
-	public Set<BlogDto> getBlogsByUserId( String userId, int pageNumber, int pageLimit) throws Exception {
+	public Set<BlogDto> getBlogsByUserId(String userId, boolean includeImpressions, int pageNumber, int pageLimit)
+			throws Exception {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		BlogDto blogDto = null;
@@ -62,7 +59,7 @@ public class BlogsServiceImpl implements BlogsService {
 		Set<BlogDto> blogs = new HashSet<BlogDto>();
 		UserEntity userEntity = null;
 		BlogEntity blogEntity = null;
-		
+
 		long id = this.decryptId(userId);
 		try {
 			userEntity = usersRepository.findById(id).get();
@@ -72,23 +69,23 @@ public class BlogsServiceImpl implements BlogsService {
 
 		Pageable blogPageable = PageRequest.of(pageNumber, pageLimit);
 		Page<BlogEntity> blogPages = blogsRepository.findAllByUser(userEntity, blogPageable);
-		
+
 		Iterator<BlogEntity> iterator = blogPages.iterator();
 
 		while (iterator.hasNext()) {
 			blogEntity = iterator.next();
 			String blogId = encryptId(blogEntity.getId());
-			blogDto = this.getBlogDetails(blogEntity, blogId);
-			blogDto.setCategoryId( this.encryptId( blogEntity.getCategory().getId() ) );
-			
+			blogDto = this.getBlogDetails(blogEntity, blogId, includeImpressions);
+			blogDto.setCategoryId(this.encryptId(blogEntity.getCategory().getId()));
+
 			Iterator<BlogElementDto> elementsIterator = blogDto.getElements().iterator();
-			while( elementsIterator.hasNext() ) {
+			while (elementsIterator.hasNext()) {
 				blogElementDto = elementsIterator.next();
 				blogElementDto.setUserId(userId);
 				blogElementDtos.add(blogElementDto);
 			}
 			blogDto.setElements(blogElementDtos);
-			
+
 			blogs.add(blogDto);
 		}
 
@@ -103,27 +100,27 @@ public class BlogsServiceImpl implements BlogsService {
 		CategoryEntity categoryEntity = null;
 		BlogEntity blogEntity = null;
 		BlogDto createdBlog = null;
-		
+
 		blogEntity = modelMapper.map(blogDto, BlogEntity.class);
 		blogEntity.setCreationDate(new Date());
 
 		long id = usersService.decryptUserId(blogDto.getUserId());
 		try {
-			userEntity = usersRepository.findById(id).get();			
+			userEntity = usersRepository.findById(id).get();
 		} catch (NoSuchElementException e) {
 			throw new Exception("User with ID-" + id + " doesn't exists!");
 		}
-		
-		id = usersService.decryptUserId( blogDto.getCategoryId() );
+
+		id = usersService.decryptUserId(blogDto.getCategoryId());
 		try {
 			categoryEntity = categoryRepository.findById(id).get();
 		} catch (NoSuchElementException e) {
 			throw new Exception("category with ID-" + id + " not found!");
 		}
-		
+
 		blogEntity.setUser(userEntity);
 		blogEntity.setCategory(categoryEntity);
-		
+
 		try {
 			blogEntity = blogsRepository.save(blogEntity);
 		} catch (DataIntegrityViolationException e) {
@@ -137,20 +134,20 @@ public class BlogsServiceImpl implements BlogsService {
 				}
 			}
 		}
-		
+
 		String blogId = encryptId(blogEntity.getId());
-		
+
 		createdBlog = modelMapper.map(blogEntity, BlogDto.class);
 		createdBlog.setBlogId(blogId);
 		createdBlog.setUserId(blogDto.getUserId());
-		createdBlog.setElements( new HashSet<BlogElementDto>() );
-		createdBlog.setCategoryId( blogDto.getCategoryId() );
-		
+		createdBlog.setElements(new HashSet<BlogElementDto>());
+		createdBlog.setCategoryId(blogDto.getCategoryId());
+
 		return createdBlog;
 	}
 
 	@Override
-	public BlogDto getBlogByBlogId(String blogId, String userId) throws Exception {
+	public BlogDto getBlogByBlogId(String blogId, String userId, boolean includeImpressions) throws Exception {
 		BlogEntity blogEntity = null;
 		BlogElementDto blogElementDto = null;
 		Set<BlogElementDto> blogElementDtos = new HashSet<BlogElementDto>();
@@ -161,54 +158,54 @@ public class BlogsServiceImpl implements BlogsService {
 		} catch (NoSuchElementException e) {
 			throw new Exception("Blog doesn't exists!");
 		}
-		
-		BlogDto blogDto = this.getBlogDetails(blogEntity, blogId);
-		blogDto.setUserId( this.encryptId( blogEntity.getUser().getId() ) );
-		blogDto.setCategoryId( this.encryptId( blogEntity.getCategory().getId() ) );
-		
+
+		BlogDto blogDto = this.getBlogDetails(blogEntity, blogId, includeImpressions);
+		blogDto.setUserId(this.encryptId(blogEntity.getUser().getId()));
+		blogDto.setCategoryId(this.encryptId(blogEntity.getCategory().getId()));
+
 		Iterator<BlogElementDto> elementsIterator = blogDto.getElements().iterator();
-		while( elementsIterator.hasNext() ) {
+		while (elementsIterator.hasNext()) {
 			blogElementDto = elementsIterator.next();
 			blogElementDto.setUserId(userId);
 			blogElementDtos.add(blogElementDto);
 		}
 		blogDto.setElements(blogElementDtos);
-		
+
 		return blogDto;
 	}
-	
+
 	@Override
 	public BlogDto updateBlog(BlogDto newBlogDetails) throws Exception {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		CategoryEntity categoryEntity = null;
 
-		long blogId = this.decryptId( newBlogDetails.getBlogId() );
+		long blogId = this.decryptId(newBlogDetails.getBlogId());
 		BlogEntity oldBlogEntity = blogsRepository.findById(blogId).get();
-		oldBlogEntity.setTitle( newBlogDetails.getTitle() );
-		oldBlogEntity.setDescription( newBlogDetails.getDescription() );
-		
+		oldBlogEntity.setTitle(newBlogDetails.getTitle());
+		oldBlogEntity.setDescription(newBlogDetails.getDescription());
+
 		String categoryId = newBlogDetails.getCategoryId();
-		if(categoryId != null) {
-			long id = this.decryptId( newBlogDetails.getCategoryId() );
+		if (categoryId != null) {
+			long id = this.decryptId(newBlogDetails.getCategoryId());
 			try {
-				categoryEntity = categoryRepository.findById(id).get();			
+				categoryEntity = categoryRepository.findById(id).get();
 			} catch (NoSuchElementException e) {
 				throw new Exception("category with ID-" + id + " not found!");
 			}
 			oldBlogEntity.setCategory(categoryEntity);
 		}
-		
+
 		BlogEntity newBlogEntity = oldBlogEntity;
 		newBlogEntity = blogsRepository.save(newBlogEntity);
-		
+
 		BlogDto updatedBlogDetails = modelMapper.map(newBlogEntity, BlogDto.class);
-		
-		String newBlogId = this.encryptId( newBlogEntity.getId() );
+
+		String newBlogId = this.encryptId(newBlogEntity.getId());
 		updatedBlogDetails.setBlogId(newBlogId);
-		updatedBlogDetails.setUserId( newBlogDetails.getUserId() );
+		updatedBlogDetails.setUserId(newBlogDetails.getUserId());
 		updatedBlogDetails.setCategoryId(categoryId);
-		
+
 		return updatedBlogDetails;
 	}
 
@@ -221,16 +218,14 @@ public class BlogsServiceImpl implements BlogsService {
 		} catch (NoSuchElementException e) {
 			throw new Exception("Blog with id: " + blogId + " doesn't exists!");
 		}
-		
+
 		blogsRepository.deleteById(id);
 	}
-
 
 	@Override
 	public String encryptId(long id) {
 		return (id * 673926356) + "";
 	}
-
 
 	@Override
 	public long decryptId(String blogId) throws Exception {
@@ -243,26 +238,44 @@ public class BlogsServiceImpl implements BlogsService {
 		id = id / 673926356;
 		return id;
 	}
-	
-	public BlogDto getBlogDetails( BlogEntity blogEntity, String blogId ) {
+
+	public BlogDto getBlogDetails(BlogEntity blogEntity, String blogId, boolean includeImpressions) {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
+		Set<BlogImpressionDto> impressionDtoList = new HashSet<BlogImpressionDto>();
+
 		Set<BlogElementEntity> elementList = blogEntity.getElements();
-		Iterator<BlogElementEntity> iterator = elementList.iterator();
+		Iterator<BlogElementEntity> elementsIterator = elementList.iterator();
 		Set<BlogElementDto> elementDtoList = new HashSet<BlogElementDto>();
-		
-		while(iterator.hasNext()) {
-			BlogElementEntity element = iterator.next();
+
+		while (elementsIterator.hasNext()) {
+			BlogElementEntity element = elementsIterator.next();
 			BlogElementDto elementDto = modelMapper.map(element, BlogElementDto.class);
-			elementDto.setElementId( this.encryptId(element.getId()) );
+			elementDto.setElementId(this.encryptId(element.getId()));
 			elementDto.setBlogId(blogId);
 			elementDtoList.add(elementDto);
+		}
+
+		if( includeImpressions ) {
+			Set<BlogImpressionEntity> impressionList = blogEntity.getImpressions();
+			Iterator<BlogImpressionEntity> impressionsIterator = impressionList.iterator();
+			impressionDtoList = new HashSet<BlogImpressionDto>();
+
+			while (impressionsIterator.hasNext()) {
+				BlogImpressionEntity impression = impressionsIterator.next();
+				BlogImpressionDto impressionDto = modelMapper.map(impression, BlogImpressionDto.class);
+				impressionDto.setImpressionId(this.encryptId(impression.getId()));
+				impressionDto.setBlogId(blogId);
+				impressionDto.setUserId(this.encryptId(impression.getUser().getId()));
+				impressionDtoList.add(impressionDto);
+			}
 		}
 
 		BlogDto blogDto = modelMapper.map(blogEntity, BlogDto.class);
 		blogDto.setBlogId(blogId);
 		blogDto.setElements(elementDtoList);
+		blogDto.setImpressions(impressionDtoList);
+		blogDto.setImpressionsCount( blogEntity.getImpressions().size() );
 		
 		return blogDto;
 	}

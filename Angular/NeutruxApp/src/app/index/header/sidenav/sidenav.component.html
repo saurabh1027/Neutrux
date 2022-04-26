@@ -27,21 +27,25 @@
     <div class="navigation">
 
         <a 
+            (click)="onClick()"
             class="link"
-            [routerLink]="['']">
-            <span>Smartphones</span>
+            [routerLink]="['','blogs']">
+            <span>Blogs</span>
         </a>
         <a 
+            (click)="onClick()"
             class="link"
             [routerLink]="['']">
             <span>Headphones</span>
         </a>
         <a 
+            (click)="onClick()"
             class="link"
             [routerLink]="['']">
             <span>Watches</span>
         </a>
         <a 
+            (click)="onClick()"
             class="link"
             [routerLink]="['']">
             <span>Accessories</span>

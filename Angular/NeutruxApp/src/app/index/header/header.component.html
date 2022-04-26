@@ -2,11 +2,36 @@
     <a 
         [routerLink]="['']" 
         class="logo">
-        <img src="../../../assets/logos/name_logo_dark_grey.png" alt="logo">
+        <img src="../../../assets/logos/name_logo_black.png" alt="logo">
     </a>
 
+    <div class="navigation">
+
+        <a 
+            class="link"
+            [routerLink]="['','blogs']">
+            <span>Blogs</span>
+        </a>
+        <a 
+            class="link"
+            [routerLink]="['']">
+            <span>Headphones</span>
+        </a>
+        <a 
+            class="link"
+            [routerLink]="['']">
+            <span>Watches</span>
+        </a>
+        <a 
+            class="link"
+            [routerLink]="['']">
+            <span>Accessories</span>
+        </a>
+
+    </div>
+
     <div 
-        class="menu-icon" 
+        class="menu-icon"
         (click)="isSidenavOpened = true">
         <div class="line"></div>
         <div class="line"></div>

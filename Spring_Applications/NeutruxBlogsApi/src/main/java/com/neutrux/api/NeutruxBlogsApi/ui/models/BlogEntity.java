@@ -48,7 +48,10 @@ public class BlogEntity implements Serializable {
 
 	@OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<BlogElementEntity> elements;
-
+	
+	@OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<BlogImpressionEntity> impressions;
+	
 	public long getId() {
 		return id;
 	}
@@ -103,6 +106,14 @@ public class BlogEntity implements Serializable {
 
 	public void setCategory(CategoryEntity category) {
 		this.category = category;
+	}
+
+	public Set<BlogImpressionEntity> getImpressions() {
+		return impressions;
+	}
+
+	public void setImpressions(Set<BlogImpressionEntity> impressions) {
+		this.impressions = impressions;
 	}
 
 }

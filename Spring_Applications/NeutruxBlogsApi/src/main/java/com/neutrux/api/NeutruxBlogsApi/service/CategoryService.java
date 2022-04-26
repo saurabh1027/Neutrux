@@ -8,4 +8,12 @@ public interface CategoryService {
 
 	public Set<CategoryDto> getCategories(int pageNumber, int pageLimit);
 	
+	public CategoryDto getCategoryById(String categoryId) throws Exception;
+	
+	public CategoryDto addCategory(CategoryDto categoryDto) throws Exception;
+	
+	public CategoryDto updateCategory(CategoryDto categoryDto) throws Exception;
+
+	public void deleteCategory(String categoryId) throws Exception;
+	
 }

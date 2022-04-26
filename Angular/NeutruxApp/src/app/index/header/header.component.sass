@@ -18,8 +18,21 @@
             -webkit-user-drag: none
             user-select: none
 
-    .menu-icon
+    .navigation
+        padding: 0 20px
         display: flex
+        column-gap: 20px
+
+        .link
+            color: $dark-theme-text-color
+            text-decoration: none
+            letter-spacing: 1px
+
+            &:hover
+                text-decoration: underline
+
+    .menu-icon
+        display: none
         flex-direction: column
         justify-content: space-between
         align-items: center
@@ -32,3 +45,12 @@
             width: 25px
             height: 4px
             background-color: $dark-theme-text-color
+
+
+@media screen and (max-width:600px)
+    .header
+        .navigation
+            display: none
+
+        .menu-icon
+            display: flex

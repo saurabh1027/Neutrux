@@ -13,6 +13,8 @@ public class BlogResponseModel implements Serializable {
 	private Date creationDate;
 	private String categoryId;
 	private Set<BlogElementResponseModel> elements;
+	private Set<BlogImpressionResponseModel> impressions;
+	private long impressionsCount;
 
 	public String getBlogId() {
 		return blogId;
@@ -60,6 +62,22 @@ public class BlogResponseModel implements Serializable {
 
 	public void setElements(Set<BlogElementResponseModel> elements) {
 		this.elements = elements;
+	}
+
+	public Set<BlogImpressionResponseModel> getImpressions() {
+		return impressions;
+	}
+
+	public void setImpressions(Set<BlogImpressionResponseModel> impressions) {
+		this.impressions = impressions;
+	}
+
+	public long getImpressionsCount() {
+		return impressionsCount;
+	}
+
+	public void setImpressionsCount(long impressionsCount) {
+		this.impressionsCount = impressionsCount;
 	}
 
 }

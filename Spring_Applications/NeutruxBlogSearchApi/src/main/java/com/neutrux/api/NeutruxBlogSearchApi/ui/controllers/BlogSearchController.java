@@ -41,6 +41,16 @@ public class BlogSearchController {
 		return blogs;
 	}
 	
+	@GetMapping("trending")
+	public Set<BlogResponseModel> getTrendingBlogs(
+		@RequestParam(name= "pageNumber", defaultValue = "1") int pageNumber,
+		@RequestParam(name= "pageLimit", defaultValue = "20") int pageLimit
+	) {
+		Set<BlogDto> blogDtos = blogSearchService.getTrendingBlogs(pageNumber-1, pageLimit);
+		Set<BlogResponseModel> blogs = this.convertDtoToResponseModelList(blogDtos);
+		return blogs;
+	}
+	
 	@GetMapping("search/t/{titleSubstr}")
 	public Set<BlogResponseModel> getBlogsByTitle(
 		@PathVariable("titleSubstr") String titleSubstr,

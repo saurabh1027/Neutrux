@@ -74,6 +74,12 @@ public class BlogSearchServiceImpl implements BlogSearchService {
 		return null;
 	}
 	
+	@Override
+	public Set<BlogDto> getTrendingBlogs(int pageNumber, int pageLimit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	
 	
 	
