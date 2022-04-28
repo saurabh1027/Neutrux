@@ -15,6 +15,7 @@ public class BlogDto implements Serializable {
 	private String categoryId;
 	private Set<BlogElementDto> elements;
 	private Set<BlogImpressionDto> impressions;
+	private Set<BlogCommentDto> comments;
 	private long impressionsCount;
 
 	public String getBlogId() {
@@ -87,6 +88,14 @@ public class BlogDto implements Serializable {
 
 	public void setImpressionsCount(long impressionsCount) {
 		this.impressionsCount = impressionsCount;
+	}
+
+	public Set<BlogCommentDto> getComments() {
+		return comments;
+	}
+
+	public void setComments(Set<BlogCommentDto> comments) {
+		this.comments = comments;
 	}
 
 }

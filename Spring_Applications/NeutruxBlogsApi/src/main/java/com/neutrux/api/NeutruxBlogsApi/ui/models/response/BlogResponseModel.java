@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+import com.neutrux.api.NeutruxBlogsApi.shared.BlogCommentDto;
+
 public class BlogResponseModel implements Serializable {
 
 	private static final long serialVersionUID = 95371308421411824L;
@@ -14,6 +16,7 @@ public class BlogResponseModel implements Serializable {
 	private String categoryId;
 	private Set<BlogElementResponseModel> elements;
 	private Set<BlogImpressionResponseModel> impressions;
+	private Set<BlogCommentDto> comments;
 	private long impressionsCount;
 
 	public String getBlogId() {
@@ -78,6 +81,14 @@ public class BlogResponseModel implements Serializable {
 
 	public void setImpressionsCount(long impressionsCount) {
 		this.impressionsCount = impressionsCount;
+	}
+
+	public Set<BlogCommentDto> getComments() {
+		return comments;
+	}
+
+	public void setComments(Set<BlogCommentDto> comments) {
+		this.comments = comments;
 	}
 
 }

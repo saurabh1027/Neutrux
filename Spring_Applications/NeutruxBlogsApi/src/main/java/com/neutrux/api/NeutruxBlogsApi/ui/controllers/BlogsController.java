@@ -43,17 +43,18 @@ public class BlogsController {
 	@PreAuthorize("hasRole('ROLE_EDITOR') and principal == #userId")
 	@GetMapping
 	public ResponseEntity<Set<BlogResponseModel>> getUserBlogsByUserId(
-			@RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
-			@RequestParam(name = "pageLimit", defaultValue = "20") int pageLimit,
-			@RequestParam("X-User-ID") String userId,
-			@RequestParam(name = "include-impressions", defaultValue = "false") boolean includeImpressions)
-			throws Exception {
+		@RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
+		@RequestParam(name = "pageLimit", defaultValue = "20") int pageLimit,
+		@RequestParam("X-User-ID") String userId,
+		@RequestParam(name = "include-impressions", defaultValue = "false") boolean includeImpressions,
+		@RequestParam(name = "include-comments", defaultValue = "false") boolean includeComments
+	) throws Exception {
 		Set<BlogResponseModel> blogs = new HashSet<BlogResponseModel>();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
 		// Implement Blog Search Service here...
-		Set<BlogDto> blogsDto = blogsService.getBlogsByUserId(userId, includeImpressions, pageNumber - 1, pageLimit);
+		Set<BlogDto> blogsDto = blogsService.getBlogsByUserId(userId, includeImpressions, pageNumber - 1, pageLimit, includeComments);
 
 		Iterator<BlogDto> iterator = blogsDto.iterator();
 		while (iterator.hasNext()) {
@@ -67,15 +68,16 @@ public class BlogsController {
 	@PreAuthorize("hasRole('ROLE_EDITOR') and principal == #userId")
 	@GetMapping("{blogId}")
 	public ResponseEntity<BlogResponseModel> getBlogByBlogId(@PathVariable("blogId") String blogId,
-			@RequestParam("X-User-ID") String userId,
-			@RequestParam(name = "include-impressions", defaultValue = "false") boolean includeImpressions)
-			throws Exception {
+		@RequestParam("X-User-ID") String userId,
+		@RequestParam(name = "include-impressions", defaultValue = "false") boolean includeImpressions,
+		@RequestParam(name = "include-comments", defaultValue = "false") boolean includeComments
+	) throws Exception {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		BlogResponseModel blogResponseModel = null;
 		BlogDto blogDto = null;
 
-		blogDto = blogsService.getBlogByBlogId(blogId, userId, includeImpressions);
+		blogDto = blogsService.getBlogByBlogId(blogId, userId, includeImpressions, includeComments);
 		blogResponseModel = modelMapper.map(blogDto, BlogResponseModel.class);
 
 		return new ResponseEntity<BlogResponseModel>(blogResponseModel, HttpStatus.OK);

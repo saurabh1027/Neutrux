@@ -22,9 +22,11 @@ import com.neutrux.api.NeutruxBlogsApi.repositories.CategoryRepository;
 import com.neutrux.api.NeutruxBlogsApi.repositories.UsersRepository;
 import com.neutrux.api.NeutruxBlogsApi.service.BlogsService;
 import com.neutrux.api.NeutruxBlogsApi.service.UsersService;
+import com.neutrux.api.NeutruxBlogsApi.shared.BlogCommentDto;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogDto;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogElementDto;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogImpressionDto;
+import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogCommentEntity;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogElementEntity;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogEntity;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogImpressionEntity;
@@ -49,8 +51,8 @@ public class BlogsServiceImpl implements BlogsService {
 	}
 
 	@Override
-	public Set<BlogDto> getBlogsByUserId(String userId, boolean includeImpressions, int pageNumber, int pageLimit)
-			throws Exception {
+	public Set<BlogDto> getBlogsByUserId(String userId, boolean includeImpressions, int pageNumber, int pageLimit,
+			boolean includeComments) throws Exception {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		BlogDto blogDto = null;
@@ -75,7 +77,7 @@ public class BlogsServiceImpl implements BlogsService {
 		while (iterator.hasNext()) {
 			blogEntity = iterator.next();
 			String blogId = encryptId(blogEntity.getId());
-			blogDto = this.getBlogDetails(blogEntity, blogId, includeImpressions);
+			blogDto = this.getBlogDetails(blogEntity, blogId, includeImpressions, includeComments);
 			blogDto.setCategoryId(this.encryptId(blogEntity.getCategory().getId()));
 
 			Iterator<BlogElementDto> elementsIterator = blogDto.getElements().iterator();
@@ -147,7 +149,8 @@ public class BlogsServiceImpl implements BlogsService {
 	}
 
 	@Override
-	public BlogDto getBlogByBlogId(String blogId, String userId, boolean includeImpressions) throws Exception {
+	public BlogDto getBlogByBlogId(String blogId, String userId, boolean includeImpressions, boolean includeComments)
+			throws Exception {
 		BlogEntity blogEntity = null;
 		BlogElementDto blogElementDto = null;
 		Set<BlogElementDto> blogElementDtos = new HashSet<BlogElementDto>();
@@ -159,7 +162,7 @@ public class BlogsServiceImpl implements BlogsService {
 			throw new Exception("Blog doesn't exists!");
 		}
 
-		BlogDto blogDto = this.getBlogDetails(blogEntity, blogId, includeImpressions);
+		BlogDto blogDto = this.getBlogDetails(blogEntity, blogId, includeImpressions, includeComments);
 		blogDto.setUserId(this.encryptId(blogEntity.getUser().getId()));
 		blogDto.setCategoryId(this.encryptId(blogEntity.getCategory().getId()));
 
@@ -239,24 +242,44 @@ public class BlogsServiceImpl implements BlogsService {
 		return id;
 	}
 
-	public BlogDto getBlogDetails(BlogEntity blogEntity, String blogId, boolean includeImpressions) {
+	public BlogDto getBlogDetails(BlogEntity blogEntity, String blogId, boolean includeImpressions,
+			boolean includeComments) {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		Set<BlogImpressionDto> impressionDtoList = new HashSet<BlogImpressionDto>();
+		Set<BlogCommentDto> commentDtos = new HashSet<BlogCommentDto>();
+		BlogElementEntity element = null;
+		BlogElementDto elementDto = null;
 
 		Set<BlogElementEntity> elementList = blogEntity.getElements();
 		Iterator<BlogElementEntity> elementsIterator = elementList.iterator();
 		Set<BlogElementDto> elementDtoList = new HashSet<BlogElementDto>();
 
 		while (elementsIterator.hasNext()) {
-			BlogElementEntity element = elementsIterator.next();
-			BlogElementDto elementDto = modelMapper.map(element, BlogElementDto.class);
+			element = elementsIterator.next();
+			elementDto = modelMapper.map(element, BlogElementDto.class);
 			elementDto.setElementId(this.encryptId(element.getId()));
 			elementDto.setBlogId(blogId);
 			elementDtoList.add(elementDto);
 		}
 
-		if( includeImpressions ) {
+		if (includeComments) {
+			BlogCommentEntity blogCommentEntity = null;
+			BlogCommentDto blogCommentDto = null;
+			Set<BlogCommentEntity> commentEntities = blogEntity.getComments();
+			Iterator<BlogCommentEntity> commentsIterator = commentEntities.iterator();
+
+			while (commentsIterator.hasNext()) {
+				blogCommentEntity = commentsIterator.next();
+				blogCommentDto = modelMapper.map(blogCommentEntity, BlogCommentDto.class);
+				blogCommentDto.setCommentId(this.encryptId(blogCommentEntity.getId()));
+				blogCommentDto.setBlogId(this.encryptId(blogCommentEntity.getBlog().getId()));
+				blogCommentDto.setUserId(this.encryptId(blogCommentEntity.getUser().getId()));
+				commentDtos.add(blogCommentDto);
+			}
+		}
+
+		if (includeImpressions) {
 			Set<BlogImpressionEntity> impressionList = blogEntity.getImpressions();
 			Iterator<BlogImpressionEntity> impressionsIterator = impressionList.iterator();
 			impressionDtoList = new HashSet<BlogImpressionDto>();
@@ -275,8 +298,9 @@ public class BlogsServiceImpl implements BlogsService {
 		blogDto.setBlogId(blogId);
 		blogDto.setElements(elementDtoList);
 		blogDto.setImpressions(impressionDtoList);
-		blogDto.setImpressionsCount( blogEntity.getImpressions().size() );
-		
+		blogDto.setComments(commentDtos);
+		blogDto.setImpressionsCount(blogEntity.getImpressions().size());
+
 		return blogDto;
 	}
 
