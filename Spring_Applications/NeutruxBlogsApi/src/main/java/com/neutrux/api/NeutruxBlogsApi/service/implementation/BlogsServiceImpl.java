@@ -26,6 +26,7 @@ import com.neutrux.api.NeutruxBlogsApi.shared.BlogCommentDto;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogDto;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogElementDto;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogImpressionDto;
+import com.neutrux.api.NeutruxBlogsApi.shared.CategoryDto;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogCommentEntity;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogElementEntity;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogEntity;
@@ -56,8 +57,6 @@ public class BlogsServiceImpl implements BlogsService {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		BlogDto blogDto = null;
-		BlogElementDto blogElementDto = null;
-		Set<BlogElementDto> blogElementDtos = new HashSet<BlogElementDto>();
 		Set<BlogDto> blogs = new HashSet<BlogDto>();
 		UserEntity userEntity = null;
 		BlogEntity blogEntity = null;
@@ -78,16 +77,6 @@ public class BlogsServiceImpl implements BlogsService {
 			blogEntity = iterator.next();
 			String blogId = encryptId(blogEntity.getId());
 			blogDto = this.getBlogDetails(blogEntity, blogId, includeImpressions, includeComments);
-			blogDto.setCategoryId(this.encryptId(blogEntity.getCategory().getId()));
-
-			Iterator<BlogElementDto> elementsIterator = blogDto.getElements().iterator();
-			while (elementsIterator.hasNext()) {
-				blogElementDto = elementsIterator.next();
-				blogElementDto.setUserId(userId);
-				blogElementDtos.add(blogElementDto);
-			}
-			blogDto.setElements(blogElementDtos);
-
 			blogs.add(blogDto);
 		}
 
@@ -113,7 +102,7 @@ public class BlogsServiceImpl implements BlogsService {
 			throw new Exception("User with ID-" + id + " doesn't exists!");
 		}
 
-		id = usersService.decryptUserId(blogDto.getCategoryId());
+		id = usersService.decryptUserId(blogDto.getCategory().getCategoryId());
 		try {
 			categoryEntity = categoryRepository.findById(id).get();
 		} catch (NoSuchElementException e) {
@@ -143,7 +132,7 @@ public class BlogsServiceImpl implements BlogsService {
 		createdBlog.setBlogId(blogId);
 		createdBlog.setUserId(blogDto.getUserId());
 		createdBlog.setElements(new HashSet<BlogElementDto>());
-		createdBlog.setCategoryId(blogDto.getCategoryId());
+		createdBlog.setCategory(blogDto.getCategory());
 
 		return createdBlog;
 	}
@@ -151,6 +140,8 @@ public class BlogsServiceImpl implements BlogsService {
 	@Override
 	public BlogDto getBlogByBlogId(String blogId, String userId, boolean includeImpressions, boolean includeComments)
 			throws Exception {
+		ModelMapper mapper = new ModelMapper();
+		mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		BlogEntity blogEntity = null;
 		BlogElementDto blogElementDto = null;
 		Set<BlogElementDto> blogElementDtos = new HashSet<BlogElementDto>();
@@ -164,7 +155,10 @@ public class BlogsServiceImpl implements BlogsService {
 
 		BlogDto blogDto = this.getBlogDetails(blogEntity, blogId, includeImpressions, includeComments);
 		blogDto.setUserId(this.encryptId(blogEntity.getUser().getId()));
-		blogDto.setCategoryId(this.encryptId(blogEntity.getCategory().getId()));
+		CategoryDto categoryDto = mapper.map(blogEntity.getCategory(), CategoryDto.class);
+		String categoryId = this.encryptId(blogEntity.getCategory().getId());
+		categoryDto.setCategoryId(categoryId);
+		blogDto.setCategory( categoryDto );
 
 		Iterator<BlogElementDto> elementsIterator = blogDto.getElements().iterator();
 		while (elementsIterator.hasNext()) {
@@ -188,9 +182,9 @@ public class BlogsServiceImpl implements BlogsService {
 		oldBlogEntity.setTitle(newBlogDetails.getTitle());
 		oldBlogEntity.setDescription(newBlogDetails.getDescription());
 
-		String categoryId = newBlogDetails.getCategoryId();
+		String categoryId = newBlogDetails.getCategory().getCategoryId();
 		if (categoryId != null) {
-			long id = this.decryptId(newBlogDetails.getCategoryId());
+			long id = this.decryptId(newBlogDetails.getCategory().getCategoryId());
 			try {
 				categoryEntity = categoryRepository.findById(id).get();
 			} catch (NoSuchElementException e) {
@@ -207,8 +201,11 @@ public class BlogsServiceImpl implements BlogsService {
 		String newBlogId = this.encryptId(newBlogEntity.getId());
 		updatedBlogDetails.setBlogId(newBlogId);
 		updatedBlogDetails.setUserId(newBlogDetails.getUserId());
-		updatedBlogDetails.setCategoryId(categoryId);
 
+		CategoryDto categoryDto = modelMapper.map(newBlogEntity.getCategory(), CategoryDto.class);
+		categoryDto.setCategoryId(categoryId);
+		updatedBlogDetails.setCategory( categoryDto );
+		
 		return updatedBlogDetails;
 	}
 
@@ -250,6 +247,12 @@ public class BlogsServiceImpl implements BlogsService {
 		Set<BlogCommentDto> commentDtos = new HashSet<BlogCommentDto>();
 		BlogElementEntity element = null;
 		BlogElementDto elementDto = null;
+		CategoryEntity categoryEntity = null;
+		CategoryDto categoryDto = null;
+		
+		categoryEntity = blogEntity.getCategory();
+		categoryDto = modelMapper.map(categoryEntity, CategoryDto.class);
+		categoryDto.setCategoryId( this.encryptId(categoryEntity.getId()) );
 
 		Set<BlogElementEntity> elementList = blogEntity.getElements();
 		Iterator<BlogElementEntity> elementsIterator = elementList.iterator();
@@ -295,6 +298,7 @@ public class BlogsServiceImpl implements BlogsService {
 		}
 
 		BlogDto blogDto = modelMapper.map(blogEntity, BlogDto.class);
+		blogDto.setCategory(categoryDto);
 		blogDto.setBlogId(blogId);
 		blogDto.setElements(elementDtoList);
 		blogDto.setImpressions(impressionDtoList);

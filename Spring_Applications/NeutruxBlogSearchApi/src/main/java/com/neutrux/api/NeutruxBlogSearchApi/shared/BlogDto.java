@@ -13,6 +13,9 @@ public class BlogDto implements Serializable {
 	private Date creationDate;
 	private CategoryDto category;
 	private Set<BlogElementDto> elements;
+	private Set<BlogImpressionDto> impressions;
+	private Set<BlogCommentDto> comments;
+	private long impressionsCount;
 
 	public String getBlogId() {
 		return blogId;
@@ -60,6 +63,30 @@ public class BlogDto implements Serializable {
 
 	public void setElements(Set<BlogElementDto> elements) {
 		this.elements = elements;
+	}
+
+	public Set<BlogImpressionDto> getImpressions() {
+		return impressions;
+	}
+
+	public void setImpressions(Set<BlogImpressionDto> impressions) {
+		this.impressions = impressions;
+	}
+
+	public Set<BlogCommentDto> getComments() {
+		return comments;
+	}
+
+	public void setComments(Set<BlogCommentDto> comments) {
+		this.comments = comments;
+	}
+
+	public long getImpressionsCount() {
+		return impressionsCount;
+	}
+
+	public void setImpressionsCount(long impressionsCount) {
+		this.impressionsCount = impressionsCount;
 	}
 
 }

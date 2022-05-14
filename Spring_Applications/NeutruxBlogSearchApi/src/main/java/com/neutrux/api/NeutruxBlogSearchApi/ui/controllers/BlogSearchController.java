@@ -20,62 +20,79 @@ import com.neutrux.api.NeutruxBlogSearchApi.ui.models.response.BlogResponseModel
 @RestController
 @RequestMapping("blogs")
 public class BlogSearchController {
-	
+
 	private BlogSearchService blogSearchService;
-	
+
 	@Autowired
-	public BlogSearchController(
-		BlogSearchService blogSearchService
-	) {
+	public BlogSearchController(BlogSearchService blogSearchService) {
 		this.blogSearchService = blogSearchService;
 	}
-	
-	
+
 	@GetMapping
-	public Set<BlogResponseModel> getBlogs(
-		@RequestParam(name= "pageNumber", defaultValue = "1") int pageNumber,
-		@RequestParam(name= "pageLimit", defaultValue = "20") int pageLimit
-	){
-		Set<BlogDto> blogDtos = blogSearchService.getBlogs(pageNumber-1, pageLimit);
-		Set<BlogResponseModel> blogs = this.convertDtoToResponseModelList(blogDtos);
+	public Set<BlogResponseModel> getBlogs(@RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
+			@RequestParam(name = "pageLimit", defaultValue = "20") int pageLimit,
+			@RequestParam(name = "include-impressions", defaultValue = "false") boolean includeImpressions,
+			@RequestParam(name = "include-comments", defaultValue = "false") boolean includeComments) {
+		Set<BlogResponseModel> blogs = new HashSet<BlogResponseModel>();
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+		// Implement Blog Search Service here...
+		Set<BlogDto> blogDtos = blogSearchService.getBlogs(pageNumber - 1, pageLimit, includeImpressions,
+				includeComments);
+
+		Iterator<BlogDto> iterator = blogDtos.iterator();
+		while (iterator.hasNext()) {
+			BlogResponseModel blogResponseModel = modelMapper.map(iterator.next(), BlogResponseModel.class);
+			blogs.add(blogResponseModel);
+		}
+
 		return blogs;
 	}
-	
+
+	//it is returning normal blogs instead of trending blogs	
 	@GetMapping("trending")
 	public Set<BlogResponseModel> getTrendingBlogs(
-		@RequestParam(name= "pageNumber", defaultValue = "1") int pageNumber,
-		@RequestParam(name= "pageLimit", defaultValue = "20") int pageLimit
-	) {
-		Set<BlogDto> blogDtos = blogSearchService.getTrendingBlogs(pageNumber-1, pageLimit);
-		Set<BlogResponseModel> blogs = this.convertDtoToResponseModelList(blogDtos);
+			@RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
+			@RequestParam(name = "pageLimit", defaultValue = "20") int pageLimit,
+			@RequestParam(name = "include-impressions", defaultValue = "false") boolean includeImpressions,
+			@RequestParam(name = "include-comments", defaultValue = "false") boolean includeComments) {
+		Set<BlogResponseModel> blogs = new HashSet<BlogResponseModel>();
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+		
+		Set<BlogDto> blogDtos = blogSearchService.getBlogs(pageNumber - 1, pageLimit, includeImpressions,
+				includeComments);
+		Iterator<BlogDto> iterator = blogDtos.iterator();
+		while (iterator.hasNext()) {
+			BlogResponseModel blogResponseModel = modelMapper.map(iterator.next(), BlogResponseModel.class);
+			blogs.add(blogResponseModel);
+		}
+
 		return blogs;
 	}
-	
+
 	@GetMapping("search/t/{titleSubstr}")
-	public Set<BlogResponseModel> getBlogsByTitle(
-		@PathVariable("titleSubstr") String titleSubstr,
-		@RequestParam(name= "pageNumber", defaultValue = "1") int pageNumber,
-		@RequestParam(name= "pageLimit", defaultValue = "20") int pageLimit
-	) {
-		Set<BlogDto> blogDtos = blogSearchService.getBlogsByTitleSubstring(titleSubstr, pageNumber-1, pageLimit);
-		Set<BlogResponseModel> blogs = this.convertDtoToResponseModelList(blogDtos);
-		return blogs;
-	}
-	
-	@GetMapping("search/c/{category}")
-	public Set<BlogResponseModel> getBlogsByCategory(
-		@PathVariable("category") String category,
-		@RequestParam(name= "pageNumber", defaultValue = "1") int pageNumber,
-		@RequestParam(name= "pageLimit", defaultValue = "20") int pageLimit
-	) {
-		Set<BlogDto> blogDtos = this.blogSearchService.getBlogsByCategory(category, pageNumber-1, pageLimit);
+	public Set<BlogResponseModel> getBlogsByTitle(@PathVariable("titleSubstr") String titleSubstr,
+			@RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
+			@RequestParam(name = "pageLimit", defaultValue = "20") int pageLimit,
+			@RequestParam(name = "include-impressions", defaultValue = "false") boolean includeImpressions,
+			@RequestParam(name = "include-comments", defaultValue = "false") boolean includeComments) {
+		Set<BlogDto> blogDtos = blogSearchService.getBlogsByTitleSubstring(titleSubstr, pageNumber - 1, pageLimit,
+				includeComments, includeImpressions);
 		Set<BlogResponseModel> blogs = this.convertDtoToResponseModelList(blogDtos);
 		return blogs;
 	}
 
-	
-	
-	
+	@GetMapping("search/c/{category}")
+	public Set<BlogResponseModel> getBlogsByCategory(@PathVariable("category") String category,
+			@RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
+			@RequestParam(name = "pageLimit", defaultValue = "20") int pageLimit) {
+		Set<BlogDto> blogDtos = this.blogSearchService.getBlogsByCategory(category, pageNumber - 1, pageLimit);
+		Set<BlogResponseModel> blogs = this.convertDtoToResponseModelList(blogDtos);
+		return blogs;
+	}
+
 	public Set<BlogResponseModel> convertDtoToResponseModelList(Set<BlogDto> blogDtos) {
 		ModelMapper mapper = new ModelMapper();
 		mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -83,14 +100,14 @@ public class BlogSearchController {
 		Set<BlogResponseModel> blogResponseModels = new HashSet<BlogResponseModel>();
 		BlogResponseModel blogResponseModel = null;
 		BlogDto blogDto = null;
-		
-		while(iterator.hasNext()) {
+
+		while (iterator.hasNext()) {
 			blogDto = iterator.next();
 			blogResponseModel = mapper.map(blogDto, BlogResponseModel.class);
 			blogResponseModels.add(blogResponseModel);
 		}
-		
+
 		return blogResponseModels;
 	}
-	
+
 }

@@ -12,7 +12,7 @@ public class BlogDto implements Serializable {
 	private String description;
 	private Date creationDate;
 	private String userId;
-	private String categoryId;
+	private CategoryDto category;
 	private Set<BlogElementDto> elements;
 	private Set<BlogImpressionDto> impressions;
 	private Set<BlogCommentDto> comments;
@@ -58,12 +58,12 @@ public class BlogDto implements Serializable {
 		this.userId = userId;
 	}
 
-	public String getCategoryId() {
-		return categoryId;
+	public CategoryDto getCategory() {
+		return category;
 	}
 
-	public void setCategoryId(String categoryId) {
-		this.categoryId = categoryId;
+	public void setCategory(CategoryDto category) {
+		this.category = category;
 	}
 
 	public Set<BlogElementDto> getElements() {

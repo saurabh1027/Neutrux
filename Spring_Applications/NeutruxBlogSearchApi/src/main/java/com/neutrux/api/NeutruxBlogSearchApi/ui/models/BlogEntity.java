@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -42,6 +43,12 @@ public class BlogEntity implements Serializable {
 
 	@OneToMany(mappedBy = "blog")
 	private Set<BlogElementEntity> elements;
+	
+	@OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<BlogImpressionEntity> impressions;
+	
+	@OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<BlogCommentEntity> comments;
 
 	public long getId() {
 		return id;
@@ -89,6 +96,22 @@ public class BlogEntity implements Serializable {
 
 	public void setElements(Set<BlogElementEntity> elements) {
 		this.elements = elements;
+	}
+
+	public Set<BlogImpressionEntity> getImpressions() {
+		return impressions;
+	}
+
+	public void setImpressions(Set<BlogImpressionEntity> impressions) {
+		this.impressions = impressions;
+	}
+
+	public Set<BlogCommentEntity> getComments() {
+		return comments;
+	}
+
+	public void setComments(Set<BlogCommentEntity> comments) {
+		this.comments = comments;
 	}
 
 }

@@ -13,7 +13,7 @@ public class BlogResponseModel implements Serializable {
 	private String title;
 	private String description;
 	private Date creationDate;
-	private String categoryId;
+	private CategoryResponseModel category;
 	private Set<BlogElementResponseModel> elements;
 	private Set<BlogImpressionResponseModel> impressions;
 	private Set<BlogCommentDto> comments;
@@ -51,12 +51,12 @@ public class BlogResponseModel implements Serializable {
 		this.creationDate = creationDate;
 	}
 
-	public String getCategoryId() {
-		return categoryId;
+	public CategoryResponseModel getCategory() {
+		return category;
 	}
 
-	public void setCategoryId(String categoryId) {
-		this.categoryId = categoryId;
+	public void setCategory(CategoryResponseModel category) {
+		this.category = category;
 	}
 
 	public Set<BlogElementResponseModel> getElements() {

@@ -1,22 +1,23 @@
+CP => Context Path
 
+Authenticate User
+	POST	{CP}/authenticate
 
-	/authenticate	
-		POST	authenticate-user
-	/users 	
-		GET 	get-users
-		POST	add-user
-		
-		/:userId
-			GET	get-user-by-userId
-			PUT	update-user-by-userId
-			DELETE	delete-user-by-userId
+User related paths
+	GET	get all users		{CP}/users/
+	POST	add user		{CP}/users/
+	GET	get user By ID		{CP}/users/{userId}
+	PUT	update user By ID 	{CP}/users/{userId}
+	DELETE	delete user By ID	{CP}/users/{userId}
+	
+	User-Blog related paths
+		GET	get all blogs of user
+		GET 	get blog of user by id
+		POST	add blog of user
+		PUT	update blog of user by id
+		DELETE	delete blog of user by id
 
-			/blogs
-				GET	get-blogs-of-user
-				POST	add-blog-of-user
-				
-				/:blogId
-					GET	get-blog-of-user-by-blogId
-					PUT	update-blog-of-user-by-blogId
-					DELETE	delete-blog-of-user-by-blogId
+		User-Blog-Element related paths
+			GET	get all elements 
+
 		

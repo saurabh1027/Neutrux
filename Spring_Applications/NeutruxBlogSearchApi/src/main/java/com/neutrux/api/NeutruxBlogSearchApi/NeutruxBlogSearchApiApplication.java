@@ -8,8 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.neutrux.api.NeutruxBlogSearchApi.ui.models.response.error.RestTemplateResponseErrorHandler;
 
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -36,6 +41,24 @@ public class NeutruxBlogSearchApiApplication {
 					.exposedHeaders("X-User-ID");
 			}
 		};
+	}
+	
+	@Bean
+	public RestTemplate restTemplate(ClientHttpRequestFactory factory,
+			RestTemplateResponseErrorHandler restTemplateResponseErrorHandler) throws Exception {
+		RestTemplate restTemplate = new RestTemplate(factory);
+		restTemplate.setErrorHandler(restTemplateResponseErrorHandler);
+		return restTemplate;
+	}
+	
+	@Bean
+	public ClientHttpRequestFactory simpleClientHttpRequestFactory() {
+		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+
+		factory.setReadTimeout(5000);
+
+		factory.setConnectTimeout(15000);
+		return factory;
 	}
 
 }
