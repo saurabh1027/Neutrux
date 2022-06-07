@@ -6,15 +6,23 @@
     background: rgba(0, 0, 0, 0.25)
     display: flex!important
     flex-wrap: wrap!important
+    user-select: none
 
     .col
         position: relative
         height: 100%
 
+        &.nothing
+            display: flex
+            align-items: center
+            justify-content: center
+
         &.one
             width: 60% 
+            display: flex
+            flex-direction: column-reverse
 
-            div
+            .bg-image
                 padding-top: 65%
                 height: 100%
                 img
@@ -22,6 +30,30 @@
                     top: 0
                     left: 0
                     width: 100%
+                    height: 100%
+                    object-fit: cover
+                    -webkit-user-drag: none
+
+            .details
+                position: absolute
+                padding: 20px
+                display: flex
+                flex-direction: column
+                row-gap: 5px
+                .title
+                    text-decoration: none
+                    color: #111
+                    font-size: 20px
+                    background: rgba(200, 200, 200, 0.5)
+                    padding: 5px
+                    text-decoration: capitalize
+                .category
+                    width: fit-content
+                    text-decoration: none
+                    background: #002bff
+                    color: #ccc
+                    padding: 2px 5px
+
 
         &.two
             display: flex
@@ -33,8 +65,15 @@
                 display: flex!important
                 flex-wrap: wrap!important
                 position: relative
+                flex-direction: column-reverse
 
-                div
+                &.nothing
+                    padding: 22% 0
+                    text-align: center
+                    background: rgba(1, 1, 1, 0.25)
+                    color: #111
+
+                .bg-image
                     flex-grow: 1
                     padding-top: 48.8%
                     img
@@ -44,6 +83,30 @@
                         width: 100%
                         height: 100%
                         object-fit: cover
+                        -webkit-user-drag: none
+
+                .details
+                    position: absolute
+                    padding: 20px
+                    row-gap: 10px
+                    display: flex
+                    flex-direction: column
+                    row-gap: 5px
+                    .title
+                        text-decoration: none
+                        color: #111
+                        font-size: 20px
+                        background: rgba(200, 200, 200, 0.5)
+                        padding: 5px
+                        text-decoration: capitalize
+                        font-size: 16px
+                    .category
+                        font-size: 14px
+                        width: fit-content
+                        text-decoration: none
+                        background: #002bff
+                        color: #ccc
+                        padding: 2px 5px
 
 
 
@@ -61,7 +124,7 @@
                     padding-top: 0
                     img
                         position: relative
-                
+
             &.two
                 width: 100%
                 flex-direction: row
@@ -76,5 +139,16 @@
 @media screen and (max-width:600px)
     .top-blogs
         .col
+            &.one
+                .details
+                    .title 
+                        font-size: 16px
+                    .category
+                        font-size: 14px
+
             &.two
                 flex-direction: column
+
+                .row
+                    .bg-image
+                        padding-top: 65%

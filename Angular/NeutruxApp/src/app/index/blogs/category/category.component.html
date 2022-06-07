@@ -1,0 +1,12 @@
+<app-alert 
+    [alert]="alert"
+    (close)="onClose()"
+    *ngIf="alert"></app-alert>
+
+<app-blog-list 
+    [blogs]="blogs" 
+    [pageNumber]="pageNumber"
+    (prev)="onPrev($event)" 
+    (next)="onNext($event)"
+    *ngIf="blogs && blogs.length>0"
+></app-blog-list>

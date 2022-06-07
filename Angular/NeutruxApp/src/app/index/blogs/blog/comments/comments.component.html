@@ -1,0 +1,49 @@
+<div class="comment-section" [class.active]="bool">
+
+    <div class="close" (click)="closeCommentSection()">
+        <div class="line one"></div>
+        <div class="line two"></div>
+    </div>
+
+    <form action="javascript:void(0)" class="new-comment" (ngSubmit)="addComment()" #AddCommentForm="ngForm">
+        <input 
+            type="text" 
+            placeholder="Enter your comment!"
+            ngModel
+            name="new-comment" 
+            id="new-comment"
+            required
+        >
+        <div class="action-buttons">
+            <button type="submit" [disabled]="AddCommentForm.invalid" class="post btn">Post</button>
+            <button type="reset" class="cancel btn">Cancel</button>
+        </div>
+    </form>
+
+    <div class="comments" *ngIf="comments">
+        <div class="no-comment" *ngIf="!comments.length">
+            No comments found!
+        </div>
+
+        <div class="comment" *ngFor="let comment of comments">
+            <div 
+                class="deletebtn"
+                *ngIf="user && user.userId==(comment.user.userId+'')"
+                (click)="deleteCommentById(comment.commentId)"    
+            >🗑️</div>
+            <div class="row">
+                <div class="details">
+                    <div class="user">{{comment.user.firstname}} {{comment.user.lastname}}</div>
+                    <div class="date">{{comment.creationDate | date:'medium'}}</div>
+                </div>
+                <!-- <div class="actions" *ngIf="user && user.userId==(comment.user.userId+'')">
+                    <button 
+                        class="delete btn" 
+                        (click)="deleteCommentById(comment.commentId)"
+                    >Delete</button>
+                </div> -->
+            </div>
+            <div class="content">{{comment.content}}</div>
+        </div>
+    </div>
+</div>

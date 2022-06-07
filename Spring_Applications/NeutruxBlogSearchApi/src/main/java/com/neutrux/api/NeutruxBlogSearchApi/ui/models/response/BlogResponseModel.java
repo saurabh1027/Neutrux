@@ -13,7 +13,9 @@ public class BlogResponseModel implements Serializable {
 	private String title;
 	private String description;
 	private Date creationDate;
+	private String thumbnail;
 	private CategoryResponseModel category;
+	private UserResponseModel user;
 	private Set<BlogElementResponseModel> elements;
 	private Set<BlogImpressionResponseModel> impressions;
 	private Set<BlogCommentDto> comments;
@@ -89,6 +91,22 @@ public class BlogResponseModel implements Serializable {
 
 	public void setImpressionsCount(long impressionsCount) {
 		this.impressionsCount = impressionsCount;
+	}
+
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
+	}
+
+	public UserResponseModel getUser() {
+		return user;
+	}
+
+	public void setUser(UserResponseModel user) {
+		this.user = user;
 	}
 
 }

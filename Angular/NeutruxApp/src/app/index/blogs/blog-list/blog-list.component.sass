@@ -1,0 +1,124 @@
+.list
+    display: grid
+    grid-template-rows: auto
+    grid-template-columns: auto auto auto
+    padding: 10vh 5vw 0
+    gap: 30px 20px
+    user-select: none
+
+    .blog
+        // box-shadow: 0 0 5px #111
+        display: flex
+        flex-direction: column
+        width: 350px
+        min-height: 50vh
+        position: relative
+        padding-bottom: 10px
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
+        &.extra
+            box-shadow: none
+
+        .thumbnail
+            min-height: 150px
+            width: 100%
+            height: 45%
+            position: relative
+            background: rgba(0, 0, 0, 0.35)
+            overflow: hidden
+            img
+                width: 100%
+                position: absolute
+                top: 50%
+                transform: translateY(-50%)
+                -webkit-user-drag: none
+            
+        .details
+            width: 100%
+            padding: 0 10px
+
+            .row
+                display: flex
+                align-items: center
+                justify-content: space-between
+                padding: 10px 0
+                .category
+                    font-size: 14px
+                    width: fit-content
+                    text-decoration: none
+                    background: #002bff
+                    color: #ccc
+                    padding: 2px 5px
+                .count
+                    .icon
+                        width: 16px
+                        -webkit-user-drag: none
+                        vertical-align: middle
+
+            .title
+                text-align: justify
+                text-decoration: none
+                color: #000
+                width: 100%
+
+            .para
+                padding-top: 5px
+                font-size: 14px
+                color: rgba(0, 0, 0, 0.6)
+
+.pagination
+    display: flex
+    justify-content: center
+    padding: 20px 0 10vh
+    column-gap: 10px
+    color: #555
+    user-select: none
+    .counter
+        padding: 7px 0
+        width: 40px
+        border: 1px solid #555
+        text-align: center
+    .btn
+        padding: 7px 0
+        cursor: pointer
+        &:hover
+            color: #222
+            
+        
+
+
+
+
+@media screen and (max-width:1200px) 
+    .list
+        grid-template-columns: auto auto auto
+        .blog
+            width: 300px
+
+@media screen and (max-width:1050px) 
+    .list
+        grid-template-columns: auto auto
+        justify-content: center
+        gap: 30px 40px
+        .blog
+            width: 400px
+
+@media screen and (max-width:900px) 
+    .list
+        .blog
+            width: 350px
+
+@media screen and (max-width:800px) 
+    .list
+        gap: 30px 20px
+        .blog
+            width: 300px
+
+@media screen and (max-width:675px) 
+    .list
+        grid-template-columns: auto
+        .blog
+            width: 80vw
+
+@media screen and (max-width:575px) 
+    .list
+        .blog

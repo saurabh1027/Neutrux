@@ -61,7 +61,7 @@ public class UserBlogImpressionsController {
 		params.put("X-User-ID", userId);
 
 		UriComponents builder = UriComponentsBuilder.fromHttpUrl(this.BlogsApiUrl + blogId + "/impressions/")
-				.queryParam("X-User-ID", userId).build();
+			.queryParam("X-User-ID", userId).build();
 
 		return restTemplate.exchange(builder.toUriString(), HttpMethod.PUT, entity, Object.class, params);
 	}

@@ -10,7 +10,7 @@ public interface BlogCommentsService {
 	
 	public Set<BlogCommentDto> getCommentsOfBlog(String blogIdStr, int pageNumber, int pageLimit) throws Exception;
 
-	public BlogCommentDto addCommentToBlog(BlogCommentDto blogCommentDto) throws Exception;
+	public BlogCommentDto addCommentToBlog(BlogCommentDto blogCommentDto, String userIdStr) throws Exception;
 
 	public BlogCommentDto updateCommentToBlog(BlogCommentDto blogCommentDto) throws Exception;
 

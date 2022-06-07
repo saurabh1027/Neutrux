@@ -1,0 +1,142 @@
+.comment-section
+    position: fixed
+    background: rgba(0,0,0,0.9)
+    height: 95%
+    width: 95%
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    display: none
+    flex-direction: column
+    row-gap: 20px
+    padding: 5vh 5vw
+    user-select: none
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5)
+
+    .close
+        position: absolute
+        top: 0
+        right: 0
+        margin: 10px
+        width: 40px
+        height: 40px
+        cursor: pointer
+        display: flex
+        justify-content: center
+        align-items: center
+        .line
+            position: absolute
+            width: 30px
+            height: 6px
+            background: #bbb
+            border-radius: 2px
+            &.one
+                transform: rotate(45deg)
+            &.two
+                transform: rotate(-45deg)
+
+
+    &.active
+        display: flex
+
+    .new-comment
+        width: 100%
+        display: flex
+        justify-content: center
+        flex-direction: column
+        row-gap: 10px
+        margin: 0 auto
+        input
+            width: 100%
+            outline: none
+            padding: 10px
+            resize: none
+        .action-buttons
+            display: flex
+            column-gap: 15px
+            .btn
+                width: 75px
+                padding: 8px 0
+                background: none
+                border: none
+                outline: none
+                color: #fff
+                text-transform: uppercase
+                border-radius: 5px
+                cursor: pointer
+                &.post
+                    background: #008cc4
+                    &:disabled
+                        background: #a0ecff
+                        cursor: auto
+                        
+                &.cancel
+                    background: #f00
+
+    .comments
+        display: flex
+        flex-direction: column
+        row-gap: 10px
+        overflow-y: scroll
+        margin: 0 20px
+
+        &::-webkit-scrollbar
+            width: 5px
+            height: 5px
+        &::-webkit-scrollbar-track
+            background: transparent
+        &::-webkit-scrollbar-thumb
+            background: #888
+        &::-webkit-scrollbar-thumb:hover
+            background: #666
+
+        .comment
+            display: flex
+            flex-direction: column
+            row-gap: 5px
+            padding: 10px
+            position: relative
+            .deletebtn
+                position: absolute
+                bottom: 0
+                right: 0
+                font-size: 20px
+                margin: 0 5px 5px
+                background: red
+                border-radius: 50%
+                padding: 2.5px
+                cursor: pointer
+                display: none
+            &:hover
+                .deletebtn
+                    display: block
+            .row
+                display: flex
+                justify-content: space-between
+                align-items: center
+                .details
+                    display: flex
+                    justify-content: space-between
+                    align-items: center
+                    width: 100%
+                    column-gap: 10px
+                    color: #fff
+                    .date
+                        color: #ddd
+                        font-size: 12px
+            &:hover
+                .row
+                    .actions
+                        display: flex
+            .content
+                color: #bbb
+                // color: rgb(240, 240, 240)
+                text-align: justify
+                width: 80%
+                padding: 5px 0
+                font-size: 13px
+
+@media screen and (max-width: 500px)
+    .comment-section
+        .new-comment
+            padding: 0

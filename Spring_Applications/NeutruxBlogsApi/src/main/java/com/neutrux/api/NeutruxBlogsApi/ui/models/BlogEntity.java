@@ -35,6 +35,9 @@ public class BlogEntity implements Serializable {
 
 	@Column(nullable = false)
 	private Date creationDate;
+	
+	@Column(nullable = false)
+	private String thumbnail;
 
 	@ManyToOne
 	@JoinColumn(name = "category_id", nullable = false)
@@ -125,6 +128,14 @@ public class BlogEntity implements Serializable {
 
 	public void setComments(Set<BlogCommentEntity> comments) {
 		this.comments = comments;
+	}
+
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
 	}
 
 }

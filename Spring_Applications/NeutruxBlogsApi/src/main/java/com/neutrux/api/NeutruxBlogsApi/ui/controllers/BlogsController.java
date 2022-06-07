@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.neutrux.api.NeutruxBlogsApi.service.BlogsService;
+import com.neutrux.api.NeutruxBlogsApi.service.CategoryService;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogDto;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.request.BlogRequestModel;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.response.BlogResponseModel;
@@ -34,10 +35,14 @@ import com.neutrux.api.NeutruxBlogsApi.ui.models.response.SuccessMessageResponse
 public class BlogsController {
 
 	private BlogsService blogsService;
+	private CategoryService categoryService;
 
 	@Autowired
-	public BlogsController(BlogsService blogsService) {
+	public BlogsController(
+		BlogsService blogsService,
+		CategoryService categoryService) {
 		this.blogsService = blogsService;
+		this.categoryService = categoryService;
 	}
 
 	@PreAuthorize("hasRole('ROLE_EDITOR') and principal == #userId")
@@ -91,6 +96,7 @@ public class BlogsController {
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
 		BlogDto blogDto = modelMapper.map(blogRequestModel, BlogDto.class);
+		blogDto.setCategory( categoryService.getCategoryById( blogRequestModel.getCategoryId() ) );
 		BlogDto createdBlog = blogsService.createBlog(blogDto);
 
 		BlogResponseModel blogResponseModel = modelMapper.map(createdBlog, BlogResponseModel.class);

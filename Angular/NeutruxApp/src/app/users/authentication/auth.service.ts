@@ -92,7 +92,7 @@ export class AuthService{
                 = new Date(user. _accessTokenExpirationDate).getTime() - new Date().getTime();
             this.autoLogout( sessionExpiryDuration )
         }
-    
+        
     }
 
     autoLogout(sessionExpiryDuration: number) {

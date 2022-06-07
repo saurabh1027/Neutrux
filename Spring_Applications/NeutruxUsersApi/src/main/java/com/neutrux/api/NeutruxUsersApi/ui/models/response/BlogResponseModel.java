@@ -11,6 +11,7 @@ public class BlogResponseModel implements Serializable {
 	private String title;
 	private String description;
 	private Date creationDate;
+	private String thumbnail;
 	private Set<BlogElementResponseModel> elements;
 
 	public String getBlogId() {
@@ -51,6 +52,14 @@ public class BlogResponseModel implements Serializable {
 
 	public void setElements(Set<BlogElementResponseModel> elements) {
 		this.elements = elements;
+	}
+
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
 	}
 
 }

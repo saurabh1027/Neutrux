@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -31,6 +32,7 @@ public class BlogElementEntity implements Serializable {
 	private String description;
 
 	@Column(nullable = false)
+	@Lob
 	private String value;
 
 	@Column(nullable = false)

@@ -19,6 +19,7 @@ import com.neutrux.api.NeutruxBlogsApi.repositories.BlogsRepository;
 import com.neutrux.api.NeutruxBlogsApi.repositories.UsersRepository;
 import com.neutrux.api.NeutruxBlogsApi.service.BlogCommentsService;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogCommentDto;
+import com.neutrux.api.NeutruxBlogsApi.shared.BlogUserDto;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogCommentEntity;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogEntity;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.UserEntity;
@@ -64,9 +65,11 @@ public class BlogCommentsServiceImpl implements BlogCommentsService {
 		while(iterator.hasNext()) {
 			blogCommentEntity = iterator.next();
 			blogCommentDto = mapper.map(blogCommentEntity, BlogCommentDto.class);
+			BlogUserDto blogUserDto = blogCommentDto.getUser();
 			blogCommentDto.setCommentId( this.encryptId(blogCommentEntity.getId()) );
 			blogCommentDto.setBlogId( this.encryptId(blogCommentEntity.getBlog().getId()) );
-			blogCommentDto.setUserId( this.encryptId(blogCommentEntity.getUser().getId()) );
+			blogUserDto.setUserId( this.encryptId(blogCommentEntity.getUser().getId()) );
+			blogCommentDto.setUser(blogUserDto);
 			comments.add(blogCommentDto);
 		}
 		
@@ -88,20 +91,21 @@ public class BlogCommentsServiceImpl implements BlogCommentsService {
 		}
 		
 		blogCommentDto = mapper.map(blogCommentEntity, BlogCommentDto.class);
+		BlogUserDto blogUserDto = blogCommentDto.getUser();
 		blogCommentDto.setCommentId( this.encryptId(blogCommentEntity.getId()) );
 		blogCommentDto.setBlogId( this.encryptId(blogCommentEntity.getBlog().getId()) );
-		blogCommentDto.setUserId( this.encryptId(blogCommentEntity.getUser().getId()) );
-		
+		blogUserDto.setUserId( this.encryptId(blogCommentEntity.getUser().getId()) );
+		blogCommentDto.setUser(blogUserDto);
 		return blogCommentDto;
 	}
 	
 	@Override
-	public BlogCommentDto addCommentToBlog(BlogCommentDto blogCommentDto) throws Exception {
+	public BlogCommentDto addCommentToBlog(BlogCommentDto blogCommentDto, String userIdStr) throws Exception {
 		ModelMapper mapper = new ModelMapper();
 		mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		BlogCommentEntity blogCommentEntity = mapper.map(blogCommentDto, BlogCommentEntity.class);
 		long blogId = this.decryptId( blogCommentDto.getBlogId() );
-		long userId = this.decryptId( blogCommentDto.getUserId() );
+		long userId = this.decryptId( userIdStr );
 		BlogEntity blogEntity = null;
 		UserEntity userEntity = null;
 		
@@ -123,9 +127,11 @@ public class BlogCommentsServiceImpl implements BlogCommentsService {
 		blogCommentEntity = this.blogCommentsRepository.save( blogCommentEntity );
 		
 		BlogCommentDto addedComment = mapper.map(blogCommentEntity, BlogCommentDto.class);
+		BlogUserDto blogUserDto = addedComment.getUser();
 		addedComment.setCommentId( this.encryptId( blogCommentEntity.getId() ) );
 		addedComment.setBlogId( blogCommentDto.getBlogId() );
-		addedComment.setUserId( blogCommentDto.getUserId() );
+		blogUserDto.setUserId( this.encryptId(blogCommentEntity.getUser().getId()) );
+		addedComment.setUser(blogUserDto);
 		return addedComment;
 	}
 
@@ -145,9 +151,11 @@ public class BlogCommentsServiceImpl implements BlogCommentsService {
 		blogCommentEntity = this.blogCommentsRepository.save( blogCommentEntity );
 		
 		BlogCommentDto addedComment = mapper.map(blogCommentEntity, BlogCommentDto.class);
+		BlogUserDto blogUserDto = addedComment.getUser();
 		addedComment.setCommentId( blogCommentDto.getCommentId() );
 		addedComment.setBlogId( this.encryptId( blogCommentEntity.getBlog().getId() ) );
-		addedComment.setUserId( this.encryptId( blogCommentEntity.getUser().getId() ) );
+		blogUserDto.setUserId( this.encryptId( blogCommentEntity.getUser().getId() ) );
+		addedComment.setUser(blogUserDto);
 		return addedComment;
 	}
 	

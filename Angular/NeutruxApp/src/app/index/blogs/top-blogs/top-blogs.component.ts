@@ -16,9 +16,7 @@ export class TopBlogsComponent implements OnInit {
 
     ngOnInit(): void {
         this.blogsService.getTrendingBlogs(undefined, undefined, true, true).subscribe(data => {
-            console.log(data)
             this.blogs = data
-            console.log(this.blogs)
         })
     }
 

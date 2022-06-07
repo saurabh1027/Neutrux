@@ -6,7 +6,7 @@ import { AuthService } from "./authentication/auth.service";
 @Injectable({
     providedIn: 'root'
 })
-export class AuthorizationHeaderInterceptor {/*implements HttpInterceptor {
+export class AuthorizationHeaderInterceptor implements HttpInterceptor {
 
     constructor( private authService:AuthService ) {}
 
@@ -14,16 +14,18 @@ export class AuthorizationHeaderInterceptor {/*implements HttpInterceptor {
         return this.authService.user.pipe(
             take(1),
             exhaustMap(user => {
-                if( !user )
+                if( !user ){
                     return next.handle(req)
+                }
                 
                 const newRequest = req.clone({
                     headers: new HttpHeaders().set('Authorization', 'Bearer '+user.accessToken)
+                        .set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE, PATCH")
                 })
 
                 return next.handle( newRequest )
             })
         )
-    }*/
+    }
     
 }

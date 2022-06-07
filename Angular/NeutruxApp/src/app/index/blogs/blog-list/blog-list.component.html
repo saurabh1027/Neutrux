@@ -1,0 +1,51 @@
+<!-- 
+    1. blog-list
+    2. pagination
+-->
+
+<div class="list">
+    
+    <div class="blog" *ngFor="let blog of blogs">
+        <div class="thumbnail">
+            <img [src]="[blog.thumbnail]" alt="">
+        </div>
+        
+        <div class="details">
+            <div class="row">
+                <a [routerLink]="['','blogs','categories',blog.category.categoryId, 'blogs']"
+                    class="category">{{blog.category.name}}</a>
+                <div class="count">
+                    <img
+                        class="icon heart" 
+                        src="../../../../assets/icons/heart.svg" alt="">
+                    {{blog.impressions.length}}
+                    <img
+                        class="icon comment" 
+                        src="../../../../assets/icons/comment.svg" alt="">
+                    {{blog.comments.length}}
+                </div>
+            </div>
+
+            <a 
+                class="title" 
+                [routerLink]="['','blogs',blog.blogId]"
+                [title]="blog.title"
+            >{{blog.title.substr(0,60)}}...</a>
+
+            <div class="para">{{blog.description}}..</div>
+        </div>
+    </div>
+
+    <div class="blog extra" *ngIf="blogs.length%3==1"></div>
+    <div class="blog extra" *ngIf="blogs.length%3==1"></div>
+    <div class="blog extra" *ngIf="blogs.length%3==2"></div>
+    
+</div>
+
+<div class="pagination">
+
+    <span class="btn" (click)="onPrev()">prev</span>
+    <span class="counter">{{pageNumber}}</span>
+    <span class="btn" (click)="onNext()">next</span>
+
+</div>

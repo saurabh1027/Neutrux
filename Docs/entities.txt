@@ -72,3 +72,16 @@
 		comment_id:long [FK],
 		impression_id:long [FK],
 		user_id:long [FK]
+
+
+--------------------------------------Blog Editor Entities--------------------------
+	Blog_projects
+		project_id
+		last_updated_date
+		created_date
+		user_id
+		title
+		category_id
+		thumbnail
+		description
+		published

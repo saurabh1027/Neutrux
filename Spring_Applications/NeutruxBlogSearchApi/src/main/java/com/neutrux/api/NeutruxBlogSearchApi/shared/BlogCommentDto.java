@@ -10,7 +10,7 @@ public class BlogCommentDto implements Serializable {
 	private String content;
 	private Date creationDate;
 	private String blogId;
-	private String userId;
+	private UserDto user;
 
 	public String getCommentId() {
 		return commentId;
@@ -44,12 +44,12 @@ public class BlogCommentDto implements Serializable {
 		this.blogId = blogId;
 	}
 
-	public String getUserId() {
-		return userId;
+	public UserDto getUser() {
+		return user;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUser(UserDto user) {
+		this.user = user;
 	}
 
 }

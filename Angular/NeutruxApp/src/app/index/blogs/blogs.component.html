@@ -1,1 +1,7 @@
 <app-top-blogs></app-top-blogs>
+<app-blog-list 
+    [blogs]="blogs" 
+    [pageNumber]="pageNumber"
+    (prev)="onPrev($event)" 
+    (next)="onNext($event)"
+></app-blog-list>

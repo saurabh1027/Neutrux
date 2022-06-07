@@ -63,6 +63,7 @@ public class BlogSearchController {
 		
 		Set<BlogDto> blogDtos = blogSearchService.getBlogs(pageNumber - 1, pageLimit, includeImpressions,
 				includeComments);
+		
 		Iterator<BlogDto> iterator = blogDtos.iterator();
 		while (iterator.hasNext()) {
 			BlogResponseModel blogResponseModel = modelMapper.map(iterator.next(), BlogResponseModel.class);
@@ -84,13 +85,27 @@ public class BlogSearchController {
 		return blogs;
 	}
 
-	@GetMapping("search/c/{category}")
-	public Set<BlogResponseModel> getBlogsByCategory(@PathVariable("category") String category,
+	@GetMapping("search/c/{categoryId}")
+	public Set<BlogResponseModel> getBlogsByCategory(@PathVariable("categoryId") String categoryId,
 			@RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
-			@RequestParam(name = "pageLimit", defaultValue = "20") int pageLimit) {
-		Set<BlogDto> blogDtos = this.blogSearchService.getBlogsByCategory(category, pageNumber - 1, pageLimit);
+			@RequestParam(name = "pageLimit", defaultValue = "20") int pageLimit,
+			@RequestParam(name = "include-impressions", defaultValue = "false") boolean includeImpressions,
+			@RequestParam(name = "include-comments", defaultValue = "false") boolean includeComments) throws Exception {
+		Set<BlogDto> blogDtos = this.blogSearchService.getBlogsByCategory(categoryId, pageNumber - 1, pageLimit,
+				includeComments, includeImpressions);
 		Set<BlogResponseModel> blogs = this.convertDtoToResponseModelList(blogDtos);
 		return blogs;
+	}
+	
+	@GetMapping("{blogId}")
+	public BlogResponseModel getBlogById(@PathVariable("blogId") String blogId) throws Exception {
+		BlogResponseModel blogResponseModel = null;
+		ModelMapper mapper = new ModelMapper();
+		mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+		
+		BlogDto blogDto = this.blogSearchService.getBlogById(blogId);
+		blogResponseModel = mapper.map(blogDto, BlogResponseModel.class);
+		return blogResponseModel;
 	}
 
 	public Set<BlogResponseModel> convertDtoToResponseModelList(Set<BlogDto> blogDtos) {

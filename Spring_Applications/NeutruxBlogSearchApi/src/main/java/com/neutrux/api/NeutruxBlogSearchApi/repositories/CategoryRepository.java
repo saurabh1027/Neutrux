@@ -7,5 +7,5 @@ import com.neutrux.api.NeutruxBlogSearchApi.ui.models.CategoryEntity;
 
 @Repository
 public interface CategoryRepository extends PagingAndSortingRepository<CategoryEntity, Long> {
-	
+	public CategoryEntity findByName(String name);
 }

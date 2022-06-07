@@ -1,0 +1,98 @@
+.blog
+    display: flex
+    flex-direction: column
+    row-gap: 10px
+    padding: 5vh 5vw 2.5vh
+    user-select: none
+    .title
+        font-size: 25px
+        text-align: justify
+        color: #000
+    .details
+        display: flex
+        justify-content: space-between
+        color: #555
+        align-items: center
+        .user
+            font-size: 18px
+    .elements
+        display: flex
+        flex-direction: column
+        row-gap: 15px
+        margin-top: 10px
+        padding: 10px
+        text-align: justify
+        background: rgba(200, 200, 200, 0.25)
+        box-shadow: 0 0 10px rgba(200, 200, 200, 0.75)
+        color: #222
+        .heading
+            font-size: 20px
+        .paragraph
+            color: #555
+            font-size: 14px
+        .img
+            img
+                max-width: 700px
+                display: block
+                margin: auto
+                width: 100%
+                -webkit-user-drag: none
+
+    .action-buttons
+        display: flex
+        column-gap: 10px
+        margin-bottom: 20px
+        position: relative
+        .btn
+            cursor: pointer
+            width: 50%
+            text-align: center
+            padding: 10px
+            border-radius: 2px
+            color: #fff
+            background: rgba(0, 0, 0, 0.5)
+            font-weight: normal
+            vertical-align: middle
+            &.like:hover
+                .backdrop
+                    .impressions
+                        display: flex
+            
+            .backdrop
+                position: absolute
+                bottom: 100%
+                left: 0
+                .impressions
+                    display: none
+                    column-gap: 10px
+                    align-items: center
+                    width: fit-content
+                    height: 50px
+                    background: #fff
+                    padding: 10px
+                    border-radius: 5px
+                    box-shadow: 0 0 10px #111
+                    list-style: none
+                    margin: 0 0 10px
+                    li
+                        font-size: 20px
+                        cursor: pointer
+                        padding: 3px
+                        &:hover
+                            font-size: 25px
+                        &.active
+                            border-radius: 50%
+                            border: 2px solid #111
+                            
+
+@media screen and (max-width: 500px)
+    .blog
+        .title
+            font-size: 20px
+        .details
+            .user
+                font-size: 16px
+        .elements
+            .heading
+                font-size: 18px
+

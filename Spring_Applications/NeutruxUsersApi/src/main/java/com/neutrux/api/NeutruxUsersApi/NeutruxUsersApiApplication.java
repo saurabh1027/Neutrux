@@ -40,7 +40,11 @@ public class NeutruxUsersApiApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("http://localhost:4200").exposedHeaders("X-User-ID");
+				registry
+					.addMapping("/**")
+					.allowedOrigins("http://localhost:4200")
+					.allowedMethods("*")
+					.exposedHeaders("X-User-ID");
 			}
 		};
 	}

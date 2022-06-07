@@ -11,7 +11,9 @@ public class BlogDto implements Serializable {
 	private String title;
 	private String description;
 	private Date creationDate;
+	private String thumbnail;
 	private CategoryDto category;
+	private UserDto user;
 	private Set<BlogElementDto> elements;
 	private Set<BlogImpressionDto> impressions;
 	private Set<BlogCommentDto> comments;
@@ -87,6 +89,22 @@ public class BlogDto implements Serializable {
 
 	public void setImpressionsCount(long impressionsCount) {
 		this.impressionsCount = impressionsCount;
+	}
+
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
+	}
+
+	public UserDto getUser() {
+		return user;
+	}
+
+	public void setUser(UserDto user) {
+		this.user = user;
 	}
 
 }

@@ -40,6 +40,7 @@ public class NeutruxBlogsApiApplication {
 				registry
 					.addMapping("/**")
 					.allowedOrigins("http://localhost:4200")
+					.allowedMethods("*")
 					.exposedHeaders("X-User-ID");
 			}
 		};

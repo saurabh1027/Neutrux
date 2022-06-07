@@ -2,6 +2,7 @@ package com.neutrux.api.NeutruxBlogSearchApi.service.implementation;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.modelmapper.ModelMapper;
@@ -13,26 +14,31 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.neutrux.api.NeutruxBlogSearchApi.repositories.BlogSearchRepository;
+import com.neutrux.api.NeutruxBlogSearchApi.repositories.CategoryRepository;
 import com.neutrux.api.NeutruxBlogSearchApi.service.BlogSearchService;
 import com.neutrux.api.NeutruxBlogSearchApi.shared.BlogCommentDto;
 import com.neutrux.api.NeutruxBlogSearchApi.shared.BlogDto;
 import com.neutrux.api.NeutruxBlogSearchApi.shared.BlogElementDto;
 import com.neutrux.api.NeutruxBlogSearchApi.shared.BlogImpressionDto;
 import com.neutrux.api.NeutruxBlogSearchApi.shared.CategoryDto;
+import com.neutrux.api.NeutruxBlogSearchApi.shared.UserDto;
 import com.neutrux.api.NeutruxBlogSearchApi.ui.models.BlogCommentEntity;
 import com.neutrux.api.NeutruxBlogSearchApi.ui.models.BlogElementEntity;
 import com.neutrux.api.NeutruxBlogSearchApi.ui.models.BlogEntity;
 import com.neutrux.api.NeutruxBlogSearchApi.ui.models.BlogImpressionEntity;
 import com.neutrux.api.NeutruxBlogSearchApi.ui.models.CategoryEntity;
+import com.neutrux.api.NeutruxBlogSearchApi.ui.models.UserEntity;
 
 @Service
 public class BlogSearchServiceImpl implements BlogSearchService {
 
 	private BlogSearchRepository blogSearchRepository;
+	private CategoryRepository categoryRepository;
 
 	@Autowired
-	public BlogSearchServiceImpl(BlogSearchRepository blogSearchRepository) {
+	public BlogSearchServiceImpl(BlogSearchRepository blogSearchRepository, CategoryRepository categoryRepository) {
 		this.blogSearchRepository = blogSearchRepository;
+		this.categoryRepository = categoryRepository;
 	}
 
 	@Override
@@ -58,9 +64,33 @@ public class BlogSearchServiceImpl implements BlogSearchService {
 	}
 
 	@Override
-	public Set<BlogDto> getBlogsByCategory(String category, int pageNumber, int pageLimit) {
-		// TODO Auto-generated method stub
-		return null;
+	public Set<BlogDto> getBlogsByCategory(String categoryId, int pageNumber, int pageLimit,
+			boolean includeComments, boolean includeImpressions) throws Exception {
+		CategoryEntity categoryEntity = null;
+		BlogEntity blogEntity = null;
+		BlogDto blogDto = null;
+		Set<BlogDto> blogDtos = new HashSet<BlogDto>();
+		ModelMapper mapper = new ModelMapper();
+		mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+		long id = this.decryptId(categoryId);
+		
+		try {
+			categoryEntity = categoryRepository.findById(id).get();
+		} catch (NoSuchElementException e) {
+			throw new Exception("Category with id-"+categoryId+" not found!");
+		}
+		Pageable blogPageable = PageRequest.of(pageNumber, pageLimit);
+		Page<BlogEntity> blogsPage = blogSearchRepository.findAllBycategory(categoryEntity, blogPageable);
+		Iterator<BlogEntity> blogsIterator = blogsPage.iterator();
+		
+		while (blogsIterator.hasNext()) {
+			blogEntity = blogsIterator.next();
+			String blogId = encryptId(blogEntity.getId());
+			blogDto = this.getBlogDetails(blogEntity, blogId, includeImpressions, includeComments);
+			blogDtos.add(blogDto);
+		}
+		
+		return blogDtos;
 	}
 
 	@Override
@@ -98,6 +128,24 @@ public class BlogSearchServiceImpl implements BlogSearchService {
 		return null;
 	}
 
+	@Override
+	public BlogDto getBlogById(String blogIdStr) throws Exception {
+		BlogDto blogDto = null;
+		BlogEntity blogEntity = null;
+		ModelMapper mapper = new ModelMapper();
+		mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+		long blogId = this.decryptId(blogIdStr);
+		try {
+			blogEntity = this.blogSearchRepository.findById(blogId).get();
+		} catch (NoSuchElementException e) {
+			throw new Exception("Blog with ID:" + blogIdStr + " not found!");
+		}
+
+		blogDto = this.getBlogDetails(blogEntity, blogIdStr, true, true);
+		return blogDto;
+	}
+
 	public BlogDto getBlogDetails(BlogEntity blogEntity, String blogId, boolean includeImpressions,
 			boolean includeComments) {
 		ModelMapper modelMapper = new ModelMapper();
@@ -108,6 +156,12 @@ public class BlogSearchServiceImpl implements BlogSearchService {
 		BlogElementDto elementDto = null;
 		CategoryEntity categoryEntity = null;
 		CategoryDto categoryDto = null;
+		UserEntity userEntity = null;
+		UserDto userDto = null;
+
+		userEntity = blogEntity.getUser();
+		userDto = modelMapper.map(userEntity, UserDto.class);
+		userDto.setUserId(this.encryptId(userEntity.getId()));
 
 		categoryEntity = blogEntity.getCategory();
 		categoryDto = modelMapper.map(categoryEntity, CategoryDto.class);
@@ -134,9 +188,10 @@ public class BlogSearchServiceImpl implements BlogSearchService {
 			while (commentsIterator.hasNext()) {
 				blogCommentEntity = commentsIterator.next();
 				blogCommentDto = modelMapper.map(blogCommentEntity, BlogCommentDto.class);
+				UserDto commentUserDto = blogCommentDto.getUser();
 				blogCommentDto.setCommentId(this.encryptId(blogCommentEntity.getId()));
 				blogCommentDto.setBlogId(this.encryptId(blogCommentEntity.getBlog().getId()));
-				blogCommentDto.setUserId(this.encryptId(blogCommentEntity.getUser().getId()));
+				commentUserDto.setUserId(this.encryptId(blogCommentEntity.getUser().getId()));
 				commentDtos.add(blogCommentDto);
 			}
 		}
@@ -158,6 +213,7 @@ public class BlogSearchServiceImpl implements BlogSearchService {
 
 		BlogDto blogDto = modelMapper.map(blogEntity, BlogDto.class);
 		blogDto.setCategory(categoryDto);
+		blogDto.setUser(userDto);
 		blogDto.setBlogId(blogId);
 		blogDto.setElements(elementDtoList);
 		blogDto.setImpressions(impressionDtoList);

@@ -1,0 +1,76 @@
+<app-alert 
+    [alert]="alert"
+    (close)="onClose()"
+    *ngIf="alert"></app-alert>
+
+<div class="blog" *ngIf="blog">
+
+    <div class="title">{{blog.title}}</div>
+    <div class="details">
+        <span class="date">{{blog.creationDate | date}}</span>
+        <span class="user">{{blog.user.firstname}} {{blog.user.lastname}}</span>
+    </div>
+    <div class="elements">
+        <div [ngSwitch]="element.name" *ngFor="let element of blog.elements">
+            <div class="heading" *ngSwitchCase="'heading'">{{element.value}}</div>
+            <div class="sub-heading" *ngSwitchCase="'sub-heading'">{{element.value}}</div>
+            <div class="minor-heading" *ngSwitchCase="'minor-heading'">{{element.value}}</div>
+            <div class="paragraph" *ngSwitchCase="'paragraph'">{{element.value}}</div>
+            <a class="img" *ngSwitchCase="'image'" href="{{element.value}}" target="_blank">
+                <img [src]="element.value">
+            </a>
+        </div>
+    </div>
+    <div class="action-buttons">
+        <div class="like btn" *ngIf="blog && blog.impressions">
+            <span *ngIf="!impression || !impression.type">Like 👍🏻 ( {{blog.impressions.length}} )</span>
+            <div *ngIf="impression" [ngSwitch]="impression.type">
+                <span *ngSwitchCase="'thumbs up'">Liked 👍 ( {{blog.impressions.length}} )</span>
+                <span *ngSwitchCase="'loved'">Loved 💝 ( {{blog.impressions.length}} )</span>
+                <span *ngSwitchCase="'happy'">Happy 😇 ( {{blog.impressions.length}} )</span>
+                <span *ngSwitchCase="'celebrate'">Celebrating 🙌 ( {{blog.impressions.length}} )</span>
+                <span *ngSwitchCase="'angry'">Angry 😠 ( {{blog.impressions.length}} )</span>
+            </div>
+            <div class="backdrop">
+                <ul class="impressions">
+                    <li 
+                        title="liked"
+                        (click)="onImpression('thumbs up')" 
+                        [class.active]="impression && impression.type=='thumbs up'">👍</li>
+                    <li 
+                        title="loved"
+                        (click)="onImpression('loved')" 
+                        [class.active]="impression && impression.type=='loved'">💝</li>
+                    <li 
+                        title="happy"
+                        (click)="onImpression('happy')" 
+                        [class.active]="impression && impression.type=='happy'">😇</li>
+                    <li 
+                        title="celebrate"
+                        (click)="onImpression('celebrate')" 
+                        [class.active]="impression && impression.type=='celebrate'">🙌</li>
+                    <li 
+                        title="angry"
+                        (click)="onImpression('angry')" 
+                        [class.active]="impression && impression.type=='angry'">😠</li>
+                </ul>
+            </div>
+        </div>
+
+        <div 
+            class="comment btn" 
+            (click)="toggleCommentSection()"
+            *ngIf="blog && blog.comments"    
+        >Comment 💭 ( {{blog.comments.length}} )</div>
+    </div>
+
+</div>
+
+<app-comments 
+    *ngIf="blog"
+    [comments]="blog.comments"
+    [blogId]="blog.blogId"
+    (onDelete)="refreshBlog($event)"
+    (onCloseCommentSection)="toggleCommentSection()"
+    [bool]="bool"
+></app-comments>

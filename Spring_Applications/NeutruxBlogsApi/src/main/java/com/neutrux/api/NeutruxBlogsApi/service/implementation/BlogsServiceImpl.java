@@ -26,6 +26,7 @@ import com.neutrux.api.NeutruxBlogsApi.shared.BlogCommentDto;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogDto;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogElementDto;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogImpressionDto;
+import com.neutrux.api.NeutruxBlogsApi.shared.BlogUserDto;
 import com.neutrux.api.NeutruxBlogsApi.shared.CategoryDto;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogCommentEntity;
 import com.neutrux.api.NeutruxBlogsApi.ui.models.BlogElementEntity;
@@ -275,9 +276,10 @@ public class BlogsServiceImpl implements BlogsService {
 			while (commentsIterator.hasNext()) {
 				blogCommentEntity = commentsIterator.next();
 				blogCommentDto = modelMapper.map(blogCommentEntity, BlogCommentDto.class);
+				BlogUserDto blogUserDto = blogCommentDto.getUser();
 				blogCommentDto.setCommentId(this.encryptId(blogCommentEntity.getId()));
 				blogCommentDto.setBlogId(this.encryptId(blogCommentEntity.getBlog().getId()));
-				blogCommentDto.setUserId(this.encryptId(blogCommentEntity.getUser().getId()));
+				blogUserDto.setUserId(this.encryptId(blogCommentEntity.getUser().getId()));
 				commentDtos.add(blogCommentDto);
 			}
 		}

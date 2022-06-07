@@ -35,11 +35,19 @@ public class BlogEntity implements Serializable {
 
 	@Column(nullable = false)
 	private Date creationDate;
+	
+	@Column(nullable = false)
+	private String thumbnail;
 
 	@ManyToOne
 	@JoinColumn(name = "category_id", nullable = false)
 	@JsonIgnore
 	private CategoryEntity category;
+	
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	@JsonIgnore
+	private UserEntity user;
 
 	@OneToMany(mappedBy = "blog")
 	private Set<BlogElementEntity> elements;
@@ -112,6 +120,22 @@ public class BlogEntity implements Serializable {
 
 	public void setComments(Set<BlogCommentEntity> comments) {
 		this.comments = comments;
+	}
+
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
+	}
+
+	public UserEntity getUser() {
+		return user;
+	}
+
+	public void setUser(UserEntity user) {
+		this.user = user;
 	}
 
 }

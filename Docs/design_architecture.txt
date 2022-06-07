@@ -14,7 +14,7 @@ TechzSpots.com
 	[2nd]	--tools
 		[3rd]	--blog_editor
 				--posted_blog_list
-					--posted_blog_card_with_menu
+					--posted_blog_cards_with_menu
 					[N_D]	--blog_analytics
 				--blog_projects
 					--blog_project_dashboard_with_menu
