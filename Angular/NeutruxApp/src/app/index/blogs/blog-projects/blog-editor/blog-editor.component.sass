@@ -1,0 +1,227 @@
+.editor
+    margin: 30px 40px
+    padding: 20px 10px
+    display: flex
+    flex-direction: column
+    position: relative
+    overflow: hidden
+    user-select: none
+    background: rgba(240, 240, 240, 0.75)
+    // min-height: 80vh
+    row-gap: 10px
+    height: 80vh
+    overflow-y: auto
+
+    .action-box
+        width: 100%
+        min-height: 60px
+        border: 1px solid #aaa
+        background: rgba(220, 220, 220, 0.9)
+        border-radius: 5px
+        position: sticky
+        top: 0
+        z-index: 1
+        display: flex
+        align-items: center
+        
+
+        .menu-icon
+            display: flex
+            flex-direction: column
+            padding: 10px 20px
+            row-gap: 3px
+            cursor: pointer
+            width: fit-content
+            .dot
+                width: 8px
+                height: 8px
+                background: #111
+                border-radius: 50%
+                
+    
+    .divider
+        width: 100%
+        height: 2px
+        background: rgba(0, 0, 0, 0.2)
+        margin: 0 auto
+
+
+.backdrop
+    height: 100%
+    width: 100%
+    top: 0
+    right: 0
+    position: fixed
+    background: rgba(0, 0, 0, 0.1)
+    visibility: 0.1
+    cursor: pointer
+    display: none
+    z-index: 1
+    &.active
+        display: block
+
+
+.element-list
+    cursor: auto
+    min-width: 350px
+    max-width: 500px
+    position: fixed
+    top: 0
+    left: -500px
+    height: 100%
+    background: #444
+    display: flex
+    flex-direction: column
+    z-index: 1
+    transition: 0.3s ease-in-out
+    user-select: none
+    
+    &.active
+        left: 0
+
+    .heading
+        margin: 20px auto 30px
+        width: fit-content
+        font-size: 25px
+        color: #eee
+
+    .elements
+        display: flex
+        flex-direction: column
+        row-gap: 10px
+        margin: 0 10px 
+
+        .move-icon
+            display: flex
+            align-items: center
+            justify-content: center
+            flex-direction: column
+            row-gap: 5px
+            height: 30px
+            margin: auto 0
+            background: rgba(0, 0, 0, 0.25)
+            width: 50px
+            cursor: pointer
+            border-radius: 4px
+            .line
+                width: 30px
+                height: 4px
+                background: rgba(0,0,0,0.5)
+
+
+
+
+.category-list
+    cursor: auto
+    min-width: 350px
+    max-width: 500px
+    position: fixed
+    top: 0
+    right: -500px
+    height: 100%
+    background: #444
+    display: flex
+    flex-direction: column
+    z-index: 1
+    transition: 0.3s ease-in-out
+    padding: 20px 0 70px
+    &.active
+        right: 0
+    .category-search
+        border: none
+        width: 250px
+        font-size: 16px
+        outline: none
+        background: none
+        color: #fff
+        border-bottom: 1px solid #fff
+        padding: 10px 0px 5px
+        margin: 10px auto
+    .categories
+        margin: 20px 20px 10px
+        text-align: center
+        overflow: auto
+        &::-webkit-scrollbar
+            width: 5px
+            height: 5px
+        &::-webkit-scrollbar-track
+            background: transparent
+        &::-webkit-scrollbar-thumb
+            background: #888
+        &::-webkit-scrollbar-thumb:hover
+            background: #666
+        .category
+            padding: 8px 10px
+            margin: 5px
+            color: #fff
+            border: 1px solid #fff
+            width: fit-content
+            cursor: pointer
+            display: inline-flex
+            &.selected
+                background: #fff
+                color: #000
+
+    .actions
+        bottom: 10px
+        position: absolute
+        left: 0
+        width: 100%
+        height: 50px
+        display: flex
+        justify-content: space-evenly
+        align-items: center
+        button
+            padding: 8px 0
+            width: 100px
+            background: #0062f5
+            border: none
+            cursor: pointer
+            outline: none
+            color: #fff
+            font-size: 14px
+            border-radius: 2px
+            border-radius: 3px
+            &.cancelbtn
+                background: #f00
+
+    
+.context-menu
+    position: absolute
+    top: 0
+    left: 0
+    width: 175px
+    height: 200px
+    border-radius: 4px
+    box-shadow: 0 0 5px #aaa
+    background: #fff
+    display: none
+    flex-direction: column
+    z-index: 2
+    padding: 10px 0
+    font-size: 14px
+    overflow-y: scroll
+    user-select: none
+    &::-webkit-scrollbar
+        width: 2.5px
+    &::-webkit-scrollbar-track
+        background: transparent
+    &::-webkit-scrollbar-thumb
+        background: #888
+    &::-webkit-scrollbar-thumb:hover
+        background: #666
+    &.active
+        display: flex
+    .action
+        width: 100%
+        padding: 8px 10px
+        color: #555
+        cursor: pointer
+        display: flex
+        justify-content: space-between
+        &:hover
+            background: #f6f6f6
+
+@media screen and (max-width: 1000px)
+    .editor
+        margin: 0

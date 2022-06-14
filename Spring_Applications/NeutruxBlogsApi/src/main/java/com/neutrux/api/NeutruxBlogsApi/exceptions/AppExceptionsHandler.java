@@ -46,13 +46,16 @@ public class AppExceptionsHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler({ Exception.class })
 	public ResponseEntity<Object> handleAnyException(Exception ex, WebRequest request) {
-
 		String errorMessageDescription = ex.getMessage();
+		ErrorMessageResponseModel errorMessage = null;
 
-		ErrorMessageResponseModel errorMessage = buildErrorMessage(ex, errorMessageDescription, HttpStatus.BAD_REQUEST);
-
+		if( errorMessageDescription.equals("Already exists") ) {
+			errorMessage = buildErrorMessage(ex, errorMessageDescription, HttpStatus.CONFLICT);
+		} else {
+			errorMessage = buildErrorMessage(ex, errorMessageDescription, HttpStatus.BAD_REQUEST);
+		}
+		
 		return new ResponseEntity<Object>(errorMessage, new HttpHeaders(), errorMessage.getType());
-
 	}
 
 	@Override

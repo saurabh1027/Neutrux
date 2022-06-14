@@ -1,0 +1,47 @@
+.output
+    width: 100%
+    height: 100%
+    padding: 25px 15px 15px
+    display: flex
+    flex-direction: column
+    row-gap: 10px
+    user-select: none
+
+    .elements
+        display: flex
+        flex-direction: column
+        row-gap: 20px
+        padding: 10px 0 0
+        .element
+            .heading
+                font-size: 22px
+            .paragraph
+                color: #555
+                font-size: 15px
+        .img
+            img
+                max-width: 700px
+                display: block
+                margin: auto
+                width: 100%
+                -webkit-user-drag: none
+
+@media screen and (max-width:900px)
+    .output
+        .elements
+            row-gap: 10px
+            .element
+                .heading
+                    font-size: 20px
+                .paragraph
+
+@media screen and (max-width:550px)
+    .output
+        padding: 15px
+        .elements
+            .element
+                textarea
+                    &.heading
+                        font-size: 18px
+                    &.paragraph
+                        font-size: 14px

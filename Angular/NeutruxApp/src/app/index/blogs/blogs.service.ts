@@ -56,10 +56,12 @@ export class BlogsService{
         return this.http.get<BlogModel>( environment.backendServerUrl+'blogs/'+blogId )
     }
     
-    addOrUpdateImpressionToBlog( type:string, userId:string, blogId:string ) :Observable<BlogImpressionModel> {
+    addOrUpdateImpressionToBlog( type:string, userId:string, blogId:string ) 
+        : Observable<BlogImpressionModel> {
         return this.http.put<BlogImpressionModel>( 
             environment.backendServerUrl+'users/'+userId+'/blogs/'+blogId+'/impressions',
-            { 'type': type, 'userId': userId } )
+            { 'type': type, 'userId': userId } 
+        )
     }
 
     removeImpressionFromBlog( userId:string, blogId:string ) {

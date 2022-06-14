@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
-import { HttpClientModule } from "@angular/common/http";
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { BrowserModule } from "@angular/platform-browser";
 import { RouterModule } from "@angular/router";
 import { SharedModule } from "src/app/shared/shared.module";
+import { BlogEditorService } from "./blog-projects/blog-editor/blog-editor.service";
 import { BlogListComponent } from "./blog-list/blog-list.component";
+import { BlogProjectsComponent } from "./blog-projects/blog-projects.component";
 import { BlogComponent } from "./blog/blog.component";
 import { CommentsComponent } from "./blog/comments/comments.component";
 import { CommentsService } from "./blog/comments/comments.service";
@@ -14,6 +14,10 @@ import { BlogsComponent } from "./blogs.component";
 import { BlogsService } from "./blogs.service";
 import { CategoryComponent } from "./category/category.component";
 import { TopBlogsComponent } from "./top-blogs/top-blogs.component";
+import { BlogEditorComponent } from "./blog-projects/blog-editor/blog-editor.component";
+import { BlogDetailsComponent } from "./blog-projects/blog-editor/blog-details/blog-details.component";
+import { BlogElementsComponent } from "./blog-projects/blog-editor/blog-elements/blog-elements.component";
+import { BlogEditElementsComponent } from "./blog-projects/blog-editor/blog-edit-elements/blog-edit-elements.component";
 
 @NgModule({
     declarations: [
@@ -22,7 +26,12 @@ import { TopBlogsComponent } from "./top-blogs/top-blogs.component";
         BlogListComponent,
         BlogComponent,
         CommentsComponent,
-        CategoryComponent
+        CategoryComponent,
+        BlogProjectsComponent,
+        BlogEditorComponent,
+        BlogDetailsComponent,
+        BlogElementsComponent,
+        BlogEditElementsComponent
     ],
     imports: [
         // don't import the modules that are already present in AppModule for e.g. BrowserModule, HttpClientModule.
@@ -35,7 +44,8 @@ import { TopBlogsComponent } from "./top-blogs/top-blogs.component";
     ],
     providers: [
         BlogsService,
-        CommentsService
+        CommentsService,
+        BlogEditorService
     ]
 })
 export class BlogsModule{ }

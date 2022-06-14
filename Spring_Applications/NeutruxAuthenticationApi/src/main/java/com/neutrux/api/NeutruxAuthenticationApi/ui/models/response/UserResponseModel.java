@@ -11,6 +11,7 @@ public class UserResponseModel implements Serializable {
     private String email;
     private String userId;
     private long expiresIn;
+    private String roles;
 
     //Getters & Setters
     public String getFirstname() {
@@ -52,6 +53,14 @@ public class UserResponseModel implements Serializable {
     public void setExpiresIn(long expiresIn) {
     	this.expiresIn = expiresIn;
     }
+    
+	public String getRoles() {
+		return roles;
+	}
+
+	public void setRoles(String roles) {
+		this.roles = roles;
+	}
 
 	@Override
 	public String toString() {
@@ -60,7 +69,8 @@ public class UserResponseModel implements Serializable {
 				+ "\"lastname\":\""+ this.lastname +"\","
 				+ "\"email\":\""+ this.email +"\","
 				+ "\"userId\":\""+ this.userId +"\","
-				+ "\"expiresIn\":\""+ this.expiresIn +"\""
+				+ "\"expiresIn\":\""+ this.expiresIn +"\","
+				+ "\"roles\":\""+ this.roles +"\""
 				+ "}";
 	}
 	

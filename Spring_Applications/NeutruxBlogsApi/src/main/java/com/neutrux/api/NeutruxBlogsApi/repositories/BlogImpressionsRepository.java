@@ -16,4 +16,6 @@ public interface BlogImpressionsRepository extends PagingAndSortingRepository<Bl
 	
 	public BlogImpressionEntity findByBlogAndUser( BlogEntity blog, UserEntity user );
 	
+	public BlogImpressionEntity findByBlogAndUserAndType( BlogEntity blog, UserEntity user, String type );
+	
 }

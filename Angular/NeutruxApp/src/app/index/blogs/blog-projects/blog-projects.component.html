@@ -1,0 +1,14 @@
+<div *ngIf="projects.length==0 && !currentProject" class="no-projects">
+    <span>No projects yet!</span>
+    <button (click)="openNewProject()">New Project</button>
+</div>
+<!-- 
+<div *ngIf="currentProject && currentProject.elements">
+    <span *ngFor="let element of currentProject.elements">
+        {{element.position}}
+    </span>
+</div> -->
+
+<app-blog-editor
+    *ngIf="currentProject"
+></app-blog-editor>

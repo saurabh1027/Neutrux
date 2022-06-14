@@ -1,0 +1,44 @@
+<div class="output" #output>
+
+    <div class="edit-elements" #editElementsContainer>
+
+        <div 
+            class="element"
+            *ngFor="let element of currentProject.elements"
+            [ngSwitch]="element.name"
+            draggable="true"
+            #element
+            attr.data-position="{{element.position}}"
+            [class.selected]="selectedElementPosition==element.position"
+        >
+            <div class="move-icon" (click)="selectElement(element.position)">
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <textarea 
+                [(ngModel)]="element.value"
+                class="heading element-type"
+                *ngSwitchCase="'heading'"
+                placeholder="Enter heading here..."
+                rows="2"
+                #heading="ngModel"
+                [class.error]="heading.invalid"
+                required
+                (click)="selectElement(element.position)"
+            ></textarea>
+            <textarea 
+                [(ngModel)]="element.value"
+                class="paragraph element-type"
+                *ngSwitchCase="'paragraph'"
+                placeholder="Enter paragraph here..."
+                rows="4"
+                #paragraph="ngModel"
+                [class.error]="paragraph.invalid"
+                required
+                (click)="selectElement(element.position)"
+            ></textarea>
+        </div>
+
+    </div>
+
+</div>

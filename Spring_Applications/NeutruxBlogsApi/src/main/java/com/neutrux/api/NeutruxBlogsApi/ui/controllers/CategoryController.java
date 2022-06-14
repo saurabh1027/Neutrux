@@ -45,7 +45,7 @@ public class CategoryController {
 		Set<CategoryDto> categories = new HashSet<CategoryDto>();
 
 		categories = this.categoryService.getCategories(pageNumber - 1, pageLimit);
-
+		
 		return categories;
 	}
 	

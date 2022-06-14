@@ -39,7 +39,9 @@ import { UsersModule } from './users/users.module';
     SharedModule,
     BlogsModule,
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthorizationHeaderInterceptor, multi: true}],
+  providers: [{
+    provide: HTTP_INTERCEPTORS, useClass: AuthorizationHeaderInterceptor, multi: true},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

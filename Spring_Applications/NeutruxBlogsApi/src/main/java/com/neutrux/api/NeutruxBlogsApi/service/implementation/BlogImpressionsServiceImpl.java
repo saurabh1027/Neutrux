@@ -104,6 +104,14 @@ public class BlogImpressionsServiceImpl implements BlogImpressionsService {
 		} catch (NoSuchElementException e) {
 			throw new Exception("Blog with ID"+blogImpressionDto.getBlogId()+" not found!");
 		}
+		
+		blogImpressionEntity = this.blogImpressionsRepository.findByBlogAndUserAndType(
+			blogEntity, userEntity, blogImpressionDto.getType() );
+		
+		if( blogImpressionEntity!=null ) {
+			throw new Exception("Already exists");
+		}
+		
 		blogImpressionEntity = this.blogImpressionsRepository.findByBlogAndUser(blogEntity, userEntity);
 		
 		if(blogImpressionEntity != null) {

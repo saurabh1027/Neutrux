@@ -1,0 +1,100 @@
+<div class="backdrop" #backdrop (click)="toggleList(false)"></div>
+
+<div class="editor" #editor>
+
+    <div class="action-box">
+        <div class="menu-icon">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <app-blog-details
+        [editMode]="editMode"
+    ></app-blog-details>
+    
+    <div class="divider"></div>
+
+    <app-blog-elements
+        *ngIf="!editMode"
+    ></app-blog-elements>
+
+    <app-blog-edit-elements
+        *ngIf="editMode"
+        [selectedElementPosition]="selectedElementPosition"
+        (changeElementPosition)="selectedElementPosition = $event"
+    ></app-blog-edit-elements>
+
+</div>
+
+<div class="element-list" #element_list>
+    
+    <div class="heading">Blog Elements</div>
+    <div 
+        class="elements"
+    >
+        <div 
+            class="element"
+            *ngFor="let element of blogElements"
+            draggable="true"
+            #element
+        >
+            <div class="move-icon">
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            {{element.name}}
+        </div>
+    </div>
+
+</div>
+
+<div class="category-list" #category_list>
+
+    <input 
+        type="text"
+        name="category-search"
+        class="category-search"
+        placeholder="Enter category here!"
+        [(ngModel)]="searchCategoryName"
+        (keyup)="filterCategoriesByName()"
+    >
+    
+    <div class="categories" *ngIf="categories">
+        <span 
+            class="category" 
+            *ngFor="let category of categorySearchResults"
+            [title]="category.description"
+            [class.selected]="selectedCategory.name==category.name"
+            (click)="selectCategory(category)"
+        >
+            {{category.name}}
+        </span>
+    </div>
+
+    <div class="actions">
+        <button (click)="changeProjectCategory()">Choose</button>
+        <button 
+            class="cancelbtn"
+            (click)="toggleList(false)"
+        >Cancel</button>
+    </div>
+
+</div>
+
+
+<div class="context-menu" #context_menu>
+    <span class="action" (click)="toggleList(true, 'elements')">Insert Element</span>
+
+    <span class="action" (click)="toggleList(true, 'category')">Edit Category</span>
+    
+    <div class="action" (click)="editMode=!editMode">Edit Mode <span *ngIf="editMode">✔️</span></div>
+    
+    <!-- <span 
+        class="action" 
+        *ngIf="editMode && selectedElementPosition" 
+        (click)="deleteElement(selectedElementPosition)"
+    >Delete Selected Element</span> -->
+
+</div>

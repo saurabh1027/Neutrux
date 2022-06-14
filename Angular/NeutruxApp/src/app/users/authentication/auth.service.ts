@@ -12,7 +12,8 @@ export interface AuthResponseData {
     lastname: string,
     email: string,
     userId: string,
-    expiresIn: number
+    expiresIn: number,
+    roles: string
 }
 
 @Injectable()
@@ -73,6 +74,7 @@ export class AuthService{
             firstname: string,
             lastname: string,
             email: string,
+            roles: string,
             _accessToken: string,
             _accessTokenExpirationDate: string
         } = JSON.parse( userData )
@@ -82,6 +84,7 @@ export class AuthService{
             user.firstname,
             user.lastname,
             user.email,
+            user.roles,
             user._accessToken,
             new Date( user._accessTokenExpirationDate )
         )
@@ -109,6 +112,7 @@ export class AuthService{
             authResponseData.firstname,
             authResponseData.lastname,
             authResponseData.email,
+            authResponseData.roles,
             token,
             expirationDate
         )
@@ -121,6 +125,7 @@ export class AuthService{
     }
 
     private handleError(errorRes: HttpErrorResponse) {
+        console.log(errorRes.error)
         let errorMessage = 'An unknown error occurred!';
         if (!errorRes.error || !errorRes.error.error) {
             return throwError( errorMessage );

@@ -12,6 +12,7 @@ public class UserDto implements Serializable{
     private String email;
     private String password;
     private String encryptedPassword;
+    private String roles;
 
     //Getters & Setters
     public String getUserId() {
@@ -60,6 +61,14 @@ public class UserDto implements Serializable{
 
     public void setEncryptedPassword(String encryptedPassword) {
         this.encryptedPassword = encryptedPassword;
-    }
+	}
+
+	public String getRoles() {
+		return roles;
+	}
+
+	public void setRoles(String roles) {
+		this.roles = roles;
+	}
 	
 }
