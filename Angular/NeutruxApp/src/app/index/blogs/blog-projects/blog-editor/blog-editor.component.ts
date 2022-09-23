@@ -1,164 +1,179 @@
-import { Component, ElementRef, Input, OnInit, QueryList, ViewChild, ViewChildren } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Observable, Subscription } from "rxjs";
 import { BlogElementModel } from "../../blog.element.model";
+import { BlogUserModel } from "../../blog_user.model";
 import { CategoryModel } from "../../category.model";
 import { BlogProjectModel } from "../blog_project.model";
 import { BlogEditorService } from "./blog-editor.service";
+import { CanComponentDeactivate } from "./can-deactivate-guard.service";
 
 @Component({
     selector: 'app-blog-editor',
     templateUrl: 'blog-editor.component.html',
     styleUrls: ['blog-editor.component.sass']
 })
-export class BlogEditorComponent implements OnInit {
-    // @Input('currentProject') currentProject!:BlogProjectModel
-    currentProject!:BlogProjectModel
-
-    // EDITOR
-    @ViewChild('editor') editor!:ElementRef
-    @ViewChild('backdrop') backdrop!:ElementRef
-    @ViewChild('element_list') element_list!:ElementRef
-    @ViewChild('category_list') category_list!:ElementRef
-    @ViewChild('context_menu') context_menu!:ElementRef
-    editMode:boolean = true
+export class BlogEditorComponent implements OnInit, OnDestroy, CanComponentDeactivate {
     
-    // CATEGORY
-    categories:CategoryModel[] = []
-    categorySearchResults:CategoryModel[] = []
-    searchCategoryName:string = ''
-    selectedCategory:CategoryModel = new CategoryModel('','','')
-    
-    // BLOG ELEMENT
-    blogElements:BlogElementModel[] = []
+    currentProject!:BlogProjectModel|null
     selectedElementPosition:number = 0
-    @ViewChildren('element') draggableElements!:QueryList<ElementRef>
+    // direction!:string |undefined
+    // newElement!:BlogElementModel|undefined
+    
+    // Subscriptions
+    currentProjectSub!:Subscription
+    selectedElementPositionSub!:Subscription
+    elementsSub!:Subscription
+    changesMadeSub!:Subscription
+    changesSavedSub!:Subscription
+    projectsSub!:Subscription
+
+    isAddElementActive:boolean = false
+    elements:BlogElementModel[] = []
+    changesMade:boolean = false
+    changesSaved:boolean = true
+    projects:BlogProjectModel[] = []
 
     constructor(
-        private blogEditorService:BlogEditorService
+        public blogEditorService:BlogEditorService,
+        private readonly route:ActivatedRoute,
+        private router:Router
     ) {}
 
+    // Component life-cycle methods
     ngOnInit(): void {
-        this.loadCurrentProject()
-        this.loadBlogElements()
+        let bool = false
+        let projectId = this.route.snapshot.params['id']
+        this.subscribeElements()
+        this.subscribeCurrentProject()
+        this.subscribeSelectedElementPosition()
+        this.subscribeChangesVariables()
+        this.subscribeProjects()
+        this.addArrowKeyEvents()
+        bool = this.loadCurrentProject(projectId)
+        if(!bool) {
+            this.router.navigate(['','blogs','projects'])
+        }
+    }
         
-        setTimeout(() => {
-            console.log( this.editor.nativeElement.offsetParent )
-            this.setContextMenu()
-            this.addEventToDraggableElements()
-        }, 500);
+    ngOnDestroy(): void {
+        this.selectedElementPositionSub.unsubscribe()
+        this.changesMadeSub.unsubscribe()
+        this.changesSavedSub.unsubscribe()
+        this.elementsSub.unsubscribe()
+        this.currentProjectSub.unsubscribe()
+        this.projectsSub.unsubscribe()
     }
 
-    loadBlogElements() {
-        this.blogEditorService.loadBlogElements().subscribe( ( blogElements:any )=>{
-            this.blogElements = blogElements
-        } )
-    }
-
-    loadCurrentProject() {
-        this.blogEditorService.currentProject.subscribe( currentProject=>{
-            if(currentProject){
-                this.currentProject = currentProject
-            } else {
-                setTimeout(() => {
-                    this.loadCurrentProject()
-                }, 500);
+    canDeactivate(): boolean | Observable<boolean> | Promise<boolean> {
+        if( this.changesMade && !this.changesSaved ) {
+            let bool:boolean
+            bool = confirm('Do you want to discard the changes?')
+            if( bool ) {
+                this.blogEditorService.changesMade.next(false)
+                this.blogEditorService.changesSaved.next(true)
             }
-        } )
-    }
-
-    addEventToDraggableElements() {
-        this.draggableElements.forEach( draggableElement => {
-            let element = draggableElement.nativeElement as HTMLElement
-
-            element.addEventListener( 'dragstart', ()=>{
-                this.toggleList( false )
-                element.classList.add('dragging')
-            } )
-            element.addEventListener( 'dragend', ()=>{
-                // this.currentProject.elements.splice(1, 0, this.blogElements[0])
-                this.inserNewElementInContainer()
-                element.classList.remove('dragging')
-            } )
-
-        } )
-    }
-
-    inserNewElementInContainer() {
-        
-    }
-
-    setContextMenu() {
-        let context_menu = this.context_menu.nativeElement as HTMLInputElement
-        this.editor.nativeElement.addEventListener( "contextmenu", (event:PointerEvent)=>{
-            event.preventDefault()
-            context_menu.classList.add('active')
-            this.blogEditorService.positionContextMenu(
-                context_menu, event, this.editor.nativeElement.offsetParent as HTMLInputElement)
-            window.addEventListener('click', ()=>{
-                context_menu.classList.remove('active')
-            }, false)
-        } )
-        this.context_menu.nativeElement.addEventListener( "contextmenu", (event:PointerEvent)=>{
-            event.preventDefault()
-        } )
-    }
-    
-    toggleList( bool:boolean, listName?:string ) {
-        if( bool && listName ) {
-            this.backdrop.nativeElement.classList.add("active")
-            if( listName=='elements' ){
-                this.element_list.nativeElement.classList.add("active")
-                this.category_list.nativeElement.classList.remove("active")
-            } else {
-                this.loadCategories()
-                this.category_list.nativeElement.classList.add("active")
-                this.element_list.nativeElement.classList.remove("active")
-            }
+            return bool
         } else {
-            this.backdrop.nativeElement.classList.remove("active")
-            this.element_list.nativeElement.classList.remove("active")
-            this.category_list.nativeElement.classList.remove("active")
+            return true
         }
     }
 
-    loadCategories() {
-        this.blogEditorService.loadCategories( 1, 100000 ).subscribe(data=>{
-            this.categories = data
-            this.categorySearchResults = this.categories
+    loadCurrentProject( projectId:string ) {
+        let bool = false
+        for( let i=0;i<this.projects.length;i++ ) {
+            if(this.projects[i].projectId==projectId) {
+                this.blogEditorService.currentProject.next( this.projects[i] )
+                bool = true
+            }
+        }
+        return bool
+    }
+    
+    // content loading methods
+    subscribeChangesVariables() {
+        this.changesMadeSub = this.blogEditorService.changesMade.subscribe( (changesMade:boolean)=>{
+            this.changesMade = changesMade
+        } )
+        this.changesSavedSub = this.blogEditorService.changesSaved.subscribe( (changesSaved:boolean)=>{
+            this.changesSaved = changesSaved
+        } )
+    }
+
+    subscribeElements() {
+        this.elementsSub = this.blogEditorService.elements.subscribe( (elements:BlogElementModel[])=>{
+            this.elements = elements
+        } )
+    }
+
+    subscribeCurrentProject() {
+        this.currentProjectSub = this.blogEditorService.currentProject.subscribe( currentProject=>{
+            if(currentProject) {
+                this.currentProject = currentProject
+                this.blogEditorService.elements.next( this.currentProject.elements )
+            }
+        } )
+    }
+
+    subscribeProjects() {
+        this.projectsSub = this.blogEditorService.projects.subscribe( projects=>{
+            this.projects = projects
+        } )
+    }
+    
+    subscribeSelectedElementPosition() {
+        this.selectedElementPositionSub = this.blogEditorService.selectedElementPosition.subscribe( selectedElementPosition=>{
+            this.selectedElementPosition = selectedElementPosition
+        } )
+    }
+
+    addArrowKeyEvents() {
+        document.addEventListener('keydown', (event:KeyboardEvent)=>{
+            switch( event.key ) {
+                // don't use save event it causes problems while saving projects
+                // case 's':
+                //     if( event.ctrlKey ){
+                //         event.stopImmediatePropagation()
+                //         event.preventDefault()
+                //         this.saveCurrentProject()
+                //     }
+                // break;
+            }
         })
     }
 
-    filterCategoriesByName() {
-        this.categorySearchResults = []
-        this.categories.forEach(category => {
-            if( category.name.includes( this.searchCategoryName ) )
-                this.categorySearchResults.push(category)
-        });
+    // Action events
+    addElement(newElement:BlogElementModel) {
+        if( !this.currentProject ) return
+        newElement.position = this.elements.length+1
+        this.elements.push( newElement )
+        this.blogEditorService.elements.next( this.elements )
+        this.blogEditorService.selectedElementPosition.next( newElement.position )
+        this.blogEditorService.changesMade.next(true)
+        this.blogEditorService.changesSaved.next(false)
     }
-
-    selectCategory(category:CategoryModel) {
-        if( category.name==this.selectedCategory.name ){
-            this.selectedCategory = new CategoryModel('','','')
-        } else {
-            this.selectedCategory = category
-        }
-    }
-
-    changeProjectCategory() {
-        this.currentProject.category = this.selectedCategory
-        this.selectedCategory = new CategoryModel('', '', '')
-        this.toggleList(false)
-    }
-
-    deleteElement( elementPosition:number ) {
-        let elements:BlogElementModel[] = this.currentProject.elements
-        for( let i=0; i<elements.length; i++ ) {
-            if( elements[i].position == elementPosition ) {
-                elements.splice( i,1 )
+    
+    saveCurrentProject() {
+        for( let i=0;i<this.projects.length;i++ ) {
+            if( this.currentProject && this.projects[i].projectId==this.currentProject.projectId ) {
+                this.projects.splice(i,1)
+                this.projects.splice(i,0,this.currentProject)
+                break;
             }
         }
-        this.currentProject.elements = elements
-        this.blogEditorService.currentProject.next( this.currentProject )
-        this.selectedElementPosition = 0
+        this.blogEditorService.storeProjects(this.projects)
+        this.blogEditorService.changesSaved.next(true)
+        this.blogEditorService.changesMade.next(false)
+        this.blogEditorService.currentProject.next(null)
+        this.blogEditorService.elements.next([])
+        this.router.navigate(['','blogs','projects'])
+    }
+
+    discardCurrentProject() {
+        this.blogEditorService.changesSaved.next(true)
+        this.blogEditorService.changesMade.next(false)
+        this.blogEditorService.currentProject.next(null)
+        this.router.navigate(['','blogs','projects'])
     }
 
 }

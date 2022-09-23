@@ -1,20 +1,56 @@
-<div class="output">
-    
-    <div class="elements">
-        <div 
-            class="element"
-            *ngFor="let element of currentProject.elements"
-            [ngSwitch]="element.name"
-        >
+<app-text-input
+    [value]="previousValue"
+    *ngIf="isTextInputActive"
+    (cancelTextInputEvent)="isTextInputActive = false"
+    (textInputUpdatedEvent)="isTextInputActive = false; onUpdate($event)"
+></app-text-input>
+<div class="elements">
+
+    <div 
+        class="element"
+        *ngFor="let element of elements"
+        [ngSwitch]="element.name"
+        [class.selected]="selectedElementPosition==element.position">
+
+        <div class="menu">
             <div 
-                class="heading"
-                *ngSwitchCase="'heading'"
-            >{{element.value}}</div>
+                class="action" 
+                (click)="edit()" 
+                title="Edit"
+            >E</div>
             <div 
-                class="paragraph"
-                *ngSwitchCase="'paragraph'"
-            >{{element.value}}</div>
+                class="action" 
+                (click)="delete()" 
+                title="Delete"
+            >D</div>
+            <!-- <div 
+                class="action" 
+                (click)="invokeEvent.emit('add element above')" 
+                title="Add element above"
+            ></div>
+            <div 
+                class="action" 
+                (click)="invokeEvent.emit('add element below')" 
+                title="Add element below"
+            ></div> -->
+            <div 
+                class="action" 
+                title="Move UP"
+            ></div>
+            <div 
+                class="action" 
+                title="Move Down"
+            ></div>
         </div>
+
+        <div class="type heading" *ngSwitchCase="'heading'">
+            <div class="value" (click)="selectElement(element.position)">{{element.value}}</div>
+        </div>
+
+        <div class="type paragraph" *ngSwitchCase="'paragraph'">
+            <div class="value" (click)="selectElement(element.position)">{{element.value}}</div>
+        </div>
+
     </div>
-    
+
 </div>

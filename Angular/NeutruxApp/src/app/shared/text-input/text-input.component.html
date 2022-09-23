@@ -1,0 +1,32 @@
+<div class="backdrop" (click)="cancelTextInputEvent.emit()"></div>
+
+<form 
+    action="javascript:void(0)" 
+    class="textInputForm" 
+    #textInputForm="ngForm"
+    (ngSubmit)="onSubmit()"
+>
+    <textarea 
+        name="value" 
+        cols="30" 
+        rows="3" 
+        [(ngModel)]="value"
+        class="input"
+        autofocus
+        #input
+    ></textarea>
+    
+    <div class="actions">
+        <button 
+            type="submit"
+            class="btn submit"
+            [disabled]="!(value.length>15)"
+            tabindex="0"
+        >Finish</button>
+        <button 
+            class="btn cancel"
+            (click)="cancelTextInputEvent.emit()" 
+        >Cancel</button>
+    </div>
+
+</form>

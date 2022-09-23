@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
+import { Router } from "@angular/router";
+import { BehaviorSubject, Observable, Subscription } from "rxjs";
 import { AesCryptoService } from "src/app/aes-crypto.service";
 import { BlogElementModel } from "../../blog.element.model";
 import { CategoryModel } from "../../category.model";
@@ -11,12 +12,18 @@ import { BlogProjectModel } from "../blog_project.model";
 })
 export class BlogEditorService {
 
-    projects = new BehaviorSubject< BlogProjectModel[] | null >(null)
-    currentProject = new BehaviorSubject< BlogProjectModel|null >(null)
+    projects = new BehaviorSubject<BlogProjectModel[]>([])
+    elements = new BehaviorSubject<BlogElementModel[]>([])
+    currentProject = new BehaviorSubject<BlogProjectModel|null>(null)
+    selectedElementPosition = new BehaviorSubject<number>(0)
+
+    changesMade = new BehaviorSubject<boolean>(false)
+    changesSaved = new BehaviorSubject<boolean>(true)
 
     constructor(
         private cryptoService:AesCryptoService,
-        private http:HttpClient
+        private http:HttpClient,
+        private router:Router
     ) {}
 
     loadBlogElements() : Observable<BlogElementModel[]> {
@@ -26,26 +33,25 @@ export class BlogEditorService {
     loadProjects() {
         let encryptedProjectsStr = localStorage.getItem('blog_projects')
         if( !encryptedProjectsStr ){
-            this.projects.next( [] )
-            this.storeProjects()
+            this.storeProjects([])
             return
         }
         let projectsStr = this.cryptoService.decryptData( encryptedProjectsStr )
         this.projects.next( JSON.parse(projectsStr) )
     }
 
-    storeProjects() {
+    storeProjects( projects:BlogProjectModel[] ) {
         let projectsString:string = ''
         let encryptedProjectsString:string = ''
-        this.projects.subscribe( projects => {
-            projectsString = JSON.stringify( projects )
-            encryptedProjectsString = this.cryptoService.encryptData( projectsString )
-            localStorage.setItem( 'blog_projects', encryptedProjectsString )
-        } )
+        projectsString = JSON.stringify( projects )
+        encryptedProjectsString = this.cryptoService.encryptData( projectsString )
+        localStorage.setItem( 'blog_projects', encryptedProjectsString )
+        this.loadProjects()
     }
 
-    uploadThumbnail( thumbnail:File ){
-        // enter program for uploading thumbnail on the file server using backend
+    uploadFile( fileToBeUploaded:File ){
+        // enter program for uploading file on the file server using backend
+        // return this.http.post()
     }
 
     loadCategories( pageNumber:number, pageLimit:number ) :Observable<CategoryModel[]> {

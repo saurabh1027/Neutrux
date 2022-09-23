@@ -23,14 +23,14 @@ export class AuthGuard implements CanActivate {
         let is_authorized : boolean = false;
         let encryptedUserStr = localStorage.getItem('userData');
         if( !encryptedUserStr ){
-            alert("Unauthenticated!")
+            alert("Please log in first!")
             this.router.navigate( ['','authentication'] )
             return false;
         }
         let user:User = JSON.parse( this.cryptoService.decryptData(encryptedUserStr) )
-
+        
         if( route.data['roles'] ){
-            is_authorized = this.isAuthorized( route.data['roles'], user.roles.split(',') )
+            is_authorized = this.isAuthorized( route.data['roles'], user.roles )
         }
         if(is_authorized) {
             return true

@@ -1,18 +1,33 @@
 import { DOCUMENT } from "@angular/common";
-import { Component, ElementRef, Inject, ViewChild } from "@angular/core";
+import { Component, ElementRef, Inject, OnInit, ViewChild } from "@angular/core";
+import { Subscription } from "rxjs";
+import { AuthService } from "src/app/users/authentication/auth.service";
+import { User } from "src/app/users/user.model";
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.sass']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
     @ViewChild('navigation') navigation!:ElementRef
     isSidenavOpened:boolean = false
+    user!:User
+
+    userSub!:Subscription
 
     constructor(
-        @Inject(DOCUMENT) private document:Document
+        private authService:AuthService,
+        @Inject(DOCUMENT) private document:Document,
     ) {}
+
+    ngOnInit(): void {
+        this.userSub = this.authService.user.subscribe( user=>{
+            if(user) {
+                this.user = user
+            }
+        } )
+    }
     
     toggleNavbar(bool:boolean){
         if(bool){

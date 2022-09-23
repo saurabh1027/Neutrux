@@ -1,0 +1,30 @@
+<div class="backdrop" (click)="cancelEvent.emit()"></div>
+
+<form 
+    action="javascript:void(0)"
+    (ngSubmit)="onSubmit()"
+    class="addElementForm"
+>
+    <div class="heading">Blog Elements</div>
+
+    <div class="elements">
+        <div 
+            class="element"
+            *ngFor="let element of blogElements"
+            (click)="selectElement(element)"
+            [class.selected]="element.name == newElement.name"
+        >{{element.name | titlecase}}</div>
+    </div>
+
+    <div class="actions">
+        <button 
+            type="submit"
+            class="btn submit" 
+            [disabled]="!newElement.name" 
+        >Finish</button>
+        <button 
+            class="cancel btn"
+            (click)="cancelEvent.emit()"
+        >Cancel</button>
+    </div>
+</form>

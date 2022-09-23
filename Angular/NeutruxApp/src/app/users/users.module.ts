@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
 import { RouterModule } from "@angular/router";
 import { SharedModule } from "../shared/shared.module";
+import { AuthService } from "./authentication/auth.service";
 import { AuthenticationComponent } from "./authentication/authentication.component";
 import { RegistrationComponent } from "./registration/registration.component";
 
@@ -23,6 +24,7 @@ import { RegistrationComponent } from "./registration/registration.component";
         AuthenticationComponent,
         RegistrationComponent
     ],
+    providers: [AuthService],
     bootstrap:[]
 })
 export class UsersModule{ }

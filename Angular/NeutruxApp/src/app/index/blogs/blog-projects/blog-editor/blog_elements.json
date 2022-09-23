@@ -3,7 +3,7 @@
         "elementId": "",
         "name": "heading",
         "description": "",
-        "value": "",
+        "value": "Enter the heading!",
         "position": 1,
         "blogId": ""
     },
@@ -11,7 +11,7 @@
         "elementId": "",
         "name": "paragraph",
         "description": "",
-        "value": "",
+        "value": "Enter the paragraph",
         "position": 2,
         "blogId": ""
     },
@@ -19,7 +19,7 @@
         "elementId": "",
         "name": "heading",
         "description": "",
-        "value": "",
+        "value": "Enter the heading!",
         "position": 4,
         "blogId": ""
     },
@@ -27,7 +27,7 @@
         "elementId": "",
         "name": "paragraph",
         "description": "",
-        "value": "",
+        "value": "Enter the paragraph",
         "position": 6,
         "blogId": ""
     },
@@ -35,7 +35,7 @@
         "elementId": "",
         "name": "heading",
         "description": "",
-        "value": "",
+        "value": "Enter the heading!",
         "position": 5,
         "blogId": ""
     },
@@ -43,7 +43,7 @@
         "elementId": "",
         "name": "paragraph",
         "description": "",
-        "value": "",
+        "value": "Enter the paragraph",
         "position": 3,
         "blogId": ""
     },
@@ -51,7 +51,7 @@
         "elementId": "",
         "name": "heading",
         "description": "",
-        "value": "",
+        "value": "Enter the heading!",
         "position": 7,
         "blogId": ""
     }

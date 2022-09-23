@@ -11,7 +11,7 @@
 	<artifactId>NeutruxConfigServer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>NeutruxConfigServer</name>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<description>Centralized Configuration Server for Neutrux</description>
 	<properties>
 		<java.version>1.8</java.version>
@@ -34,6 +34,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+		<dependency>  
+			<groupId>org.springframework.boot</groupId>  
+			<artifactId>spring-boot-starter-tomcat</artifactId>  
+			<scope>provided</scope>
+		</dependency>   
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -54,6 +59,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>NeutruxConfigServer</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

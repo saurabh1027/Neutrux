@@ -1,6 +1,6 @@
 <div class="tools">
 
-    <div class="tool">
+    <div class="tool" *ngIf="user && user.roles && user.roles.includes('ROLE_EDITOR')">
         <div class="thumbnail">
             <img 
                 src="../../../assets/tools/blog_editor_thumbnail.jpg" 
@@ -9,7 +9,7 @@
 
         <div class="details">
             <a 
-                [routerLink]="['','blogs','editor']"
+                [routerLink]="['','blogs','projects']"
                 class="name"    
             >Blog Editor</a>
         </div>

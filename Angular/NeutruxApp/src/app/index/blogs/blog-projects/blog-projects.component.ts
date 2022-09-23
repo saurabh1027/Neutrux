@@ -1,106 +1,74 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { Subscription } from "rxjs";
+import { SharedService } from "src/app/shared/shared.service";
 import { AuthService } from "src/app/users/authentication/auth.service";
 import { User } from "src/app/users/user.model";
-import { BlogEditorService } from "./blog-editor/blog-editor.service";
 import { BlogUserModel } from "../blog_user.model";
 import { CategoryModel } from "../category.model";
+import { BlogEditorService } from "./blog-editor/blog-editor.service";
 import { BlogProjectModel } from "./blog_project.model";
-import { BlogElementModel } from "../blog.element.model";
 
 @Component({
     selector: 'app-blog-projects',
     templateUrl: 'blog-projects.component.html',
     styleUrls: ['blog-projects.component.sass']
 })
-export class BlogProjectsComponent implements OnInit {
-    user!:User
+export class BlogProjectsComponent implements OnInit, OnDestroy {
     projects:BlogProjectModel[] = []
-    currentProject!:BlogProjectModel
+    projectsSub!:Subscription
 
     constructor(
-        private blogEditorService:BlogEditorService,
-        private authService:AuthService,
+        public blogEditorService:BlogEditorService,
+        public sharedService:SharedService,
+        private router:Router
     ) {}
 
     ngOnInit(): void {
-        this.loadCurrentProject()
+        this.subscribeProjects()
         this.blogEditorService.loadProjects()
-        this.loadProjects()
-
-        this.authService.user.subscribe(user=>{
-            if(user) this.user = user
-        })
-
-        this.openNewProject()
-    }
-
-    loadCurrentProject() {
-        this.blogEditorService.currentProject.subscribe( currentProject=>{
-            if(currentProject){
-                this.currentProject = currentProject
-            } else {
-                setTimeout(() => {
-                    this.loadCurrentProject()
-                }, 500);
-            }
-        } )
+        // setInterval(()=>{
+        //     this.blogEditorService.loadProjects()
+        // }, 60000)
     }
     
-    loadProjects() {
-        this.blogEditorService.projects.subscribe( projects => {
-            if(projects) 
-                this.projects = projects
-            else 
-                setTimeout(() => {
-                    this.loadProjects()
-                }, 500);
+    ngOnDestroy(): void {
+        this.projectsSub.unsubscribe()
+    }
+
+    subscribeProjects() {
+        this.projectsSub = this.blogEditorService.projects.subscribe( projects => {
+            this.projects = projects
         } )
     }
 
-    openNewProject() {
+    deleteProject( projectId:string ) {
+        let bool = confirm("Are you sure?")
+        if( bool ) {
+            for(let i=0;i<this.projects.length;i++) {
+                if(this.projects[i].projectId==projectId) {
+                    this.projects.splice(i,1)
+                    // this.blogEditorService.projects.next(this.projects)
+                    this.blogEditorService.storeProjects(this.projects)
+                    break;
+                }
+            }
+        }
+    }
 
+    openNewProject( newProjectId:string ) {
         let newProject:BlogProjectModel = new BlogProjectModel(
-            ( this.projects.length + 1 )+'',
-            'Hello this is the title I have wrote', 
+            newProjectId,
+             'Enter title of the blog here..'+newProjectId, 
             '', new Date(), 
             'https://neilpatel.com/wp-content/uploads/2017/08/blog.jpg',
             new CategoryModel( '', '', '' ),
             new BlogUserModel(0, '', '', '', ''),
-            [ 
-                new BlogElementModel(
-                    '', 'heading', '', 'Hello this is the 1st heading I have wrote',
-                    1, ''
-                ),
-                new BlogElementModel(
-                    '', 'paragraph', '', 'Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote ',
-                    2, ''
-                ),
-                new BlogElementModel(
-                    '', 'heading', '', 'Hello this is the 4th heading I have wrote',
-                    4, ''
-                ),
-                new BlogElementModel(
-                    '', 'paragraph', '', 'Hello this is the 6th heading I have wrote Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote ',
-                    6, ''
-                ),
-                new BlogElementModel(
-                    '', 'heading', '', 'Hello this is the 5th heading I have wrote',
-                    5, ''
-                ),
-                new BlogElementModel(
-                    '', 'paragraph', '', 'Hello this is the 3rd heading I have wrote Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote Hello this is the 2nd heading I have wrote ',
-                    3, ''
-                ),
-                new BlogElementModel(
-                    '', 'heading', '', 'Hello this is the 7th heading I have wrote',
-                    7, ''
-                ),
-            ]
+            []
         )
-
-        this.blogEditorService.currentProject.next( newProject )
-        this.projects.push(this.currentProject)
+        this.projects.push( newProject )
         this.blogEditorService.projects.next( this.projects )
+        this.router.navigate(['','blogs','editor',newProjectId])
     }
 
 }

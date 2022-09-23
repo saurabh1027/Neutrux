@@ -17,7 +17,8 @@ import { TopBlogsComponent } from "./top-blogs/top-blogs.component";
 import { BlogEditorComponent } from "./blog-projects/blog-editor/blog-editor.component";
 import { BlogDetailsComponent } from "./blog-projects/blog-editor/blog-details/blog-details.component";
 import { BlogElementsComponent } from "./blog-projects/blog-editor/blog-elements/blog-elements.component";
-import { BlogEditElementsComponent } from "./blog-projects/blog-editor/blog-edit-elements/blog-edit-elements.component";
+import { SelectCategoryComponent } from "./blog-projects/blog-editor/select-category/select-category.component";
+import { AddBlogElementComponent } from "./blog-projects/blog-editor/add-blog-element/add-blog-element.component";
 
 @NgModule({
     declarations: [
@@ -31,7 +32,8 @@ import { BlogEditElementsComponent } from "./blog-projects/blog-editor/blog-edit
         BlogEditorComponent,
         BlogDetailsComponent,
         BlogElementsComponent,
-        BlogEditElementsComponent
+        SelectCategoryComponent,
+        AddBlogElementComponent
     ],
     imports: [
         // don't import the modules that are already present in AppModule for e.g. BrowserModule, HttpClientModule.

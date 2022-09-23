@@ -16,7 +16,7 @@ export interface AuthResponseData {
     roles: string
 }
 
-@Injectable()
+@Injectable({ providedIn:'root' })
 export class AuthService{
     user = new BehaviorSubject<User|null>(null)
     private tokenExpirationTimer: any;
@@ -84,7 +84,7 @@ export class AuthService{
             user.firstname,
             user.lastname,
             user.email,
-            user.roles,
+            this.getUserRoles(user.roles),
             user._accessToken,
             new Date( user._accessTokenExpirationDate )
         )
@@ -96,6 +96,13 @@ export class AuthService{
             this.autoLogout( sessionExpiryDuration )
         }
         
+    }
+
+    getUserRoles( rolesStr:string ) {
+        if(rolesStr.includes(','))
+            return rolesStr.split(',')
+        else
+            return [...rolesStr]
     }
 
     autoLogout(sessionExpiryDuration: number) {
@@ -112,7 +119,7 @@ export class AuthService{
             authResponseData.firstname,
             authResponseData.lastname,
             authResponseData.email,
-            authResponseData.roles,
+            authResponseData.roles.split(','),
             token,
             expirationDate
         )

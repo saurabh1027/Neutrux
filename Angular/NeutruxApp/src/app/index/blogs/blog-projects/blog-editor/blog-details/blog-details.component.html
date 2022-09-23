@@ -1,60 +1,49 @@
-<div class="details" [class.edit]="editMode">
-    <div class="edit-title" title="Title of blog" *ngIf="editMode">
-        <textarea 
-            name="title" 
-            [(ngModel)]="currentProject.title"
-            #title="ngModel"
-            [class.error]="title.touched && (!(currentProject.title.length>50) || currentProject.title.length>140)"
-            placeholder="Enter title of blog here!"
-        ></textarea>
-        <div class="row" *ngIf="editMode">
-            <span 
-                class="category" 
-                *ngIf="currentProject.category && currentProject.category.name"
-            >{{currentProject.category.name}}</span>
-            <span
-                class="error" 
-                *ngIf="title.touched && (!(currentProject.title.length>50) || currentProject.title.length>140)"
-            >Title should be in between 50-140 characters!</span>
-        </div>
-    </div>
+<app-file-upload
+    [folderName]="folderName"
+    *ngIf="isFileUploadActive"
+    (cancelFileUploadEvent)="isFileUploadActive = false"
+    (fileUploadSuccessEvent)="isFileUploadActive= false; updateThumbnailEvent.emit($event); blogEditorService.changesMade.next(true); blogEditorService.changesSaved.next(false)"
+></app-file-upload>
 
-    <div class="title" *ngIf="!editMode">{{currentProject.title}}</div>
-    
-    <div class="thumbnail" #thumbnail>
+<app-text-input
+    [value]="title"
+    *ngIf="isTitleTextInputActive"
+    (cancelTextInputEvent)="isTitleTextInputActive = false"
+    (textInputUpdatedEvent)="isTitleTextInputActive = false; updateTitleEvent.emit($event); blogEditorService.changesMade.next(true); blogEditorService.changesSaved.next(false)"
+></app-text-input>
+
+<app-select-category
+    [selectedCategory]="category"
+    (changeCategoryEvent)="updateCategoryEvent.emit($event); isCategoryTextInputActive= false; blogEditorService.changesMade.next(true); blogEditorService.changesSaved.next(false)"
+    (cancelEvent)="isCategoryTextInputActive= false"
+    *ngIf="isCategoryTextInputActive"
+></app-select-category>
+
+<div class="title" (click)="isTitleTextInputActive=true">
+    {{title}}
+</div>
+
+<div class="details">
+    <span 
+        class="category" 
+        [title]="category.description"
+        (click)="isCategoryTextInputActive=true"
+        *ngIf="category.name"
+    >{{category.name | titlecase}}</span>
+        
+    <span 
+        class="category" 
+        title="click to select category"
+        (click)="isCategoryTextInputActive=true"
+        *ngIf="!category.name"
+    >Select Category</span>
+
+    <span class="date">{{currentDate | date:'longDate'}}</span>
+
+    <!-- <div class="thumbnail" #thumbnail>
         <img [src]="currentProject.thumbnail" alt="Thumbnail">
-        <div class="hover-card" (click)="toggleCard(true)" *ngIf="editMode">
+        <div class="hover-card" (click)="isFileUploadActive = true">
             <span>Thumbnail ✏️</span>
         </div>
-        <form 
-            action="javascript:void(0)" 
-            class="update-card" 
-            #updateThumbnailForm="ngForm"
-            (ngSubmit)="updateThumbnail()"
-            *ngIf="editMode"
-        >
-            <div>
-                <input 
-                    type="file" 
-                    name="thumbnail" 
-                    class="thumbnail-file-input"
-                    ngModel
-                    (change)="changeThumbnail($event)"
-                >
-                <span style="margin-left: 10px;">OR</span>
-            </div>
-            <textarea 
-                name="thumbnail-url" 
-                placeholder="Enter URL here..."
-                rows="3"
-                cols="25"
-                class="thumbnail-url"
-                ngModel
-            ></textarea>
-            <div class="actions">
-                <button type="submit" class="submitbtn">✔️</button>
-                <span class="action" (click)="toggleCard(false)">❌</span>
-            </div>
-        </form>
-    </div>
+    </div> -->
 </div>

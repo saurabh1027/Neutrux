@@ -1,0 +1,85 @@
+.backdrop
+    position: fixed
+    top: 0
+    left: 0
+    background: rgba(0, 0, 0, 0.75)
+    bottom: 0
+    right: 0
+    z-index: 10
+    cursor: pointer
+
+.uploadFileForm
+    position: fixed
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    z-index: 11
+    display: flex
+    flex-direction: column
+    row-gap: 10px
+    box-shadow: 0 0 4px #aaa
+    background: #ccc
+    padding: 30px
+    user-select: none
+
+    .file
+        width: 100%
+        z-index: 1
+        &::-webkit-file-upload-button 
+            visibility: hidden
+        &::before
+            width: 99%
+            content: 'Select file to upload'
+            display: inline-block
+            background: rgba(256, 256, 256, 0.75)
+            border: 1px solid #999
+            border-radius: 4px
+            padding: 8px 0
+            outline: none
+            white-space: nowrap
+            cursor: pointer
+            font-weight: 700
+            font-size: 10pt
+            text-align: center
+        &:hover
+            &::before
+                border-color: #555
+        &:active
+            &::before
+                background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9)
+
+    .center
+        text-align: center
+
+    .file-url
+        width: 250px
+        outline: none
+        padding: 10px
+        border: 1px solid #aaa
+        border-radius: 3px
+        &:hover
+            border-color: #777
+
+    .error
+        color: #f00
+        font-size: 12px
+    
+    .actions
+        display: flex
+        align-items: center
+        justify-content: center
+        column-gap: 10px
+        margin-top: 15px
+
+        .btn
+            outline: none
+            padding: 10px 25px
+            cursor: pointer
+            color: #fff
+            background: #1774ff
+            border-radius: 5px
+            border: none
+            &:disabled
+                background: #75acff
+            &.cancel
+                background: #f00

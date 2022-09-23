@@ -1,0 +1,38 @@
+<div class="backdrop" (click)="cancelEvent.emit()"></div>
+
+<form 
+    #selectCategoryForm="ngForm"
+    class="selectCategoryForm"
+    (ngSubmit)="onSubmit()"
+>
+    <input 
+        type="text"
+        name="category-search"
+        class="category-search"
+        placeholder="Enter category here!"
+        [(ngModel)]="searchCategoryName"
+        (keyup)="filterCategoriesByName()"
+    >
+
+    <div class="category-list">
+        <div 
+            class="category"
+            *ngFor="let category of categorySearchResults"
+            [title]="category.description"
+            [class.selected]="category.categoryId == selectedCategory.categoryId"
+            (click)="selectCategory(category)"
+        >{{category.name}}</div>
+    </div>
+
+    <div class="actions">
+        <button 
+            type="submit"
+            class="btn submit"
+            [disabled]="!selectedCategory.name"
+        >Finish</button>
+        <button 
+            class="btn cancel"
+            (click)="cancelEvent.emit()"    
+        >Cancel</button>
+    </div>
+</form>

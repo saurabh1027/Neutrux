@@ -1,23 +1,82 @@
-.output
+.elements
     width: 100%
     height: 100%
-    padding: 25px 15px 15px
+    padding: 25px 0 15px
     display: flex
     flex-direction: column
     row-gap: 10px
     user-select: none
+    z-index: 1
 
-    .elements
+    .element
         display: flex
-        flex-direction: column
-        row-gap: 20px
-        padding: 10px 0 0
-        .element
-            .heading
+        justify-content: center
+        column-gap: 10px
+        position: relative
+        padding: 3px
+        &:hover
+            padding: 0
+            .type
+                .input
+                    outline: none
+                    border: 3px dashed #82d1ff
+                    &:hover, &:focus
+                        outline-color: #82d1ff
+                .value
+                    border: 3px dashed #82d1ff
+        &.selected
+            padding: 0
+            &:hover
+                .menu
+                    display: flex
+            .type
+                .input
+                    outline: none
+                    border: 3px dashed #4abaf9
+                    &:hover, &:focus
+                        outline-color: #4abaf9
+                .value
+                    border: 3px dashed #4abaf9
+
+        .type
+            width: 100%
+            .input
+                width: 100%
+                background: #fff
+                border: 1px solid #ccc
+                border-radius: 5px
+                resize: vertical
+                outline: none
+                padding: 10px
+                &:hover
+                    border: none
+                    outline: 2px dashed #888
+                    &.error
+                        outline-color: red
+                &:focus
+                    border: none
+                    outline: 3px dashed #555
+                    &.error
+                        outline-color: red
+                &.error
+                    border-color: red
+            .value
+                padding: 10px
+                cursor: pointer
+        
+        .heading
+            .input
+                font-size: 20px
+            .value
                 font-size: 22px
-            .paragraph
-                color: #555
+        
+        .paragraph
+            color: #555
+            .input
+                font-size: 14px
+            .value
                 font-size: 15px
+
         .img
             img
                 max-width: 700px
@@ -26,22 +85,32 @@
                 width: 100%
                 -webkit-user-drag: none
 
+        .menu
+            position: absolute
+            bottom: 100%
+            right: 0
+            padding: 7px 10px
+            display: none
+            column-gap: 15px
+            box-shadow: 0 0 2px #111
+            .action
+                width: 20px
+                height: 20px
+                cursor: pointer
+                border-radius: 50%
+                border: 1px solid #111
+                display: flex
+                justify-content: center
+                align-items: center
+
 @media screen and (max-width:900px)
     .output
-        .elements
-            row-gap: 10px
-            .element
-                .heading
-                    font-size: 20px
-                .paragraph
+        padding: 0
 
-@media screen and (max-width:550px)
-    .output
-        padding: 15px
-        .elements
+        .edit-elements
             .element
-                textarea
-                    &.heading
-                        font-size: 18px
-                    &.paragraph
-                        font-size: 14px
+                .move-icon
+                    display: none
+                .heading
+                    .input
+                        width: 100%

@@ -1,0 +1,44 @@
+<div class="backdrop" (click)="cancelFileUploadEvent.emit()"></div>
+
+<form 
+    action="javascript:void(0)" 
+    class="uploadFileForm" 
+    #uploadFileForm="ngForm"
+    (ngSubmit)="onSubmit()"
+>
+    <input 
+        type="file" 
+        name="file" 
+        class="file"
+        #file="ngModel"
+        ngModel
+        required
+        (change)="onFileChange($event)"
+    >
+    <span class="center">OR</span>
+    <input 
+        name="file-url" 
+        placeholder="Enter URL here..."
+        class="file-url"
+        #fileUrl="ngModel"
+        ngModel
+        required
+    >
+    <div 
+        *ngIf=" uploadFileForm.touched && ( !(file.valid || fileUrl.valid) || (file.valid && fileUrl.valid) ) "
+        class="error"
+    >
+        <span class="message">Please select only one file input</span>
+    </div>
+    <div class="actions">
+        <button 
+            type="submit"
+            class="btn submit"
+            [disabled]=" !(file.valid || fileUrl.valid) || (file.valid && fileUrl.valid) "
+        >Submit</button>
+        <button 
+            class="btn cancel"
+            (click)="cancelFileUploadEvent.emit()"    
+        >Cancel</button>
+    </div>
+</form>
