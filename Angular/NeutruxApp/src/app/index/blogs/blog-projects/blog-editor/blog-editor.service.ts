@@ -1,8 +1,9 @@
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Observable, Subscription } from "rxjs";
 import { AesCryptoService } from "src/app/aes-crypto.service";
+import { environment } from "src/environments/environment.prod";
 import { BlogElementModel } from "../../blog.element.model";
 import { CategoryModel } from "../../category.model";
 import { BlogProjectModel } from "../blog_project.model";
@@ -50,8 +51,10 @@ export class BlogEditorService {
     }
 
     uploadFile( fileToBeUploaded:File ){
-        // enter program for uploading file on the file server using backend
-        // return this.http.post()
+        const formData:FormData = new FormData()
+        formData.append( "image", fileToBeUploaded )
+        return this.http.post( environment.backendServerUrl+'image-upload', formData, 
+            { headers: new HttpHeaders().append('Content-Type', 'multipart/form-data') , responseType:'text' })
     }
 
     loadCategories( pageNumber:number, pageLimit:number ) :Observable<CategoryModel[]> {

@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  backendServerUrl: 'http://localhost:8010/'
+  backendServerUrl: 'http://localhost:8010/',
+  frontendServerUrl: 'http://localhost:4200/',
+  assetsUrl: 'http://localhost:4200/assets/'
 };
 
 /*

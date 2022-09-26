@@ -6,6 +6,16 @@
     #textInputForm="ngForm"
     (ngSubmit)="onSubmit()"
 >
+    <div class="topbar">
+        <span class="heading">{{title}}</span>
+        <div class="icon" (click)="cancelTextInputEvent.emit()" title="close (esc)">
+            <svg>
+                <rect class="line one" />
+                <rect class="line two" />
+            </svg>
+        </div>
+    </div>
+
     <textarea 
         name="value" 
         cols="30" 
@@ -18,15 +28,14 @@
     
     <div class="actions">
         <button 
-            type="submit"
-            class="btn submit"
-            [disabled]="!(value.length>15)"
-            tabindex="0"
-        >Finish</button>
-        <button 
             class="btn cancel"
             (click)="cancelTextInputEvent.emit()" 
         >Cancel</button>
+        <button 
+            type="submit"
+            class="btn submit"
+            [disabled]="!(value.length>15)"
+        >Submit</button>
     </div>
 
 </form>

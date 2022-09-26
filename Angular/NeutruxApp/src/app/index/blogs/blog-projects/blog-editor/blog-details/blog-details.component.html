@@ -6,6 +6,7 @@
 ></app-file-upload>
 
 <app-text-input
+    [title]="'Edit Title'"
     [value]="title"
     *ngIf="isTitleTextInputActive"
     (cancelTextInputEvent)="isTitleTextInputActive = false"

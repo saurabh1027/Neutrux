@@ -1,4 +1,4 @@
-<div class="backdrop" (click)="cancelFileUploadEvent.emit()"></div>
+<div class="backdrop" (click)="cancelEvent.emit()"></div>
 
 <form 
     action="javascript:void(0)" 
@@ -6,6 +6,25 @@
     #uploadFileForm="ngForm"
     (ngSubmit)="onSubmit()"
 >
+    <div class="topbar">
+        <span class="heading">File Upload</span>
+        <div class="icon" (click)="cancelEvent.emit()" title="close (esc)">
+            <svg>
+                <rect class="line one" />
+                <rect class="line two" />
+            </svg>
+        </div>
+    </div>
+
+    <input 
+        name="file-url" 
+        placeholder="Enter URL here..."
+        class="file-url-input"
+        #fileUrl="ngModel"
+        ngModel
+        required
+    >
+    <span class="center">OR</span>
     <input 
         type="file" 
         name="file" 
@@ -14,31 +33,31 @@
         ngModel
         required
         (change)="onFileChange($event)"
+        accept=".png, .jpg, .jpeg, .webp"
     >
-    <span class="center">OR</span>
-    <input 
-        name="file-url" 
-        placeholder="Enter URL here..."
-        class="file-url"
-        #fileUrl="ngModel"
-        ngModel
-        required
-    >
+
     <div 
         *ngIf=" uploadFileForm.touched && ( !(file.valid || fileUrl.valid) || (file.valid && fileUrl.valid) ) "
         class="error"
     >
-        <span class="message">Please select only one file input</span>
+        <span class="message">Please select only one file input.</span>
     </div>
+    <div 
+        *ngIf="fileToBeUploaded && (fileToBeUploaded.size/1024)>=200"
+        class="error"
+    >
+        <span class="message">File size should be less than 200KB.</span>
+    </div>
+
     <div class="actions">
+        <button 
+            class="btn cancel"
+            (click)="cancelEvent.emit()" 
+        >Cancel</button>
         <button 
             type="submit"
             class="btn submit"
-            [disabled]=" !(file.valid || fileUrl.valid) || (file.valid && fileUrl.valid) "
+            [disabled]=" !(file.valid || fileUrl.valid) || (file.valid && fileUrl.valid) || (fileToBeUploaded && (fileToBeUploaded.size/1024)>=200) "
         >Submit</button>
-        <button 
-            class="btn cancel"
-            (click)="cancelFileUploadEvent.emit()"    
-        >Cancel</button>
     </div>
 </form>

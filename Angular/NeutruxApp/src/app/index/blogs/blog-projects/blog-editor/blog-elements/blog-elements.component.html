@@ -1,9 +1,17 @@
 <app-text-input
+    [title]="'Edit Element'"
     [value]="previousValue"
     *ngIf="isTextInputActive"
     (cancelTextInputEvent)="isTextInputActive = false"
     (textInputUpdatedEvent)="isTextInputActive = false; onUpdate($event)"
 ></app-text-input>
+
+<app-file-upload
+    *ngIf="isFileUploadActive"
+    (fileUploadSuccessEvent)="isFileUploadActive = false; onUpdate($event)"
+    (cancelFileUploadEvent)="isFileUploadActive = false"
+></app-file-upload>
+
 <div class="elements">
 
     <div 
@@ -51,6 +59,21 @@
             <div class="value" (click)="selectElement(element.position)">{{element.value}}</div>
         </div>
 
+        <div class="type image" *ngSwitchCase="'image'">
+            <div class="img" (click)="selectElement(element.position)">
+                <img [src]="element.value" alt="image">
+            </div>
+        </div>
+
+        <div class="type image-paragraph" *ngSwitchCase="'image & paragraph'">
+            <div class="group" (click)="selectElement(element.position)">
+                <div class="img">
+                    <img [src]="element.value" alt="image">
+                </div>
+                <!-- <div class="paragraph" *ngIf="">{{element.value}}</div> -->
+            </div>
+        </div>
+        
     </div>
 
 </div>

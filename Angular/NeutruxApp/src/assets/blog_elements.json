@@ -4,15 +4,28 @@
         "name": "heading",
         "description": "",
         "value": "Enter the heading!",
-        "position": 1,
+        "position": 0,
         "blogId": ""
-    },
-    {
+    },{
         "elementId": "",
         "name": "paragraph",
         "description": "",
         "value": "Enter the paragraph",
-        "position": 2,
+        "position": 0,
+        "blogId": ""
+    },{
+        "elementId":"",
+        "name": "image",
+        "description": "",
+        "value": "https://neilpatel.com/wp-content/uploads/2017/08/blog.jpg",
+        "position": 0,
+        "blogId": ""
+    },{
+        "elementId":"",
+        "name": "image & paragraph",
+        "description": "",
+        "value": "https://neilpatel.com/wp-content/uploads/2017/08/blog.jpg",
+        "position": 0,
         "blogId": ""
     }
 ]

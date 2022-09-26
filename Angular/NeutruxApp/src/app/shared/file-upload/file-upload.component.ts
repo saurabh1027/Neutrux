@@ -1,27 +1,48 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { BlogEditorService } from "src/app/index/blogs/blog-projects/blog-editor/blog-editor.service";
+import { environment } from "src/environments/environment.prod";
 
 @Component({
     selector: 'app-file-upload',
     templateUrl: 'file-upload.component.html',
     styleUrls: ['file-upload.component.sass']
 })
-export class FileUploadComponent{
+export class FileUploadComponent implements OnInit, OnDestroy {
     @Input("folderName") folderName!:string
     @ViewChild("uploadFileForm") uploadFileForm!:NgForm
-    @Output("cancelFileUploadEvent") cancelFileUploadEvent = new EventEmitter()
+    @Output("cancelFileUploadEvent") cancelEvent = new EventEmitter()
     @Output("fileUploadSuccessEvent") fileUploadSuccessEvent = new EventEmitter<string>()
     fileToBeUploaded!:File
-    // fileUrl!:string
 
     constructor(
         private blogEditorService:BlogEditorService 
     ) {}
 
+    ngOnInit(): void {
+        let body:HTMLElement = document.body
+        body.classList.add('no-scrolling')
+        this.addKeyboardEvent()
+    }
+
+    ngOnDestroy(): void {
+        let body:HTMLElement = document.body
+        body.classList.remove('no-scrolling')
+    }
+
+    addKeyboardEvent(){
+        document.addEventListener('keydown', (event:KeyboardEvent)=>{
+            if( event.key.toLowerCase() == 'escape' ) {
+                this.cancelEvent.emit()
+            }
+        })
+    }
+
     onFileChange( event:any ) {
-        if( event && event.target && event.target.files && event.target.files.length>0 )
+        if( event && event.target && event.target.files && event.target.files.length>0 ){
             this.fileToBeUploaded = event.target.files[0]
+            console.log( this.fileToBeUploaded )
+        }
     }
 
     onSubmit() {
@@ -31,10 +52,13 @@ export class FileUploadComponent{
             this.fileUploadSuccessEvent.emit(fileUrl)
         } else if(this.fileToBeUploaded){
             // file upload
-            this.blogEditorService.uploadFile(this.fileToBeUploaded)
-            // emit file url after uploading on file server
-            this.fileUploadSuccessEvent.emit('')
+            this.blogEditorService.uploadFile(this.fileToBeUploaded).subscribe( (path:string)=>{
+                fileUrl = path
+                this.fileUploadSuccessEvent.emit(environment.assetsUrl + 'blog_pictures/' + fileUrl)
+            } )
         }
+        this.blogEditorService.changesMade.next(true)
+        this.blogEditorService.changesSaved.next(false)
     }
 
 

@@ -10,3 +10,11 @@ export class BlogElementModel{
     ) {}
 
 }
+
+/*
+
+options: 
+    size = full|medium|half
+    position = left|medium|right
+
+*/

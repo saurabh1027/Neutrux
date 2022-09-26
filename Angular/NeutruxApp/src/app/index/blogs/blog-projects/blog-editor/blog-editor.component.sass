@@ -16,12 +16,12 @@
         flex-direction: column
         display: flex
         align-items: center
-        row-gap: 10px
-        padding: 10px 0
+        row-gap: 15px
+        padding: 20px 0
 
         .action
-            width: 25px
-            height: 25px
+            width: 27px
+            height: 27px
             cursor: pointer
             display: flex
             justify-content: center
@@ -31,11 +31,29 @@
             padding: 0
             border: none
             &.sm
-                width: 20px
-                height: 20px
+                width: 22px
+                height: 22px
             &.lg
-                width: 25px
-                height: 25px
+                width: 27px
+                height: 27px
+
+            svg
+                &.add
+                    .fg
+                        fill: #00cd2c
+                &.save
+                    .fg
+                        fill: #0e7ae9
+                &.edit
+                    .fg
+                        fill: #0ff
+                &.discard
+                    .fg
+                        fill: #f00
+                .bg
+                    fill: #555
+                .fg
+                    fill: #fff
 
     .editor
         min-height: 80vh

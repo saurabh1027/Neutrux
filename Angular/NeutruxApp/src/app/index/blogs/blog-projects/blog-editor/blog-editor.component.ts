@@ -2,8 +2,6 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Observable, Subscription } from "rxjs";
 import { BlogElementModel } from "../../blog.element.model";
-import { BlogUserModel } from "../../blog_user.model";
-import { CategoryModel } from "../../category.model";
 import { BlogProjectModel } from "../blog_project.model";
 import { BlogEditorService } from "./blog-editor.service";
 import { CanComponentDeactivate } from "./can-deactivate-guard.service";

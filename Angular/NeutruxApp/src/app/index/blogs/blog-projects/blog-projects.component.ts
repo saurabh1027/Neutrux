@@ -2,8 +2,6 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { SharedService } from "src/app/shared/shared.service";
-import { AuthService } from "src/app/users/authentication/auth.service";
-import { User } from "src/app/users/user.model";
 import { BlogUserModel } from "../blog_user.model";
 import { CategoryModel } from "../category.model";
 import { BlogEditorService } from "./blog-editor/blog-editor.service";
@@ -39,6 +37,7 @@ export class BlogProjectsComponent implements OnInit, OnDestroy {
     subscribeProjects() {
         this.projectsSub = this.blogEditorService.projects.subscribe( projects => {
             this.projects = projects
+            this.router.navigate(['','blogs','editor',1])
         } )
     }
 

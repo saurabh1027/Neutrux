@@ -1,20 +1,30 @@
 <div class="backdrop" (click)="cancelEvent.emit()"></div>
 
 <form 
-    #selectCategoryForm="ngForm"
     class="selectCategoryForm"
     (ngSubmit)="onSubmit()"
 >
+    <div class="topbar">
+        <span class="heading">Select Category</span>
+        <div class="icon" (click)="cancelEvent.emit()" title="close (esc)">
+            <svg>
+                <rect class="line one" />
+                <rect class="line two" />
+            </svg>
+        </div>
+    </div>
+
     <input 
         type="text"
         name="category-search"
-        class="category-search"
-        placeholder="Enter category here!"
+        #searchInput
+        class="search-input"
+        placeholder="Search category"
         [(ngModel)]="searchCategoryName"
-        (keyup)="filterCategoriesByName()"
+        (keyup)="isLoading= true; filterCategoriesByName()"
     >
 
-    <div class="category-list">
+    <div class="categories" *ngIf="!isLoading && categorySearchResults.length>0">
         <div 
             class="category"
             *ngFor="let category of categorySearchResults"
@@ -24,15 +34,24 @@
         >{{category.name}}</div>
     </div>
 
+    <div class="loading" *ngIf="isLoading">
+        <div class="skeleton-div"></div>
+        <div class="skeleton-div"></div>
+        <div class="skeleton-div"></div>
+        <div class="skeleton-div"></div>
+    </div>
+    
+    <div class="none" *ngIf="!isLoading && categorySearchResults.length==0">No results</div>
+    
     <div class="actions">
-        <button 
-            type="submit"
-            class="btn submit"
-            [disabled]="!selectedCategory.name"
-        >Finish</button>
         <button 
             class="btn cancel"
             (click)="cancelEvent.emit()"    
         >Cancel</button>
+        <button 
+            type="submit"
+            class="btn submit"
+            [disabled]="!selectedCategory.name"
+        >Submit</button>
     </div>
 </form>

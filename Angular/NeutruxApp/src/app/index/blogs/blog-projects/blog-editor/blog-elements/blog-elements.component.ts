@@ -18,6 +18,8 @@ export class BlogElementsComponent implements OnInit, OnDestroy, CanComponentDea
     previousValue:string = ''
     isTextInputActive:boolean = false
 
+    isFileUploadActive:boolean = false
+
     changesMade:boolean = false
     changesSaved:boolean = true 
 
@@ -89,27 +91,35 @@ export class BlogElementsComponent implements OnInit, OnDestroy, CanComponentDea
     }
 
     edit() {
+        let textElements:string[] = ['heading','paragraph']
+        // let textElements:string[] = ['heading','paragraph']
         for( let i=0; i<this.elements.length; i++ ) {
             if( this.selectedElementPosition == this.elements[i].position ) {
-                this.previousValue = this.elements[i].value
-                this.isTextInputActive = true
+                if( textElements.includes( this.elements[i].name ) ) {
+                    this.previousValue = this.elements[i].value
+                    this.isTextInputActive = true
+                } else if( this.elements[i].name == 'image' ) {
+                    this.isFileUploadActive = true
+                }
                 return
             }
         }
     }
 
     onUpdate( value:string ) {
-        for( let i=0; i<this.elements.length; i++ ) {
-            if( this.selectedElementPosition == this.elements[i].position ) {
-                this.elements[i].value = value
-                this.blogEditorService.elements.next( this.elements )
-                this.editing = false
-                this.blogEditorService.changesMade.next(true)
-                this.blogEditorService.changesSaved.next(false)
-                this.addArrowKeyEvents()
-                return
+        setTimeout(() => {
+            for( let i=0; i<this.elements.length; i++ ) {
+                if( this.selectedElementPosition == this.elements[i].position ) {
+                    this.elements[i].value = value
+                    this.blogEditorService.elements.next( this.elements )
+                    this.editing = false
+                    this.blogEditorService.changesMade.next(true)
+                    this.blogEditorService.changesSaved.next(false)
+                    this.addArrowKeyEvents()
+                    return
+                }
             }
-        }
+        }, 500);
     }
 
     addArrowKeyEvents() {
@@ -166,6 +176,8 @@ export class BlogElementsComponent implements OnInit, OnDestroy, CanComponentDea
             this.elements[i].position = i+1
         }
         this.blogEditorService.elements.next( this.elements )
+        this.blogEditorService.changesMade.next(true)
+        this.blogEditorService.changesSaved.next(false)
     }
 
     focusSelectedElement(){

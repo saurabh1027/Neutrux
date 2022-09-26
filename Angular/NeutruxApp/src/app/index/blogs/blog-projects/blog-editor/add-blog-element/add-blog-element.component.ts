@@ -17,21 +17,37 @@ export class AddBlogElementComponent implements OnInit, OnDestroy {
     @Output('cancelEvent') cancelEvent = new EventEmitter()
     @Output('addElementSuccessEvent') addElementSuccessEvent = new EventEmitter<BlogElementModel>()
 
+    isLoading = true
+
     constructor(
         public blogEditorService:BlogEditorService,
     ) {}
     
     ngOnInit(): void {
+        let body:HTMLElement = document.body
+        body.classList.add('no-scrolling')
         this.loadBlogElements()
+        this.addKeyboardEvent()
     }
 
     ngOnDestroy(): void {
+        let body:HTMLElement = document.body
+        body.classList.remove('no-scrolling')
         this.blogElementsSub.unsubscribe()
+    }
+
+    addKeyboardEvent(){
+        document.addEventListener('keydown', (event:KeyboardEvent)=>{
+            if( event.key.toLowerCase() == 'escape' ) {
+                this.cancelEvent.emit()
+            }
+        })
     }
 
     loadBlogElements() {
         this.blogElementsSub = this.blogEditorService.loadBlogElements().subscribe( ( blogElements:any )=>{
             this.blogElements = blogElements
+            this.isLoading = false
         } )
     }
 
