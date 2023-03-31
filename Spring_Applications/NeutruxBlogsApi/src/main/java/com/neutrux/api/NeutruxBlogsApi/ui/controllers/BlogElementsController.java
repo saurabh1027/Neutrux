@@ -39,6 +39,18 @@ public class BlogElementsController {
 	public BlogElementsController(BlogElementsService blogElementsService) {
 		this.blogElementsService = blogElementsService;
 	}
+	
+	@PreAuthorize("hasRole('ROLE_EDITOR') and principal==#userId")
+	@DeleteMapping
+	public ResponseEntity<SuccessMessageResponseModel> deleteBlogElements(@PathVariable("blogId") String blogId,
+			@RequestParam("X-User-ID") String userId) throws Exception {
+		blogElementsService.deleteElementsByBlogId(blogId);
+
+		SuccessMessageResponseModel successMessageResponseModel = new SuccessMessageResponseModel(new Date(),
+				HttpStatus.OK.value(), HttpStatus.OK, "Elements of blog with ID " + blogId + " has been deleted!");
+
+		return ResponseEntity.status(HttpStatus.OK).body(successMessageResponseModel);
+	}
 
 	@PreAuthorize("hasRole('ROLE_EDITOR') and principal==#userId")
 	@GetMapping

@@ -9,20 +9,30 @@ import javax.validation.constraints.Size;
 public class BlogElementRequestModel implements Serializable {
 
 	private static final long serialVersionUID = 2524244677214825304L;
-	
+
+	private String elementId;
+
 	@NotNull(message = "Name cannot be null!")
-	@Size(min=1, message = "Name should contain at least one character!")
+	@Size(min = 1, message = "Name should contain at least one character!")
 	private String name;
-	
+
 	private String description;
 
 	@NotNull(message = "Value cannot be null!")
-	@Size(min=1, message = "Value should contain at least one character!")
+	@Size(min = 1, message = "Value should contain at least one character!")
 	private String value;
-	
+
 	@NotNull(message = "Position cannot be null!")
-	@Positive(message= "Position should be greater than ZERO!")
+	@Positive(message = "Position should be greater than ZERO!")
 	private long position;
+
+	public String getElementId() {
+		return elementId;
+	}
+
+	public void setElementId(String elementId) {
+		this.elementId = elementId;
+	}
 
 	public String getName() {
 		return name;
@@ -54,6 +64,12 @@ public class BlogElementRequestModel implements Serializable {
 
 	public void setPosition(long position) {
 		this.position = position;
+	}
+
+	@Override
+	public String toString() {
+		return "BlogElementRequestModel [elementId=" + elementId + ", name=" + name + ", description=" + description
+				+ ", value=" + value + ", position=" + position + "]";
 	}
 
 }

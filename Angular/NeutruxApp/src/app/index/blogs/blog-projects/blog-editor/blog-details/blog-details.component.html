@@ -1,21 +1,16 @@
-<app-file-upload
-    [folderName]="folderName"
-    *ngIf="isFileUploadActive"
-    (cancelFileUploadEvent)="isFileUploadActive = false"
-    (fileUploadSuccessEvent)="isFileUploadActive= false; updateThumbnailEvent.emit($event); blogEditorService.changesMade.next(true); blogEditorService.changesSaved.next(false)"
-></app-file-upload>
-
 <app-text-input
     [title]="'Edit Title'"
     [value]="title"
+    [min]="50"
+    [max]="140"
     *ngIf="isTitleTextInputActive"
     (cancelTextInputEvent)="isTitleTextInputActive = false"
-    (textInputUpdatedEvent)="isTitleTextInputActive = false; updateTitleEvent.emit($event); blogEditorService.changesMade.next(true); blogEditorService.changesSaved.next(false)"
+    (textInputUpdatedEvent)="isTitleTextInputActive = false; updateTitleEvent.emit($event); blogEditorService.changesMade.next(true)"
 ></app-text-input>
 
 <app-select-category
     [selectedCategory]="category"
-    (changeCategoryEvent)="updateCategoryEvent.emit($event); isCategoryTextInputActive= false; blogEditorService.changesMade.next(true); blogEditorService.changesSaved.next(false)"
+    (changeCategoryEvent)="updateCategoryEvent.emit($event); isCategoryTextInputActive= false; blogEditorService.changesMade.next(true)"
     (cancelEvent)="isCategoryTextInputActive= false"
     *ngIf="isCategoryTextInputActive"
 ></app-select-category>
@@ -41,10 +36,4 @@
 
     <span class="date">{{currentDate | date:'longDate'}}</span>
 
-    <!-- <div class="thumbnail" #thumbnail>
-        <img [src]="currentProject.thumbnail" alt="Thumbnail">
-        <div class="hover-card" (click)="isFileUploadActive = true">
-            <span>Thumbnail ✏️</span>
-        </div>
-    </div> -->
 </div>

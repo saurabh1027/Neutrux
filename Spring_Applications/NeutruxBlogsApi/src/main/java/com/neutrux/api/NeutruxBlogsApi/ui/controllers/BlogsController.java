@@ -1,9 +1,9 @@
 package com.neutrux.api.NeutruxBlogsApi.ui.controllers;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -47,26 +47,26 @@ public class BlogsController {
 
 	@PreAuthorize("hasRole('ROLE_EDITOR') and principal == #userId")
 	@GetMapping
-	public ResponseEntity<Set<BlogResponseModel>> getUserBlogsByUserId(
+	public ResponseEntity<List<BlogResponseModel>> getUserBlogsByUserId(
 		@RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
 		@RequestParam(name = "pageLimit", defaultValue = "20") int pageLimit,
 		@RequestParam("X-User-ID") String userId,
 		@RequestParam(name = "include-impressions", defaultValue = "false") boolean includeImpressions,
 		@RequestParam(name = "include-comments", defaultValue = "false") boolean includeComments
 	) throws Exception {
-		Set<BlogResponseModel> blogs = new HashSet<BlogResponseModel>();
+		List<BlogResponseModel> blogs = new ArrayList<BlogResponseModel>();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
 		// Implement Blog Search Service here...
-		Set<BlogDto> blogsDto = blogsService.getBlogsByUserId(userId, includeImpressions, pageNumber - 1, pageLimit, includeComments);
+		List<BlogDto> blogsDto = blogsService.getBlogsByUserId(userId, includeImpressions, pageNumber - 1, pageLimit, includeComments);
 
 		Iterator<BlogDto> iterator = blogsDto.iterator();
 		while (iterator.hasNext()) {
-			BlogResponseModel userResponseModel = modelMapper.map(iterator.next(), BlogResponseModel.class);
-			blogs.add(userResponseModel);
+			BlogResponseModel blogResponseModel = modelMapper.map(iterator.next(), BlogResponseModel.class);
+			blogs.add(blogResponseModel);
 		}
-
+		
 		return ResponseEntity.ok(blogs);
 	}
 
@@ -84,7 +84,7 @@ public class BlogsController {
 
 		blogDto = blogsService.getBlogByBlogId(blogId, userId, includeImpressions, includeComments);
 		blogResponseModel = modelMapper.map(blogDto, BlogResponseModel.class);
-
+		
 		return new ResponseEntity<BlogResponseModel>(blogResponseModel, HttpStatus.OK);
 	}
 
@@ -113,6 +113,8 @@ public class BlogsController {
 
 		BlogDto newBlogDetails = modelMapper.map(blogRequestModel, BlogDto.class);
 		newBlogDetails.setBlogId(blogId);
+		newBlogDetails.setCategory( categoryService.getCategoryById( blogRequestModel.getCategoryId() ) );
+		
 		BlogDto updatedBlog = blogsService.updateBlog(newBlogDetails);
 
 		BlogResponseModel blogResponseModel = modelMapper.map(updatedBlog, BlogResponseModel.class);

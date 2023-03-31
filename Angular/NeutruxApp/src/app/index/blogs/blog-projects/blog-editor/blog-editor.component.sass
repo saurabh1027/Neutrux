@@ -1,3 +1,82 @@
+.thumbnail_box
+    position: fixed
+    max-width: 500px
+    min-width: 300px
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    display: none
+    flex-direction: column
+    row-gap: 5px
+    box-shadow: 0 0 10px #555
+    background: #fff
+    padding: 50px 20px 20px
+    border-radius: 10px
+    z-index: 8
+    user-select: none
+    &.active
+        display: flex
+
+    .title
+        position: absolute
+        top: 14px
+        left: 28px
+        color: #555
+        font-size: 18px
+
+    .icon
+        width: 20px
+        height: 20px
+        position: absolute
+        top: 14px
+        right: 24px
+        cursor: pointer
+        display: flex
+        svg
+            width: 100%
+            height: 100%
+            .line
+                width: 100%
+                height: 10%
+                transform-origin: center
+                transform-box: fill-box
+                x: 0%
+                y: 50%
+                fill: #555
+                &.one
+                    transform: rotate(45deg)
+                &.two
+                    transform: rotate(-45deg)
+                        
+    .thumbnail
+        width: 100%
+        height: 200px
+        background-position: center
+        background-size: cover
+        border-radius: 10px 10px 0 0
+
+    .no-thumbnail
+        display: flex
+        justify-content: center
+        align-items: center
+        height: 150px
+        border: 1px solid #555
+        color: #eee
+        border-radius: 10px 10px 0 0
+        background: #555
+    
+    button
+        width: 100%
+        padding: 10px
+        border: none
+        background: #00a1ff
+        color: #fff
+        letter-spacing: 1px
+        text-transform: uppercase
+        border-radius: 0 0 10px 10px
+        cursor: pointer
+
+    
 .row
     width: 100%
     min-height: 80vh
@@ -17,48 +96,62 @@
         display: flex
         align-items: center
         row-gap: 15px
-        padding: 20px 0
+        padding: 40px 0
 
-        .action
-            width: 27px
-            height: 27px
-            cursor: pointer
+        .actions
             display: flex
-            justify-content: center
+            flex-direction: column
             align-items: center
-            position: relative
-            background: #555
-            padding: 0
-            border: none
-            &.sm
-                width: 22px
-                height: 22px
-            &.lg
+            row-gap: 15px
+            position: sticky
+            top: 30px
+            .divider
+                width: 40px
+                height: 4px
+                background: #aaa
+                border-radius: 10px
+            .action
                 width: 27px
                 height: 27px
+                cursor: pointer
+                background: #555
+                padding: 0
+                border: none
+                &.sm
+                    width: 22px
+                    height: 22px
+                &.lg
+                    width: 27px
+                    height: 27px
 
-            svg
-                &.add
+                svg
+                    &.add
+                        .fg
+                            fill: #00cd2c
+                    &.save
+                        .fg
+                            fill: #0e7ae9
+                    &.edit
+                        .fg
+                            fill: #0ff
+                    &.discard, &.delete
+                        .fg
+                            fill: #f00
+                    &.publish
+                        .fg
+                            fill: #00cd2c
+                    &.move
+                        .fg
+                            fill: #0072ff
+                    .bg
+                        fill: #555
                     .fg
-                        fill: #00cd2c
-                &.save
-                    .fg
-                        fill: #0e7ae9
-                &.edit
-                    .fg
-                        fill: #0ff
-                &.discard
-                    .fg
-                        fill: #f00
-                .bg
-                    fill: #555
-                .fg
-                    fill: #fff
+                        fill: #fff
 
     .editor
         min-height: 80vh
         width: 100%
-        padding: 30px 20px
+        padding: 20px 20px
         display: flex
         flex-direction: column
         position: relative
@@ -76,6 +169,53 @@
             background: #888
         &::-webkit-scrollbar-thumb:hover
             background: #666
+        
+        .errors
+            position: absolute
+            right: 25px
+            top: 25px
+            z-index: 1
+            .icon
+                display: flex
+                justify-content: center
+                align-items: center
+                width: 30px
+                height: 30px
+                border-radius: 50%
+                background: #fc1b1b
+                color: #fff
+                font-size: 18px
+                cursor: pointer
+                // display: flex
+                // flex-direction: column
+                // row-gap: 2px
+                // padding: 5px
+                // cursor: pointer
+                // .dot
+                //     width: 5px
+                //     height: 5px
+                //     border-radius: 50%
+                //     background: #333
+            .menu
+                display: none
+                flex-direction: column
+                min-width: 200px
+                position: absolute
+                right: 0
+                top: 0
+                background: #fff
+                font-size: 12px
+                box-shadow: 0 0 5px #333
+                padding: 10px
+                background: #ff4343
+                border-radius: 5px
+                &.active
+                    display: flex
+                .error
+                    padding: 5px 10px
+                    color: #fff
+                    &:hover
+                        background: #ff9292
         
     @media screen and (max-width: 1000px)
         .editor

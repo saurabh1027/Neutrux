@@ -3,7 +3,15 @@
     2. pagination
 -->
 
-<div class="list">
+<app-loading
+    *ngIf="isLoading"
+></app-loading>
+
+<div class="list" [class.nothing]="blogs.length==0">
+
+    <div class="nothing" *ngIf="blogs.length==0">
+        <span>No records found!</span>
+    </div>
     
     <div class="blog" *ngFor="let blog of blogs">
         <div class="thumbnail">
@@ -42,7 +50,7 @@
     
 </div>
 
-<div class="pagination">
+<div class="pagination" *ngIf="blogs.length>0">
 
     <span class="btn" (click)="onPrev()">prev</span>
     <span class="counter">{{pageNumber}}</span>

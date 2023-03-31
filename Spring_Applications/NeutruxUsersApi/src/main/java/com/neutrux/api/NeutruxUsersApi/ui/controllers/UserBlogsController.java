@@ -67,7 +67,7 @@ public class UserBlogsController {
 
 		ResponseEntity<Object> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
 				Object.class, params);
-
+		
 		return responseEntity;
 	}
 

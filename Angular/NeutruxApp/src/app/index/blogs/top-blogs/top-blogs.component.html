@@ -1,21 +1,25 @@
 <div class="top-blogs">
     <div class="col one" *ngIf="blogs[0]">
-        <a class="bg-image" [routerLink]="[blogs[0].blogId]">
-            <img [src]="blogs[0].thumbnail" alt="">
-        </a>
-
-        <div class="details">
-            <a [routerLink]="['','blogs','categories',blogs[0].category.categoryId, 'blogs']" 
-                class="category">{{blogs[0].category.name}}</a>
-            <a 
-                [routerLink]="[blogs[0].blogId]"
-                class="title"
-                [title]="blogs[0].title"
-            >{{blogs[0].title.substr(0,60)}}...</a>
+        <div class="row full">
+            <a class="bg-image" [routerLink]="[blogs[0].blogId]">
+                <img [src]="blogs[0].thumbnail" alt="">
+            </a>
+    
+            <div class="details">
+                <a [routerLink]="['','blogs','categories',blogs[0].category.categoryId, 'blogs']" 
+                    class="category">{{blogs[0].category.name}}</a>
+                <a 
+                    [routerLink]="[blogs[0].blogId]"
+                    class="title"
+                    [title]="blogs[0].title"
+                >{{blogs[0].title.substr(0,60)}}...</a>
+            </div>
         </div>
     </div>
-    <div class="col one nothing" *ngIf="!blogs[0]">
-        <span>Nothing to display</span>
+    <div class="col one" *ngIf="!blogs[0]">
+        <div class="row full nothing">
+            <span>Nothing to display</span>
+        </div>
     </div>
 
     <div class="col two">

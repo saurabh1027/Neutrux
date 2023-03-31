@@ -1,8 +1,10 @@
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { BehaviorSubject, Observable, Subscription } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { AesCryptoService } from "src/app/aes-crypto.service";
+import { AuthService } from "src/app/users/authentication/auth.service";
+import { User } from "src/app/users/user.model";
 import { environment } from "src/environments/environment.prod";
 import { BlogElementModel } from "../../blog.element.model";
 import { CategoryModel } from "../../category.model";
@@ -14,17 +16,20 @@ import { BlogProjectModel } from "../blog_project.model";
 export class BlogEditorService {
 
     projects = new BehaviorSubject<BlogProjectModel[]>([])
+    blogs = new BehaviorSubject<BlogProjectModel[]>([])
+    publishedBlogs = new BehaviorSubject<BlogProjectModel[]>([])
     elements = new BehaviorSubject<BlogElementModel[]>([])
     currentProject = new BehaviorSubject<BlogProjectModel|null>(null)
     selectedElementPosition = new BehaviorSubject<number>(0)
-
+    elementActionEmitter = new BehaviorSubject<string>("")
     changesMade = new BehaviorSubject<boolean>(false)
-    changesSaved = new BehaviorSubject<boolean>(true)
+    isBlogsViewEnabled = new BehaviorSubject<boolean>(false)
 
     constructor(
         private cryptoService:AesCryptoService,
         private http:HttpClient,
-        private router:Router
+        private router:Router,
+        private authService:AuthService
     ) {}
 
     loadBlogElements() : Observable<BlogElementModel[]> {
@@ -38,7 +43,18 @@ export class BlogEditorService {
             return
         }
         let projectsStr = this.cryptoService.decryptData( encryptedProjectsStr )
-        this.projects.next( JSON.parse(projectsStr) )
+        let projects:BlogProjectModel[] = JSON.parse(projectsStr)
+        let user:User|null = this.authService.user.getValue()
+        for( let i=0; i<projects.length; i++ ) {
+            if( user && (user.userId != ""+projects[i].user.userId) ) {
+                projects.splice(i, 1)
+            }
+        }
+        this.projects.next( projects )
+    }
+
+    loadPublishedBlogs( userId:string ){
+        return this.http.get<ServerBlogProjectModel[]>( "http://localhost:8010/users/"+userId+"/blogs" )
     }
 
     storeProjects( projects:BlogProjectModel[] ) {
@@ -95,4 +111,85 @@ export class BlogEditorService {
         
     }
 
+    publishBlog( currentProject:BlogProjectModel ): Observable<ServerBlogModel> {
+        let body:{
+            title:String, description: String, userId:String, categoryId:String, thumbnail:String
+        } = {
+            title: currentProject.title,
+            description: currentProject.description,
+            userId: currentProject.user.userId+'',
+            categoryId: currentProject.category.categoryId,
+            thumbnail: currentProject.thumbnail
+        }
+        return this.http.post<ServerBlogModel>( 'http://localhost:8010/neutrux-blogs-api/blogs/', body )
+    }
+
+    postBlogElement( element:BlogElementModel, blogId:string, userId:string ) {
+        let serverElement:ServerBlogElementModel
+        serverElement = new ServerBlogElementModel(
+            element.name, element.description, element.value, element.position
+        )
+        let params:HttpParams = new HttpParams();
+        params = params.append('X-User-ID',userId)
+        return this.http.post( "http://localhost:8010/neutrux-blogs-api/blogs/"+blogId+"/elements", serverElement, { params: params } )
+    }
+
+    deleteBlog( blogId:string,userId:string ) {
+        let params:HttpParams = new HttpParams();
+        params = params.append('X-User-ID',userId)
+        return this.http.delete<ResponseModel>( 'http://localhost:8010/neutrux-blogs-api/blogs/'+blogId, {params:params} )
+    }
+
+    updateBlog( currentProject:BlogProjectModel ){
+        let elements: BlogElementModel[] = currentProject.elements
+        let body:{
+            title:String, description: String, userId:String, categoryId:String, thumbnail:String, elements:BlogElementModel[]
+        } = {
+            title: currentProject.title,
+            description: currentProject.description,
+            userId: currentProject.user.userId+'',
+            categoryId: currentProject.category.categoryId,
+            thumbnail: currentProject.thumbnail,
+            elements: elements
+        }
+        return this.http.put<ServerBlogModel>( 'http://localhost:8010/neutrux-blogs-api/blogs/'+currentProject.projectId, body )
+    }
+
+    deleteBlogElementsByBlogId( blogId:string, userId:string ) {
+        let params:HttpParams = new HttpParams();
+        params = params.append('X-User-ID',userId)
+        return this.http.delete( 'http://localhost:8010/neutrux-blogs-api/blogs/'+blogId+'/elements/', {params:params} )
+    }
+
+}
+
+class ResponseModel{
+    constructor(
+        public date:Date,
+        public status:number,
+        public type:Object,
+        public message:string
+    ) {}
+}
+class ServerBlogModel{
+    constructor( public blogId:string ) {}
+}
+class ServerBlogElementModel{
+    constructor(
+        public name:string,
+        public description:string,
+        public value:string,
+        public position:number
+    ) {}
+}
+class ServerBlogProjectModel{
+    constructor(
+        public blogId:string,
+        public category:CategoryModel,
+        public creationDate:Date,
+        public description:string,
+        public elements:BlogElementModel[],
+        public thumbnail:string,
+        public title:string
+    ) {}
 }

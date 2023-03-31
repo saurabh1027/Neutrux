@@ -5,7 +5,7 @@ import { RouterModule } from "@angular/router";
 import { SharedModule } from "src/app/shared/shared.module";
 import { BlogEditorService } from "./blog-projects/blog-editor/blog-editor.service";
 import { BlogListComponent } from "./blog-list/blog-list.component";
-import { BlogProjectsComponent } from "./blog-projects/blog-projects.component";
+import { BlogEditorDashboardComponent } from "./blog-projects/blog-editor-dashboard.component";
 import { BlogComponent } from "./blog/blog.component";
 import { CommentsComponent } from "./blog/comments/comments.component";
 import { CommentsService } from "./blog/comments/comments.service";
@@ -28,7 +28,7 @@ import { AddBlogElementComponent } from "./blog-projects/blog-editor/add-blog-el
         BlogComponent,
         CommentsComponent,
         CategoryComponent,
-        BlogProjectsComponent,
+        BlogEditorDashboardComponent,
         BlogEditorComponent,
         BlogDetailsComponent,
         BlogElementsComponent,

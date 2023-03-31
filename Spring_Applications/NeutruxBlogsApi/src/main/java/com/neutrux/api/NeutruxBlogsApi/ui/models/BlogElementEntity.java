@@ -104,4 +104,10 @@ public class BlogElementEntity implements Serializable {
 		this.user = user;
 	}
 
+	@Override
+	public String toString() {
+		return "BlogElementEntity [id=" + id + ", name=" + name + ", description=" + description + ", value=" + value
+				+ ", position=" + position + ", blog=" + blog.getId() + ", user=" + user.getId() + "]";
+	}
+
 }

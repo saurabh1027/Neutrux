@@ -3,7 +3,8 @@
     (click)="onClick()"></div>
 <div 
     class="sidenav open"
-    #sidenav>
+    #sidenav
+>
 
     <div class="close-icon" (click)="onClick()">
         <div class="line"></div>
@@ -38,12 +39,12 @@
             [routerLink]="['','tools']">
             <span>Tools</span>
         </a>
-        <a 
+        <!-- <a 
             (click)="onClick()"
             class="link"
             [routerLink]="['']">
             <span>Watches</span>
-        </a>
+        </a> -->
         <a 
             (click)="onClick()"
             class="link"

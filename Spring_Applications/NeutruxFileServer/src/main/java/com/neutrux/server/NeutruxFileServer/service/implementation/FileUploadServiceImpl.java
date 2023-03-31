@@ -13,7 +13,7 @@ import com.neutrux.server.NeutruxFileServer.service.FileUploadService;
 public class FileUploadServiceImpl implements FileUploadService {
 	
 	private final Path root = Paths
-		.get("C:\\Users\\Admin\\Desktop\\Projects\\Saurabh\\Web\\Neutrux\\Angular\\NeutruxApp\\src\\assets\\blog_pictures");
+		.get("C:\\Users\\Lenovo\\OneDrive\\Documents\\Projects\\Neutrux\\Angular\\NeutruxApp\\src\\assets\\blog_pictures");
 
 	@Override
 	public String imageUpload(MultipartFile file) throws Exception {

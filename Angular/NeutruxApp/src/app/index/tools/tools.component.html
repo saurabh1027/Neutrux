@@ -9,10 +9,14 @@
 
         <div class="details">
             <a 
-                [routerLink]="['','blogs','projects']"
+                [routerLink]="['','blogs','editor','dashboard']"
                 class="name"    
             >Blog Editor</a>
         </div>
+    </div>
+
+    <div class="no-tools" *ngIf="!user">
+        <span>No tools for you 😅</span>
     </div>
 
 </div>

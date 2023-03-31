@@ -100,4 +100,12 @@ public class BlogResponseModel implements Serializable {
 		this.thumbnail = thumbnail;
 	}
 
+	@Override
+	public String toString() {
+		return "BlogResponseModel [blogId=" + blogId + ", title=" + title + ", description=" + description
+				+ ", creationDate=" + creationDate + ", thumbnail=" + thumbnail + ", category=" + category
+				+ ", elements=" + elements + ", impressions=" + impressions + ", comments=" + comments
+				+ ", impressionsCount=" + impressionsCount + "]";
+	}
+
 }

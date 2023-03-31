@@ -25,6 +25,7 @@
         background: rgba(200, 200, 200, 0.25)
         box-shadow: 0 0 10px rgba(200, 200, 200, 0.75)
         color: #222
+        min-height: 50vh
         .heading
             font-size: 22px
         .paragraph
@@ -64,7 +65,7 @@
                 left: 0
                 .impressions
                     display: none
-                    column-gap: 10px
+                    column-gap: 5px
                     align-items: center
                     width: fit-content
                     height: 50px
@@ -75,15 +76,13 @@
                     list-style: none
                     margin: 0 0 10px
                     li
-                        font-size: 20px
+                        font-size: 12px
                         cursor: pointer
                         padding: 3px
                         &:hover
-                            font-size: 25px
+                            // font-size: 20px
                         &.active
-                            border-radius: 50%
-                            border: 2px solid #111
-                            
+                            font-size: 25px
 
 @media screen and (max-width: 500px)
     .blog

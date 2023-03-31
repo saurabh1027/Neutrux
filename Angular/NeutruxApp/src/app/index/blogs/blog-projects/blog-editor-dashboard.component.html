@@ -1,0 +1,105 @@
+<app-loading
+    *ngIf="isLoadingActive"
+></app-loading>
+
+<div class="action-panel">
+    <div class="box" (mouseleave)="isMenuActive=false">
+        <div class="icon" (click)="isMenuActive=true">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+        <div class="menu" [class.active]="isMenuActive" (click)="isMenuActive=false">
+            <div class="action" (click)="blogEditorService.loadProjects(); isMenuActive=false">Refresh</div>
+            <div class="action" (click)="onClick(true)">View Blogs</div>
+            <div class="action" (click)="onClick(false)">View Projects</div>
+            <div class="action" (click)="openNewProject( (projects.length+1)+'' )">New Project</div>
+        </div>
+    </div>
+
+    <div class="title" *ngIf="isBlogsViewEnabled">Blogs</div>
+    <div class="title" *ngIf="!isBlogsViewEnabled">Projects</div>
+</div>
+
+
+
+
+<div class="projects" *ngIf="!isBlogsViewEnabled">
+
+    <div *ngFor="let project of projects" (click)="openProject(project.projectId)">
+        <div 
+            class="project"
+            *ngIf="user.userId == project.user.userId+''"
+        >
+
+            <!-- <div class="panel">
+                <div class="action">
+                    <a [routerLink]="['','blogs','editor','projects',project.projectId]">Edit</a>
+                </div>
+                <div class="action" (click)="deleteProject(project.projectId)">Delete</div>
+            </div> -->
+    
+            <div 
+                class="thumbnail"
+                [style.background-image]="'url(' + project.thumbnail + ')'"></div>
+            <a
+                class="title"
+                [title]="project.title"
+            >{{project.title.substr(0,50)}}</a>
+            <div class="details">
+                <span class="creationDate">{{ sharedService.getTime( project.creationDate ) }}</span>
+                <span 
+                    class="category"
+                    *ngIf="project.category && project.category.name"
+                >{{project.category.name}}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="no-projects" *ngIf="projects.length==0">
+        <span *ngIf="!isBlogsViewEnabled">No projects</span>
+    </div>
+
+</div>
+
+
+
+
+
+<div class="projects" *ngIf="isBlogsViewEnabled">
+
+    <div *ngFor="let project of blogs" (click)="openBlog(project.projectId)">
+        <div 
+            class="project"
+            *ngIf="user.userId == project.user.userId+''"
+        >
+
+            <!-- <div class="panel">
+                <div class="action">
+                    <a [routerLink]="['','blogs','editor','blogs',project.projectId]">Edit</a>
+                </div>
+                <div class="action" (click)="deleteProject(project.projectId)">Delete</div>
+            </div> -->
+    
+            <div 
+                class="thumbnail"
+                [style.background-image]="'url(' + project.thumbnail + ')'"></div>
+            <a
+                class="title"
+                [title]="project.title"
+            >{{project.title.substr(0,50)}}</a>
+            <div class="details">
+                <span class="creationDate">{{ sharedService.getTime( project.creationDate ) }}</span>
+                <span 
+                    class="category"
+                    *ngIf="project.category && project.category.name"
+                >{{project.category.name}}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="no-projects" *ngIf="blogs.length==0">
+        <span *ngIf="isBlogsViewEnabled">No Blogs</span>
+    </div>
+
+</div>

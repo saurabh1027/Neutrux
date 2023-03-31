@@ -1,15 +1,20 @@
 package com.neutrux.api.NeutruxBlogsApi.service.implementation;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +25,7 @@ import com.mysql.cj.exceptions.MysqlErrorNumbers;
 import com.neutrux.api.NeutruxBlogsApi.repositories.BlogsRepository;
 import com.neutrux.api.NeutruxBlogsApi.repositories.CategoryRepository;
 import com.neutrux.api.NeutruxBlogsApi.repositories.UsersRepository;
+import com.neutrux.api.NeutruxBlogsApi.service.BlogElementsService;
 import com.neutrux.api.NeutruxBlogsApi.service.BlogsService;
 import com.neutrux.api.NeutruxBlogsApi.service.UsersService;
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogCommentDto;
@@ -42,18 +48,20 @@ public class BlogsServiceImpl implements BlogsService {
 	private UsersService usersService;
 	private UsersRepository usersRepository;
 	private CategoryRepository categoryRepository;
+	private BlogElementsService blogElementsService;
 
 	@Autowired
 	public BlogsServiceImpl(BlogsRepository blogsRepository, UsersRepository usersRepository, UsersService usersService,
-			CategoryRepository categoryRepository) {
+			CategoryRepository categoryRepository,@Lazy BlogElementsService blogElementsService) {
 		this.blogsRepository = blogsRepository;
 		this.usersService = usersService;
 		this.usersRepository = usersRepository;
 		this.categoryRepository = categoryRepository;
+		this.blogElementsService = blogElementsService;
 	}
 
 	@Override
-	public Set<BlogDto> getBlogsByUserId(String userId, boolean includeImpressions, int pageNumber, int pageLimit,
+	public List<BlogDto> getBlogsByUserId(String userId, boolean includeImpressions, int pageNumber, int pageLimit,
 			boolean includeComments) throws Exception {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -70,7 +78,8 @@ public class BlogsServiceImpl implements BlogsService {
 		}
 
 		Pageable blogPageable = PageRequest.of(pageNumber, pageLimit);
-		Page<BlogEntity> blogPages = blogsRepository.findAllByUser(userEntity, blogPageable);
+//		Page<BlogEntity> blogPages = blogsRepository.findAllByUser(userEntity, blogPageable);
+		Page<BlogEntity> blogPages = blogsRepository.findAllByUser(userEntity.getId(), blogPageable);
 
 		Iterator<BlogEntity> iterator = blogPages.iterator();
 
@@ -80,8 +89,18 @@ public class BlogsServiceImpl implements BlogsService {
 			blogDto = this.getBlogDetails(blogEntity, blogId, includeImpressions, includeComments);
 			blogs.add(blogDto);
 		}
+		
+		//sorting blogs
+		List<BlogDto> blogList = new ArrayList<BlogDto>();
+		for( BlogDto b:blogs )
+			blogList.add(b);
+		
+		Comparator<BlogDto> compareByCreationDate = 
+				( BlogDto b1, BlogDto b2 ) -> b1.getCreationDate().compareTo(b2.getCreationDate());
+		
+		Collections.sort(blogList, compareByCreationDate.reversed());
 
-		return blogs;
+		return blogList;
 	}
 
 	@Override
@@ -116,7 +135,7 @@ public class BlogsServiceImpl implements BlogsService {
 		try {
 			blogEntity = blogsRepository.save(blogEntity);
 		} catch (DataIntegrityViolationException e) {
-			// Exception Handling for Duplicate Entry of Email
+			// Exception Handling for Duplicate Entry of title
 			if (e.getRootCause() != null
 					&& e.getRootCause().getClass().equals(SQLIntegrityConstraintViolationException.class)) {
 				SQLIntegrityConstraintViolationException ex = (SQLIntegrityConstraintViolationException) e
@@ -182,7 +201,10 @@ public class BlogsServiceImpl implements BlogsService {
 		BlogEntity oldBlogEntity = blogsRepository.findById(blogId).get();
 		oldBlogEntity.setTitle(newBlogDetails.getTitle());
 		oldBlogEntity.setDescription(newBlogDetails.getDescription());
-
+		
+		Set<BlogElementEntity> newElements = null; 
+		Set<BlogElementDto> newElementDtos = newBlogDetails.getElements(); 
+		
 		String categoryId = newBlogDetails.getCategory().getCategoryId();
 		if (categoryId != null) {
 			long id = this.decryptId(newBlogDetails.getCategory().getCategoryId());
@@ -193,9 +215,35 @@ public class BlogsServiceImpl implements BlogsService {
 			}
 			oldBlogEntity.setCategory(categoryEntity);
 		}
-
+		
 		BlogEntity newBlogEntity = oldBlogEntity;
-		newBlogEntity = blogsRepository.save(newBlogEntity);
+		newBlogEntity.setThumbnail( newBlogDetails.getThumbnail() );
+		newBlogEntity.setDescription( newBlogDetails.getDescription() );
+		newBlogEntity.setTitle( newBlogDetails.getTitle() );
+		newElements = newBlogEntity.getElements();
+		newElements.clear();
+		newBlogEntity.setElements( newElements );
+		try {
+			newBlogEntity = blogsRepository.save(newBlogEntity);
+		} catch (DataIntegrityViolationException e) {
+			// Exception Handling for Duplicate Entry of title
+			if (e.getRootCause() != null
+					&& e.getRootCause().getClass().equals(SQLIntegrityConstraintViolationException.class)) {
+				SQLIntegrityConstraintViolationException ex = (SQLIntegrityConstraintViolationException) e
+						.getRootCause();
+				if (ex.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
+					throw new Exception("Blog with same title already exists!");
+				}
+			}
+		}
+		
+		Iterator<BlogElementDto> dtoIterator = newElementDtos.iterator();
+		while( dtoIterator.hasNext() ) {
+			BlogElementDto newElementDto = dtoIterator.next();
+			newElementDto.setBlogId(newBlogDetails.getBlogId());
+			newElementDto.setUserId(newBlogDetails.getUserId());
+			this.blogElementsService.addElementToBlog(newElementDto);
+		}
 
 		BlogDto updatedBlogDetails = modelMapper.map(newBlogEntity, BlogDto.class);
 

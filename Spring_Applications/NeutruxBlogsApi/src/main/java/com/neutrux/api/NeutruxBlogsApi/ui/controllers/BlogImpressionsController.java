@@ -35,13 +35,6 @@ public class BlogImpressionsController {
 		this.blogImpressionsService = blogImpressionsService;
 	}
 
-	/*
-	 * 
-	 * add impression to blog delete impression to blog update impression type get
-	 * impressions of blog
-	 * 
-	 */
-
 	@GetMapping("count")
 	public long getBlogImpressionsCount(@PathVariable("blogId") String blogId) throws Exception {
 		return this.blogImpressionsService.getBlogImpressionsCount(blogId);

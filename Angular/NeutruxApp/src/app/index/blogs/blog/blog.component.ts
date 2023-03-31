@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { AfterViewInit, Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AuthService } from "src/app/users/authentication/auth.service";
 import { User } from "src/app/users/user.model";
@@ -11,7 +11,7 @@ import { BlogsService } from "../blogs.service";
     templateUrl: 'blog.component.html',
     styleUrls: ['blog.component.sass']
 })
-export class BlogComponent implements OnInit {
+export class BlogComponent implements OnInit, AfterViewInit {
     blog!:BlogModel
     alert:{
         'message': string,
@@ -21,6 +21,9 @@ export class BlogComponent implements OnInit {
     bool:boolean = false
     impression!:BlogImpressionModel
     index:number = 0
+
+    isLoadingActive:boolean = true
+    isImpressionBlockActive:boolean = true
 
     constructor(
         private readonly route:ActivatedRoute,
@@ -37,6 +40,10 @@ export class BlogComponent implements OnInit {
             }
         })
         this.getBlogById( blogId )
+    }
+
+    ngAfterViewInit(): void {
+        this.isLoadingActive = false
     }
 
     getBlogById( blogId:number ) {
@@ -89,6 +96,7 @@ export class BlogComponent implements OnInit {
             alert("please login")
             return
         }
+        this.isImpressionBlockActive = false
         if( this.impression && this.impression.type==type ) {
             // remove impression
             this.blogsService.removeImpressionFromBlog( this.user.userId, this.blog.blogId )
@@ -101,6 +109,7 @@ export class BlogComponent implements OnInit {
                         }
                     }
                     this.impression = new BlogImpressionModel('','','','')
+                    this.isImpressionBlockActive = true
                 })
         } else {
             // add or update impression
@@ -115,6 +124,7 @@ export class BlogComponent implements OnInit {
                     }
                     this.impression = data
                     this.blog.impressions.push( this.impression )
+                    this.isImpressionBlockActive = true
                 }
             )
         }

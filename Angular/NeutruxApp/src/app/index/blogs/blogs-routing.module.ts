@@ -4,7 +4,7 @@ import { AuthGuard } from "src/app/users/authentication/auth-guard.service";
 import { BlogListComponent } from "./blog-list/blog-list.component";
 import { BlogEditorComponent } from "./blog-projects/blog-editor/blog-editor.component";
 import { CanDeactivateGuard } from "./blog-projects/blog-editor/can-deactivate-guard.service";
-import { BlogProjectsComponent } from "./blog-projects/blog-projects.component";
+import { BlogEditorDashboardComponent } from "./blog-projects/blog-editor-dashboard.component";
 import { BlogComponent } from "./blog/blog.component";
 import { BlogsComponent } from "./blogs.component";
 import { CategoryComponent } from "./category/category.component";
@@ -12,13 +12,20 @@ import { CategoryComponent } from "./category/category.component";
 const blogsRoutes : Routes = [
     { path:'', data: { title:'Neutrux | Blogs' }, component: BlogsComponent },
     { 
-        path:'projects',
+        path:'editor/dashboard',
         canActivate: [AuthGuard], 
         data: { roles: ['ROLE_EDITOR']}, 
-        component: BlogProjectsComponent,
+        component: BlogEditorDashboardComponent,
     },
     { 
-        path:'editor/:id',
+        path:'editor/projects/:id',
+        component: BlogEditorComponent, 
+        canActivate: [AuthGuard], 
+        canDeactivate: [CanDeactivateGuard],
+        data: { roles: ['ROLE_EDITOR']} 
+    },
+    { 
+        path:'editor/blogs/:id',
         component: BlogEditorComponent, 
         canActivate: [AuthGuard], 
         canDeactivate: [CanDeactivateGuard],

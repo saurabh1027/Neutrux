@@ -1,55 +1,204 @@
+<app-loading
+    *ngIf="isLoadingActive"
+></app-loading>
+
 <app-add-blog-element
     *ngIf="isAddElementActive"
     (addElementSuccessEvent)="addElement($event); isAddElementActive=false;"
     (cancelEvent)="isAddElementActive=false"
 ></app-add-blog-element>
 
+<div *ngIf="currentProject">
+    <app-text-input
+        [title]="'Edit Description'"
+        [value]="currentProject.description"
+        [min]="100"
+        [max]="200"
+        *ngIf="isDescTextInputActive"
+        (cancelTextInputEvent)="isDescTextInputActive = false"
+        (textInputUpdatedEvent)="isDescTextInputActive = false; currentProject.description=$event; blogEditorService.currentProject.next(currentProject); blogEditorService.changesMade.next(true); validateErrors()"
+    ></app-text-input>
+</div>
+
+<div *ngIf="currentProject">
+    <app-file-upload
+        *ngIf="isFileUploadActive"
+        (fileUploadSuccessEvent)="isFileUploadActive = false; currentProject.thumbnail=$event; blogEditorService.currentProject.next(currentProject); blogEditorService.changesMade.next(true); validateErrors(); isViewThumbnailActive=true"
+        (cancelFileUploadEvent)="isFileUploadActive = false; isViewThumbnailActive=true"
+    ></app-file-upload>
+</div>
+
+<div class="thumbnail_box" [class.active]="isViewThumbnailActive" *ngIf="isViewThumbnailActive && currentProject">
+    <div class="title">Thumbnail</div>
+    <div class="icon" (click)="isViewThumbnailActive=false" title="close">
+        <svg>
+            <rect class="line one" />
+            <rect class="line two" />
+        </svg>
+    </div>
+    <div class="no-thumbnail" *ngIf="!currentProject.thumbnail">
+        <span>Select thumbnail first!</span>
+    </div>
+    <div *ngIf="currentProject.thumbnail" class="thumbnail" style="background-image: url('{{currentProject.thumbnail}}');"></div>
+    <button (click)="isViewThumbnailActive=false; isFileUploadActive=true">Edit</button>
+</div>
+
 <div class="row">
     <div class="sidebar">
-        <div class="action sm" title="Add Element" (click)="isAddElementActive=true">
-            <svg class="add" width="100%" height="100%">
-                <rect x="5%" y="40%" width="90%" height="20%" rx="5%" ry="5%" class="fg" />
-                <rect x="40%" y="5%" height="90%" width="20%" rx="5%" ry="5%" class="fg" />
-            </svg>
+
+        <!-- 
+
+            Editor Actions
+
+            Project related actions
+                save, discard
+
+            Blog related actions
+                Publish, Update, Delete
+
+            Blog related element actions
+                Add, Edit, Delete, Move Up/Down
+
+         -->
+
+        <div class="actions">
+            <!-- Project related actions -->
+            <div class="action sm" title="Save Changes" (click)="saveCurrentProject()" *ngIf="changesMade && !isBlog">
+                <svg class="save" width="100%" height="100%">
+                    <rect width="70%" height="80%" rx="10%" ry="10%" x="15%" y="10%" class="fg" />
+                    <rect width="30%" height="10%" x="69%" y="12%" class="bg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box" />
+                    <rect width="45%" height="25%" rx="10%" ry="10%" x="23%" y="19%" class="bg" />
+                    <circle cx="52%" cy="67%" r="12%" class="bg" />
+                </svg>
+            </div>
+            <div class="action sm" title="Discard Changes" (click)="discardCurrentProject()">
+                <svg class="discard" width="100%" height="100%">
+                    <rect width="70%" height="80%" rx="10%" ry="10%" x="15%" y="10%" class="fg" />
+                    <rect width="30%" height="10%" x="69%" y="12%" class="bg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box" />
+                    <rect width="45%" height="25%" rx="10%" ry="10%" x="23%" y="19%" class="bg" />
+                    <circle cx="52%" cy="67%" r="12%" class="bg" />
+                    <rect width="120%" height="10%" rx="5%" ry="5%" x="-10%" y="42.5%" class="fg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box"/>
+                    <rect width="120%" height="10%" x="-20%" y="46.5%" class="bg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box"/>
+                </svg>
+            </div>
+
+            <div class="action" title="View Thumbnail" (click)="isViewThumbnailActive=true" style="background-image: url('../../../../../assets/icons/eye.svg');background-position: center;background-size: cover;"></div>
+            
+            <button class="action" title="Edit Description" (click)="isDescTextInputActive=true">
+                <svg class="edit" width="100%" height="100%" style="transform: rotate(-45deg)">
+                    <rect x="23%" y="34.5%" rx="4.5%" ry="4.5%" height="30%" width="65%" class="fg" />
+                    <rect x="73%" y="34.5%" height="30%" width="3.125%" class="bg" />
+                    <rect x="13%" y="34.5%" rx="2.5%" ry="3.125%" height="30%" width="30%" class="fg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box" />
+                    <rect x="13%" y="14.5%" height="20%" width="62.5%" class="bg" />
+                    <rect x="13%" y="64.5%" height="20%" width="62.5%" class="bg" />
+                    <rect x="27%" y="42%" width="38%" height="4%" class="bg" />
+                    <rect x="27%" y="53%" width="38%" height="4%" class="bg" />
+                </svg>
+            </button>
+
+            <!-- Blog related actions -->
+            <div class="action lg" title="Publish Blog" (click)="publishCurrentProject()" *ngIf="!isBlog && isValidBlog">
+                <svg class="publish" width="100%" height="100%">
+                    <rect width="70%" height="40%" rx="10%" ry="10%" x="15%" y="50%" stroke="#00cd2c" stroke-width="2" fill="#555" />
+                    <rect width="40%" height="30%" fill="#555" x="30%" y="35%" />
+                    <rect height="40%" width="5%" x="47.5%" y="22%" class="fg" />
+                    <rect width="5%" height="25%" x="39%" y="16%" class="fg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box" />
+                    <rect width="5%" height="25%" x="55%" y="16%" class="fg" style="transform: rotate(-45deg); transform-origin: center; transform-box: fill-box" />
+                </svg>
+            </div>
+            <div class="action lg" title="Update Blog" *ngIf="isBlog && changesMade && isValidBlog" (click)="updateBlog()">
+                <svg class="publish" width="100%" height="100%">
+                    <rect width="70%" height="40%" rx="10%" ry="10%" x="15%" y="50%" stroke="#00cd2c" stroke-width="2" fill="#555" />
+                    <rect width="40%" height="30%" fill="#555" x="30%" y="35%" />
+                    <rect height="40%" width="5%" x="47.5%" y="22%" class="fg" />
+                    <rect width="5%" height="25%" x="39%" y="16%" class="fg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box" />
+                    <rect width="5%" height="25%" x="55%" y="16%" class="fg" style="transform: rotate(-45deg); transform-origin: center; transform-box: fill-box" />
+                </svg>
+            </div>
+            <div class="action" title="Delete Blog" (click)="delete()">
+                <svg class="delete" width="100%" height="100%">
+                    <rect width="80%" height="7%" class="fg" x="10%" y="20%" rx="4px" ry="4px"/>
+                    <rect width="30%" height="15%" stroke="#f00" stroke-width="7%" x="37.5%" y="7%" rx="4px" ry="4px" fill="#555"/>
+                    <rect rx="5px" ry="5px" x="22%" y="23%" height="65%" width="7%" class="fg" style="transform:rotate(-6deg);transform-origin:center;transform-box:fill-box;"/>
+                    <rect rx="5px" ry="5px" x="77%" y="23%" height="65%" width="7%" class="fg" style="transform:rotate(6deg);transform-origin:center;transform-box:fill-box;"/>
+                    <rect rx="4px" ry="4px" x="43%" y="34%" height="45%" width="7%" class="fg" />
+                    <rect rx="4px" ry="4px" x="60%" y="34%" height="45%" width="7%" class="fg" />
+                    <rect rx="3px" ry="3px" x="25%" y="86%" height="7%" width="54%" class="fg"/>
+                </svg>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Blog-Element related actions -->
+            <div class="action sm" title="Add element at last" (click)="isAddElementActive=true">
+                <svg class="add" width="100%" height="100%">
+                    <rect x="5%" y="40%" width="90%" height="20%" rx="5%" ry="5%" class="fg" />
+                    <rect x="40%" y="5%" height="90%" width="20%" rx="5%" ry="5%" class="fg" />
+                </svg>
+            </div>
+
+            <button class="action" title="Edit Selected Element" *ngIf="!(selectedElementPosition==0)" (click)="blogEditorService.elementActionEmitter.next('e')">
+                <svg class="edit" width="100%" height="100%" style="transform: rotate(-45deg)">
+                    <rect x="23%" y="34.5%" rx="4.5%" ry="4.5%" height="30%" width="65%" class="fg" />
+                    <rect x="73%" y="34.5%" height="30%" width="3.125%" class="bg" />
+                    <rect x="13%" y="34.5%" rx="2.5%" ry="3.125%" height="30%" width="30%" class="fg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box" />
+                    <rect x="13%" y="14.5%" height="20%" width="62.5%" class="bg" />
+                    <rect x="13%" y="64.5%" height="20%" width="62.5%" class="bg" />
+                    <rect x="27%" y="42%" width="38%" height="4%" class="bg" />
+                    <rect x="27%" y="53%" width="38%" height="4%" class="bg" />
+                </svg>
+            </button>
+
+            <div class="action" title="Delete Selected Element" *ngIf="!(selectedElementPosition==0)" (click)="blogEditorService.elementActionEmitter.next('d')">
+                <svg class="delete" width="100%" height="100%">
+                    <rect width="80%" height="7%" class="fg" x="10%" y="20%" rx="4px" ry="4px"/>
+                    <rect width="30%" height="15%" stroke="#f00" stroke-width="7%" x="37.5%" y="7%" rx="4px" ry="4px" fill="#555"/>
+                    <rect rx="5px" ry="5px" x="22%" y="23%" height="65%" width="7%" class="fg" style="transform:rotate(-6deg);transform-origin:center;transform-box:fill-box;"/>
+                    <rect rx="5px" ry="5px" x="77%" y="23%" height="65%" width="7%" class="fg" style="transform:rotate(6deg);transform-origin:center;transform-box:fill-box;"/>
+                    <rect rx="4px" ry="4px" x="43%" y="34%" height="45%" width="7%" class="fg" />
+                    <rect rx="4px" ry="4px" x="60%" y="34%" height="45%" width="7%" class="fg" />
+                    <rect rx="3px" ry="3px" x="25%" y="86%" height="7%" width="54%" class="fg"/>
+                </svg>
+            </div>
+
+            <div class="action" title="Move Upward" *ngIf="!(selectedElementPosition==0)" (click)="blogEditorService.elementActionEmitter.next('mu')">
+                <svg class="move" width="100%" height="100%">
+                    <rect height="80%" width="15%" x="42.5%" y="10%" rx="6" class="fg" />
+                    <rect height="50%" width="15%" rx="6" x="29%" y="4%" style="transform: rotate(45deg);transform-origin: center;transform-box: fill-box;" class="fg" />
+                    <rect height="50%" width="15%" rx="6" x="55%" y="4%" style="transform: rotate(-45deg);transform-origin: center;transform-box: fill-box;" class="fg" />
+                </svg>
+            </div>
+
+            <div class="action" title="Move Downward" *ngIf="!(selectedElementPosition==0)" (click)="blogEditorService.elementActionEmitter.next('md')">
+                <svg class="move" width="100%" height="100%">
+                    <rect height="80%" width="15%" x="42.5%" y="10%" rx="6" class="fg" />
+                    <rect height="50%" width="15%" rx="6" x="29%" y="46%" style="transform: rotate(-45deg);transform-origin: center;transform-box: fill-box;" class="fg" />
+                    <rect height="50%" width="15%" rx="6" x="55%" y="46%" style="transform: rotate(45deg);transform-origin: center;transform-box: fill-box;" class="fg" />
+                </svg>
+            </div>
+
         </div>
-        <button class="action" title="Edit Thumbnail">
-            <svg class="edit" width="100%" height="100%" style="transform: rotate(-45deg)">
-                <rect x="23%" y="34.5%" rx="4.5%" ry="4.5%" height="30%" width="65%" class="fg" />
-                <rect x="73%" y="34.5%" height="30%" width="3.125%" class="bg" />
-                <rect x="13%" y="34.5%" rx="2.5%" ry="3.125%" height="30%" width="30%" class="fg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box" />
-                <rect x="13%" y="14.5%" height="20%" width="62.5%" class="bg" />
-                <rect x="13%" y="64.5%" height="20%" width="62.5%" class="bg" />
-                <rect x="27%" y="42%" width="38%" height="4%" class="bg" />
-                <rect x="27%" y="53%" width="38%" height="4%" class="bg" />
-            </svg>
-        </button>
-        <div class="action sm" title="Save" (click)="saveCurrentProject()" *ngIf="changesMade && !changesSaved">
-            <svg class="save" width="100%" height="100%">
-                <rect width="70%" height="80%" rx="10%" ry="10%" x="15%" y="10%" class="fg" />
-                <rect width="30%" height="10%" x="69%" y="12%" class="bg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box" />
-                <rect width="45%" height="25%" rx="10%" ry="10%" x="23%" y="19%" class="bg" />
-                <circle cx="52%" cy="67%" r="12%" class="bg" />
-            </svg>
-        </div>
-        <div class="action sm" title="Discard" (click)="discardCurrentProject()">
-            <svg class="discard" width="100%" height="100%">
-                <rect width="70%" height="80%" rx="10%" ry="10%" x="15%" y="10%" class="fg" />
-                <rect width="30%" height="10%" x="69%" y="12%" class="bg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box" />
-                <rect width="45%" height="25%" rx="10%" ry="10%" x="23%" y="19%" class="bg" />
-                <circle cx="52%" cy="67%" r="12%" class="bg" />
-                <rect width="120%" height="10%" rx="5%" ry="5%" x="-10%" y="42.5%" class="fg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box"/>
-                <rect width="120%" height="10%" x="-20%" y="46.5%" class="bg" style="transform: rotate(45deg); transform-origin: center; transform-box: fill-box"/>
-            </svg>
-        </div>
+
+
     </div>
+    
     <div class="editor" *ngIf="currentProject">
+        <div class="errors" *ngIf="!isValidBlog" (mouseleave)="isErrorsBlockActive=false">
+            <div class="icon" title="Errors" (click)="isErrorsBlockActive=true">
+                <!-- <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span> -->
+                <span>{{errors.length}}</span>
+            </div>
+            <div class="menu" [class.active]="isErrorsBlockActive" (click)="isErrorsBlockActive=false">
+                <div *ngFor="let error of errors" class="error">{{error}}</div>
+            </div>
+        </div>
         <app-blog-details
             [title]="currentProject.title"
             [category]="currentProject.category"
-            [thumbnail]="currentProject.thumbnail"
-            (updateCategoryEvent)="currentProject.category=$event; blogEditorService.currentProject.next(currentProject)"
-            (updateThumbnailEvent)="currentProject.thumbnail=$event; blogEditorService.currentProject.next(currentProject)"
-            (updateTitleEvent)="currentProject.title=$event; blogEditorService.currentProject.next(currentProject)"
+            (updateCategoryEvent)="currentProject.category=$event; blogEditorService.currentProject.next(currentProject);validateErrors()"
+            (updateTitleEvent)="currentProject.title=$event; blogEditorService.currentProject.next(currentProject);validateErrors()"
         ></app-blog-details>
         <app-blog-elements></app-blog-elements>
     </div>

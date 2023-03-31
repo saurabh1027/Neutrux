@@ -1,12 +1,13 @@
 package com.neutrux.api.NeutruxBlogsApi.service;
 
+import java.util.List;
 import java.util.Set;
 
 import com.neutrux.api.NeutruxBlogsApi.shared.BlogDto;
 
 public interface BlogsService {
 
-	Set<BlogDto> getBlogsByUserId(String userId, boolean includeImpressions, int pageNumber, int pageLimit,
+	List<BlogDto> getBlogsByUserId(String userId, boolean includeImpressions, int pageNumber, int pageLimit,
 			boolean includeComments) throws Exception;
 
 	BlogDto createBlog(BlogDto blogDto) throws Exception;

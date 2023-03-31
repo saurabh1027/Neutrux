@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Observable, Subscription } from "rxjs";
 import { BlogElementModel } from "../../../blog.element.model";
+import { BlogProjectModel } from "../../blog_project.model";
 import { BlogEditorService } from "../blog-editor.service";
 import { CanComponentDeactivate } from "../can-deactivate-guard.service";
 
@@ -13,20 +14,19 @@ export class BlogElementsComponent implements OnInit, OnDestroy, CanComponentDea
     elements:BlogElementModel[] = []
     selectedElementPosition:number = 0
     editing:boolean = false
+    currentProject!:BlogProjectModel
 
     // text input component
     previousValue:string = ''
     isTextInputActive:boolean = false
-
     isFileUploadActive:boolean = false
-
     changesMade:boolean = false
-    changesSaved:boolean = true 
 
     elementsSub!:Subscription
     selectedElementPositionSub!:Subscription
     changesMadeSub!:Subscription
-    changesSavedSub!:Subscription
+    elementActionEmitterSub!:Subscription
+    currentProjectSub!:Subscription
 
     constructor(
         public blogEditorService:BlogEditorService
@@ -36,6 +36,7 @@ export class BlogElementsComponent implements OnInit, OnDestroy, CanComponentDea
         this.subscribeElements()
         this.subscribeSelectedElementPosition()
         this.subscribeChangesVariables()
+        this.subscribeElementActionEmitter()
         this.addArrowKeyEvents()
     }
 
@@ -44,16 +45,16 @@ export class BlogElementsComponent implements OnInit, OnDestroy, CanComponentDea
         this.selectedElementPositionSub.unsubscribe()
         this.blogEditorService.selectedElementPosition.next(0)
         this.changesMadeSub.unsubscribe()
-        this.changesSavedSub.unsubscribe()
+        this.elementActionEmitterSub.unsubscribe()
+        if( this.currentProjectSub ) this.currentProjectSub.unsubscribe()
     }
 
     canDeactivate(): boolean | Observable<boolean> | Promise<boolean> {
-        if( this.changesMade && !this.changesSaved ) {
+        if( this.changesMade ) {
             let bool:boolean
             bool = confirm('Do you want to discard the changes?')
             if( bool ) {
                 this.blogEditorService.changesMade.next(false)
-                this.blogEditorService.changesSaved.next(true)
             }
             return bool
         } else {
@@ -61,12 +62,29 @@ export class BlogElementsComponent implements OnInit, OnDestroy, CanComponentDea
         }
     }
 
+    // Subscription methods
+    subscribeElementActionEmitter() {
+        this.elementActionEmitterSub = this.blogEditorService.elementActionEmitter.subscribe((actionKey:string)=>{
+            switch(actionKey) {
+                case 'e':
+                    this.edit()
+                break;
+                case 'd':
+                    this.delete()
+                break;
+                case 'mu':
+                    this.moveElement('up')
+                break;
+                case 'md':
+                    this.moveElement('down')
+                break;
+            }
+        })
+    }
+
     subscribeChangesVariables() {
         this.changesMadeSub = this.blogEditorService.changesMade.subscribe( (changesMade:boolean)=>{
             this.changesMade = changesMade
-        } )
-        this.changesSavedSub = this.blogEditorService.changesSaved.subscribe( (changesSaved:boolean)=>{
-            this.changesSaved = changesSaved
         } )
     }
 
@@ -78,11 +96,28 @@ export class BlogElementsComponent implements OnInit, OnDestroy, CanComponentDea
 
     subscribeElements() {
         this.elementsSub = this.blogEditorService.elements.subscribe( (elements:BlogElementModel[])=>{
+            for( let i=0; i<elements.length; i++ ) {
+                for( let j=0; j<elements.length-i-1; j++ ) {
+                    if( elements[j].position > elements[j+1].position ) {
+                        let temp = elements[j]
+                        elements[j] = elements[j+1]
+                        elements[j+1] = temp
+                    }
+                }
+            }
             this.elements = elements
         } )
     }
 
-    selectElement( position:number, event?:PointerEvent|MouseEvent ) {
+    subscribeCurrentProject() {
+        this.currentProjectSub = this.blogEditorService.currentProject.subscribe(currentProject=>{
+            if( currentProject ) this.currentProject = currentProject
+        })
+    }
+    // Subscription methods - end
+
+    // action methods
+    selectElement( position:number ) {
         if( this.selectedElementPosition == position ) {
             this.blogEditorService.selectedElementPosition.next(0)
         } else {
@@ -92,7 +127,6 @@ export class BlogElementsComponent implements OnInit, OnDestroy, CanComponentDea
 
     edit() {
         let textElements:string[] = ['heading','paragraph']
-        // let textElements:string[] = ['heading','paragraph']
         for( let i=0; i<this.elements.length; i++ ) {
             if( this.selectedElementPosition == this.elements[i].position ) {
                 if( textElements.includes( this.elements[i].name ) ) {
@@ -114,12 +148,85 @@ export class BlogElementsComponent implements OnInit, OnDestroy, CanComponentDea
                     this.blogEditorService.elements.next( this.elements )
                     this.editing = false
                     this.blogEditorService.changesMade.next(true)
-                    this.blogEditorService.changesSaved.next(false)
-                    this.addArrowKeyEvents()
+                    // this.addArrowKeyEvents()
                     return
                 }
             }
         }, 500);
+    }
+
+    delete() {
+        let bool = confirm('Are you sure?')
+        if(bool){
+            for( let i=0;i<this.elements.length;i++ ) {
+                if( this.elements[i].position == this.selectedElementPosition ) {
+                    this.elements.splice(i, 1)
+                    this.blogEditorService.selectedElementPosition.next(0)
+                    break;
+                }
+            }
+            for( let i=0;i<this.elements.length;i++ ) {
+                this.elements[i].position = i+1
+            }
+            this.blogEditorService.elements.next( this.elements )
+            this.blogEditorService.changesMade.next(true)
+        }
+    }
+
+    // not working yet
+    moveElement( direction:string ) {
+        let newElements = []
+        let element!:BlogElementModel;
+        let index=0;
+        if( this.selectedElementPosition==0 ) {
+            alert("Selct an element first!")
+            return
+        }
+        for( let i=0; i<this.elements.length; i++ ) {
+            if( this.elements[i].position != this.selectedElementPosition ) {
+                newElements.push(this.elements[i])
+            } else {
+                element = this.elements[i]
+                index = i;
+            }
+        }
+        if(direction=='up') {
+            if(this.selectedElementPosition==1) {
+                newElements.splice(0,0,element)
+            } else {
+                newElements.splice( index-1,0,element )
+                this.selectedElementPosition--
+            }
+        } else {
+            if(this.selectedElementPosition==this.elements.length) {
+                newElements.push(element)
+            } else {
+                newElements.splice( index+1,0,element )
+                this.selectedElementPosition++
+            }
+        }
+        for( let i=0; i<newElements.length; i++ ) {
+            newElements[i].position = i+1
+        }
+        this.blogEditorService.elements.next( newElements )
+        this.blogEditorService.selectedElementPosition.next( this.selectedElementPosition )
+        if( this.currentProject ) {
+            this.currentProject.elements = newElements
+            this.blogEditorService.currentProject.next(this.currentProject)
+        }
+        this.focusSelectedElement()
+        this.blogEditorService.changesMade.next( true )
+    }
+
+    focusSelectedElement(){
+        setTimeout(() => {
+            let element:HTMLInputElement = document.querySelectorAll('.element.selected')[0] as HTMLInputElement
+            window.scrollTo({
+                top: element.offsetTop-(window.innerHeight/3),
+                left: 0,
+                behavior: 'smooth'
+            })
+        }, 300);
     }
 
     addArrowKeyEvents() {
@@ -127,25 +234,32 @@ export class BlogElementsComponent implements OnInit, OnDestroy, CanComponentDea
             if(this.elements.length==0) return
             switch(event.key){
                 case 'ArrowDown':
-                    if( this.selectedElementPosition>0 && this.selectedElementPosition!=this.elements.length ) {
-                        if( event.shiftKey ) this.moveElement('down')
-                        this.blogEditorService.selectedElementPosition.next( this.selectedElementPosition+1 )
-                        if( !event.shiftKey ) this.focusSelectedElement()
-                        event.preventDefault()
-                    } 
+                    if( event.shiftKey ) this.moveElement('down')
+                    if( !event.shiftKey ) {
+                        let pos = this.selectedElementPosition
+                        if( pos == this.elements.length ) {
+                            this.blogEditorService.selectedElementPosition.next( 1 )
+                        } else {
+                            this.blogEditorService.selectedElementPosition.next( pos+1 )
+                        }
+                        this.focusSelectedElement()
+                    }
+                    event.preventDefault()
                 break;
                 case 'ArrowUp':
-                    if( this.selectedElementPosition==0 ) {
-                        this.blogEditorService.selectedElementPosition.next(1)
+                    if( event.shiftKey ) this.moveElement('up')
+                    if( !event.shiftKey ) {
+                        let pos = this.selectedElementPosition
+                        if( pos==0 ) {
+                            this.blogEditorService.selectedElementPosition.next(this.elements.length)
+                        } else if( pos == 1 ) {
+                            this.blogEditorService.selectedElementPosition.next( this.elements.length )
+                        } else {
+                            this.blogEditorService.selectedElementPosition.next( pos-1 )
+                        }
                         this.focusSelectedElement()
-                        event.preventDefault()
                     }
-                    if( this.selectedElementPosition>0 && this.selectedElementPosition!=1 ){
-                        if( event.shiftKey ) this.moveElement('up')
-                        this.blogEditorService.selectedElementPosition.next( this.selectedElementPosition-1 )
-                        if( !event.shiftKey ) this.focusSelectedElement()
-                        event.preventDefault()
-                    }
+                    event.preventDefault()
                 break;
                 case 'Delete':
                     if( this.selectedElementPosition>0 ){
@@ -160,57 +274,13 @@ export class BlogElementsComponent implements OnInit, OnDestroy, CanComponentDea
                         event.preventDefault()
                     }
                 break;
+                // case ' ':
+                //     if(this.selectedElementPosition!=0) {
+                //         this.blogEditorService.selectedElementPosition.next(0)
+                //     }
+                // break;
             }
         })
-    }
-
-    delete() {
-        for( let i=0;i<this.elements.length;i++ ) {
-            if( this.elements[i].position == this.selectedElementPosition ) {
-                this.elements.splice(i, 1)
-                this.blogEditorService.selectedElementPosition.next(0)
-                break;
-            }
-        }
-        for( let i=0;i<this.elements.length;i++ ) {
-            this.elements[i].position = i+1
-        }
-        this.blogEditorService.elements.next( this.elements )
-        this.blogEditorService.changesMade.next(true)
-        this.blogEditorService.changesSaved.next(false)
-    }
-
-    focusSelectedElement(){
-        setTimeout(() => {
-            let element:HTMLInputElement = document.querySelectorAll('.element.selected')[0] as HTMLInputElement
-            window.scrollTo({
-                top: element.offsetTop-(window.innerHeight/3),
-                left: 0,
-                behavior: 'smooth'
-            })
-        }, 300);
-    }
-
-    // not working yet
-    moveElement( direction:string ) {
-        for( let i=0; i<this.elements.length; i++ ) {
-            if( this.elements[i].position == this.selectedElementPosition ) {
-                if( direction=='up' ) {
-                    this.elements.splice(i-1, 0, this.elements[i])
-                    this.elements.splice(i+1, 1)
-                } else if( direction=='down' ) {
-                    this.elements.splice(i+2, 0, this.elements[i])
-                    this.elements.splice(i, 1)
-                }
-                for( let j=1;j<=this.elements.length;j++ ) {
-                    this.elements[j].position = j
-                }
-                this.selectedElementPosition = (direction='up')? i : i+1
-                this.blogEditorService.elements.next(this.elements)
-                this.blogEditorService.selectedElementPosition.next(this.selectedElementPosition)
-                break
-            }
-        }
     }
 
 }

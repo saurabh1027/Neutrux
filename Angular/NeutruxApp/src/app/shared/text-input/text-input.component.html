@@ -20,11 +20,19 @@
         name="value" 
         cols="30" 
         rows="3" 
+        [minlength]="min"
+        [maxlength]="max"
         [(ngModel)]="value"
         class="input"
         autofocus
         #input
     ></textarea>
+
+    <div class="error">
+        <span *ngIf="(value.includes('\n'))">No new lines are allowed!</span>
+        <span *ngIf="!(value.length>min)">Minimum length should be {{min}} characters!</span>
+        <span *ngIf="(value.length>max)">Maximum length should be {{max}} characters!</span>
+    </div>
     
     <div class="actions">
         <button 
@@ -34,7 +42,7 @@
         <button 
             type="submit"
             class="btn submit"
-            [disabled]="!(value.length>15)"
+            [disabled]="!(value.length>min) || (value.length>max) || (value.includes('\n'))"
         >Submit</button>
     </div>
 

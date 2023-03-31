@@ -138,4 +138,11 @@ public class BlogEntity implements Serializable {
 		this.thumbnail = thumbnail;
 	}
 
+	@Override
+	public String toString() {
+		return "BlogEntity [id=" + id + ", title=" + title + ", description=" + description + ", creationDate="
+				+ creationDate + ", thumbnail=" + thumbnail + ", category=" + category + ", user=" + user
+				+ ", elements=" + elements + ", impressions=" + impressions + ", comments=" + comments + "]";
+	}
+	
 }

@@ -9,6 +9,8 @@ export class TextInputComponent implements OnInit, OnDestroy {
 
     @Input('title') title:string = ''
     @Input('value') value:string = ''
+    @Input('min') min!:number
+    @Input('max') max!:number
     @Output('textInputUpdatedEvent') textInputUpdatedEvent= new EventEmitter<string>()
     @Output('cancelTextInputEvent') cancelTextInputEvent:EventEmitter<void> = new EventEmitter()
     @ViewChild('input') input!:ElementRef
@@ -29,7 +31,7 @@ export class TextInputComponent implements OnInit, OnDestroy {
 
     addKeyboardEvent(){
         document.addEventListener('keydown', (event:KeyboardEvent)=>{
-            if( event.key.toLowerCase() == 'escape' ) {
+            if( event.key && event.key.toLowerCase() == 'escape' ) {
                 this.cancelTextInputEvent.emit()
             }
         })

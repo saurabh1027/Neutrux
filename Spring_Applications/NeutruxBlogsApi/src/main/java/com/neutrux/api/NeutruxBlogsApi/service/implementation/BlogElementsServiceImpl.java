@@ -179,6 +179,31 @@ public class BlogElementsServiceImpl implements BlogElementsService {
 		blogElementsRepository.delete(blogElementEntity);
 	}
 
+	@Override
+	public void deleteElementsByBlogId(String blogId) throws Exception {
+		long id = this.blogsService.decryptId(blogId);
+		
+		BlogEntity blogEntity = null;
+		BlogElementEntity blogElementEntity = null;
+		String elementId = "";
+		
+		try {
+			blogEntity = this.blogsRepository.findById(id).get();
+		} catch (NoSuchElementException e) {
+			throw new Exception("Blog with id: " + blogId + " doesn't exists!");
+		}
+
+		Set<BlogElementEntity> elements = blogEntity.getElements();
+		Iterator<BlogElementEntity> iterator = elements.iterator();
+		
+		while( iterator.hasNext() ) {
+			blogElementEntity = iterator.next();
+			elementId = this.encryptId(blogElementEntity.getId());
+			this.deleteElementById(elementId);
+		}
+		
+	}
+
 	public String encryptId(long id) {
 		return (id * 673926356) + "";
 	}

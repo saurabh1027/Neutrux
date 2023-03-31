@@ -32,7 +32,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
 
     addKeyboardEvent(){
         document.addEventListener('keydown', (event:KeyboardEvent)=>{
-            if( event.key.toLowerCase() == 'escape' ) {
+            if( event.key && event.key.toLowerCase() == 'escape' ) {
                 this.cancelEvent.emit()
             }
         })
@@ -41,7 +41,6 @@ export class FileUploadComponent implements OnInit, OnDestroy {
     onFileChange( event:any ) {
         if( event && event.target && event.target.files && event.target.files.length>0 ){
             this.fileToBeUploaded = event.target.files[0]
-            console.log( this.fileToBeUploaded )
         }
     }
 
@@ -58,7 +57,6 @@ export class FileUploadComponent implements OnInit, OnDestroy {
             } )
         }
         this.blogEditorService.changesMade.next(true)
-        this.blogEditorService.changesSaved.next(false)
     }
 
 

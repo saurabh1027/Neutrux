@@ -73,13 +73,22 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 		ModelMapper modelMapper = new ModelMapper();
 		
 		UserResponseModel userResponseModel = modelMapper.map(userDto, UserResponseModel.class);
-		Date userExpirationDate = new Date( System.currentTimeMillis() + Long.parseLong(tokenExpirationTime));
+		Date userExpirationDate = new Date( Long.parseLong(tokenExpirationTime) );
 		userResponseModel.setExpiresIn( userExpirationDate.getTime() );
 		
+		long currentTimeInMilli = new Date().getTime();
+		long tokenExpirationTimeInMilli = Long.parseLong(tokenExpirationTime);
+		
+		long expiryTimeInMilli = currentTimeInMilli+tokenExpirationTimeInMilli;
+		System.out.println(expiryTimeInMilli);
+		Date expiryDate = new Date(expiryTimeInMilli);
+
 		String token =
 				Jwts.builder()
 					.setSubject(userDto.getUserId())
-					.setExpiration(new Date( System.currentTimeMillis() + Long.parseLong(tokenExpirationTime)))
+//					.setExpiration(new Date( System.currentTimeMillis() + Long.parseLong(tokenExpirationTime)))
+//					.setExpiration(new Date( new Date().getTime() + Long.parseLong(tokenExpirationTime)))
+					.setExpiration(expiryDate)
 					.signWith(SignatureAlgorithm.HS512, environment.getProperty("token.secret"))
 					.compact();
 		

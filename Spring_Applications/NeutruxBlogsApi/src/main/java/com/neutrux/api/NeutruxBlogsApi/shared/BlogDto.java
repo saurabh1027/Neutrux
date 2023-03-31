@@ -107,4 +107,17 @@ public class BlogDto implements Serializable {
 		this.thumbnail = thumbnail;
 	}
 
+	@Override
+	public String toString() {
+		return "BlogDto [blogId=" + blogId + ", creationDate=" + creationDate + "]";
+	}
+
+//	@Override
+//	public String toString() {
+//		return "BlogDto [blogId=" + blogId + ", title=" + title + ", description=" + description + ", creationDate="
+//				+ creationDate + ", thumbnail=" + thumbnail + ", userId=" + userId + ", category=" + category
+//				+ ", elements=" + elements + ", impressions=" + impressions + ", comments=" + comments
+//				+ ", impressionsCount=" + impressionsCount + "]";
+//	}
+
 }

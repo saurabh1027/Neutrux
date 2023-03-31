@@ -1,3 +1,7 @@
+<app-loading
+*ngIf="isLoadingActive"
+></app-loading>
+
 <app-alert 
     [alert]="alert"
     (close)="onClose()"
@@ -22,8 +26,10 @@
         </div>
     </div>
     <div class="action-buttons">
-        <div class="like btn" *ngIf="blog && blog.impressions">
-            <span *ngIf="!impression || !impression.type">Like 👍🏻 ( {{blog.impressions.length}} )</span>
+        <div class="like btn" *ngIf="blog && blog.impressions" >
+            <span *ngIf="blog.impressions.length==0">No one liked yet 🙁</span>
+            <span *ngIf="(blog.impressions.length==1) && (!impression || !impression.type)">{{blog.impressions.length}} Person Liked</span>
+            <span *ngIf="(blog.impressions.length>1) && (!impression || !impression.type)">{{blog.impressions.length}} People Liked</span>
             <div *ngIf="impression" [ngSwitch]="impression.type">
                 <span *ngSwitchCase="'thumbs up'">Liked 👍 ( {{blog.impressions.length}} )</span>
                 <span *ngSwitchCase="'loved'">Loved 💝 ( {{blog.impressions.length}} )</span>
@@ -31,7 +37,7 @@
                 <span *ngSwitchCase="'celebrate'">Celebrating 🙌 ( {{blog.impressions.length}} )</span>
                 <span *ngSwitchCase="'angry'">Angry 😠 ( {{blog.impressions.length}} )</span>
             </div>
-            <div class="backdrop">
+            <div class="backdrop" *ngIf="isImpressionBlockActive">
                 <ul class="impressions">
                     <li 
                         title="liked"

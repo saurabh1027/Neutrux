@@ -62,6 +62,7 @@ export class AuthService{
     }
 
     autoLogin(){
+
         let encryptedUserData = localStorage.getItem('userData')
         let userData = ''
         
@@ -78,7 +79,7 @@ export class AuthService{
             _accessToken: string,
             _accessTokenExpirationDate: string
         } = JSON.parse( userData )
-        
+
         const loadedUser:User = new User(
             user.userId,
             user.firstname,
@@ -92,7 +93,7 @@ export class AuthService{
         if( loadedUser.accessToken ) {
             this.user.next( loadedUser )
             const sessionExpiryDuration 
-                = new Date(user. _accessTokenExpirationDate).getTime() - new Date().getTime();
+                = new Date(user._accessTokenExpirationDate).getTime() - new Date().getTime();
             this.autoLogout( sessionExpiryDuration )
         }
         
@@ -112,7 +113,7 @@ export class AuthService{
     }
 
     private handleAuthentication( authResponseData:AuthResponseData,token:string ) {
-        let expirationDate:Date = new Date( +authResponseData.expiresIn )
+        let expirationDate:Date = new Date( new Date().getTime() + +authResponseData.expiresIn )
 
         const user = new User(
             authResponseData.userId,
@@ -132,7 +133,7 @@ export class AuthService{
     }
 
     private handleError(errorRes: HttpErrorResponse) {
-        console.log(errorRes.error)
+        // console.log(errorRes.error)
         let errorMessage = 'An unknown error occurred!';
         if (!errorRes.error || !errorRes.error.error) {
             return throwError( errorMessage );

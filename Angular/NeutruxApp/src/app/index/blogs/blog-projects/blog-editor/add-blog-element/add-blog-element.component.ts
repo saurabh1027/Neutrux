@@ -38,7 +38,7 @@ export class AddBlogElementComponent implements OnInit, OnDestroy {
 
     addKeyboardEvent(){
         document.addEventListener('keydown', (event:KeyboardEvent)=>{
-            if( event.key.toLowerCase() == 'escape' ) {
+            if( event.key && event.key.toLowerCase() == 'escape' ) {
                 this.cancelEvent.emit()
             }
         })

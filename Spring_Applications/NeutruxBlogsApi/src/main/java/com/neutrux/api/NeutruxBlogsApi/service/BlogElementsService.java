@@ -16,5 +16,7 @@ public interface BlogElementsService {
 	
 	public void deleteElementById( String elementId ) throws Exception;
 
+	public void deleteElementsByBlogId(String blogId) throws Exception;
+
 
 }

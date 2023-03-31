@@ -14,6 +14,8 @@ export class AuthenticationComponent implements OnInit {
         'isError': boolean
     } | null = null
 
+    isLoadingActive:boolean = false
+
     constructor(
         private authService:AuthService,
         private router:Router
@@ -24,20 +26,20 @@ export class AuthenticationComponent implements OnInit {
     }
 
     onAuthenticationFormSubmit( authenticationForm:NgForm ){
+        this.isLoadingActive = true
         let email:string = authenticationForm.controls['username'].value
         let password:string = authenticationForm.controls['password'].value
 
         this.authService.authenticateUser( email,password ).subscribe(response=>{
-            this.alert = {
-                message: 'Authenticated Successfully!',
-                isError: false
-            }
             authenticationForm.reset()
+            this.isLoadingActive = false
+            this.router.navigate( [''] )
         },(errorMessage:any)=>{
             this.alert = {
                 message: errorMessage,
                 isError: true
             }
+            this.isLoadingActive = false
         })
         
     }

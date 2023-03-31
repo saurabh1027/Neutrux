@@ -1,5 +1,7 @@
 package com.neutrux.api.NeutruxBlogsApi.ui.models.request;
 
+import java.util.Set;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -14,10 +16,13 @@ public class BlogRequestModel {
 
 	private String categoryId;
 
+	@NotNull(message = "Thumbnail cannot be null!")
 	private String thumbnail;
 
 	@NotNull(message = "User ID cannot be null!")
 	private String userId;
+	
+	private Set<BlogElementRequestModel> elements;
 
 	public String getTitle() {
 		return title;
@@ -57,6 +62,20 @@ public class BlogRequestModel {
 
 	public void setThumbnail(String thumbnail) {
 		this.thumbnail = thumbnail;
+	}
+
+	public Set<BlogElementRequestModel> getElements() {
+		return elements;
+	}
+
+	public void setElements(Set<BlogElementRequestModel> elements) {
+		this.elements = elements;
+	}
+
+	@Override
+	public String toString() {
+		return "BlogRequestModel [title=" + title + ", description=" + description + ", categoryId=" + categoryId
+				+ ", thumbnail=" + thumbnail + ", userId=" + userId + "]";
 	}
 
 }

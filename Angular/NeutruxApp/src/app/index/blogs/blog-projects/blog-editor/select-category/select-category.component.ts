@@ -35,7 +35,7 @@ export class SelectCategoryComponent implements OnInit, OnDestroy {
         setTimeout(() => {
             this.input.nativeElement.focus()
         }, 500);
-        this.addKeyboardEvent()
+        // this.addKeyboardEvent()
     }
 
     ngOnDestroy(): void {
