@@ -28,6 +28,7 @@
     z-index: 1000
 
     &.open
+        display: flex
         animation-name: slide-in
 
     &.close
@@ -127,17 +128,17 @@
 
 
 
-@media screen and (max-width:600px)
-    .sidenav
-        display: flex
+// @media screen and (max-width:600px)
+//     .sidenav
+//         display: flex
 
 
-@media screen and (max-width:400px)
-    .sidenav
-        width: 100%
+// @media screen and (max-width:400px)
+//     .sidenav
+//         width: 100%
 
-        .close-icon
-            display: flex
+//         .close-icon
+//             display: flex
 
 
 @keyframes slide-in

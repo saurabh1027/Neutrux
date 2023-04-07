@@ -1,5 +1,5 @@
 FROM openjdk:8-jdk-alpine
 VOLUME /tmp
 COPY UnlimitedJCEPolicyJDK8/* /usr/lib/jvm/java-1.8.0-openjdk-amd64/jre/lib/security/
-COPY target/NeutruxConfigServer-0.0.1-SNAPSHOT.jar NeutruxConfigServer.jar
+COPY target/NeutruxConfigServer.jar NeutruxConfigServer.jar
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","NeutruxConfigServer.jar"]

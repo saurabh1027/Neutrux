@@ -12,6 +12,7 @@
 	<artifactId>NeutruxBlogSearchApi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>NeutruxBlogSearchApi</name>
+	<packaging>jar</packaging>
 	<description>Blogs Search Micro-Service for Neutrux</description>
 	<properties>
 		<java.version>1.8</java.version>
@@ -74,6 +75,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>NeutruxBlogSearchApi</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

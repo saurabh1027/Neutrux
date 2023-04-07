@@ -12,6 +12,7 @@
 	<artifactId>NeutruxFileServer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>NeutruxFileServer</name>
+	<packaging>jar</packaging>
 	<description>File server for Neutrux</description>
 	<properties>
 		<java.version>1.8</java.version>
@@ -91,6 +92,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>NeutruxFileServer</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

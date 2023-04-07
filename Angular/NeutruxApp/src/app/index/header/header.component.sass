@@ -9,9 +9,9 @@
     user-select: none
     background: $dark-theme-color
     color: $dark-theme-text-color
+    padding: 0 40px
 
     .logo
-        margin: 0 3vw
 
         img
             width: 90px
@@ -19,17 +19,16 @@
             user-select: none
 
     .navigation
-        padding: 0 20px
         display: flex
         align-items: center
         column-gap: 20px
 
-        .link
+        .user-icon
             color: $dark-theme-text-color
             text-decoration: none
             letter-spacing: 1px
             font-size: 12px
-
+            cursor: pointer
             &:hover
                 text-decoration: underline
 
@@ -52,28 +51,28 @@
                 .name
                     display: flex
                     flex-direction: column
+                    column-gap: 5px
                     font-size: 10px
-
-    .menu-icon
-        display: none
-        flex-direction: column
-        justify-content: space-between
-        align-items: center
-        row-gap: 5px
-        margin: 0 3vw
-        cursor: pointer
-
-        .line
-            border-radius: 3px
-            width: 25px
-            height: 4px
-            background-color: $dark-theme-text-color
-
-
-@media screen and (max-width:600px)
-    .header
-        .navigation
-            display: none
 
         .menu-icon
             display: flex
+            flex-direction: column
+            justify-content: space-between
+            align-items: center
+            row-gap: 5px
+            cursor: pointer
+
+            .line
+                border-radius: 3px
+                width: 25px
+                height: 4px
+                background-color: $dark-theme-text-color
+
+
+// @media screen and (max-width:600px)
+//     .header
+//         .navigation
+//             display: none
+
+//         .menu-icon
+//             display: flex
